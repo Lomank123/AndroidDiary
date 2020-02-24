@@ -18,8 +18,9 @@ class WordViewModel(application: Application) : AndroidViewModel(application) {
         // Gets reference to WordDao from WordRoomDatabase to construct
         // the correct WordRepository.
         val wordsDao = WordRoomDatabase.getDatabase(application, viewModelScope).wordDao()
-        repository = WordRepository(wordsDao)
-        allWords = repository.allWords
+        repository = WordRepository(wordsDao)  // связываем репозиторий с этой переменной
+        allWords = repository.allWords         // передаем данные из репозитория сюда (во ViewModel)
+
     }
 
     /**
@@ -29,7 +30,7 @@ class WordViewModel(application: Application) : AndroidViewModel(application) {
      * ViewModels have a coroutine scope based on their lifecycle called
      * viewModelScope which we can use here.
      */
-    fun insert(word: Word) = viewModelScope.launch {
+    fun insert(word: Word) = viewModelScope.launch { // Добавляет запись в БД посредством вызова внутренних ф-ий (см. WordRepository)
         repository.insert(word)
     }
 }   // TODO: comment WordViewModel class code

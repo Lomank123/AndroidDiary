@@ -17,7 +17,7 @@ class WordListAdapter internal constructor( // internal constructor means, that 
 
 
     inner class WordViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) { // передаем сюда образец одного элемента списка
-        val wordItemView: TextView = itemView.findViewById(R.id.textView1)           // textView1 - вью из файла recyclerview_layout
+        val wordItemView: TextView = itemView.findViewById(R.id.textView1)           // textView1 - вью из файла recyclerview_layout.xml
     }                                                                                // этот класс ХРАНИТ в себе то самое вью, в котором будут что-то менять
 
 
@@ -25,7 +25,7 @@ class WordListAdapter internal constructor( // internal constructor means, that 
         val itemView = inflater.inflate(R.layout.recyclerview_layout,    // добавляет контент(XML) из 1-го аргумента, и помещает во второй (родительский), 3-ий аргумент false (т.к. RecyclerView)
             parent,
             false)
-        return WordViewHolder(itemView)     // не совсем понятно, но работает (одинакого для всех RecyclerView)
+        return WordViewHolder(itemView)     // не совсем понятно, но работает (одинаково для всех RecyclerView)
     }
 
 

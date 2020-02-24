@@ -22,11 +22,11 @@ class NewWordActivity : AppCompatActivity() {
         button.setOnClickListener {
             val replyIntent = Intent()
             if (TextUtils.isEmpty(editWordView.text)) {
-                setResult(Activity.RESULT_CANCELED, replyIntent)
+                setResult(Activity.RESULT_CANCELED, replyIntent) // resultCode будет негативным
             } else {
                 val word = editWordView.text.toString()
-                replyIntent.putExtra(EXTRA_REPLY, word)
-                setResult(Activity.RESULT_OK, replyIntent)
+                replyIntent.putExtra(EXTRA_REPLY, word)     // кладем то, что написано в editText в word и передаем по тегу EXTRA_REPLY (ниже)
+                setResult(Activity.RESULT_OK, replyIntent) // resultCode будет RESULT_OK
             }
             finish()
         }

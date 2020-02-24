@@ -19,25 +19,22 @@ abstract class WordRoomDatabase : RoomDatabase() {
 
         override fun onOpen(db: SupportSQLiteDatabase) {
             super.onOpen(db)
-            INSTANCE?.let { database ->
+            INSTANCE?.let { database -> // в параллельном(?) потоке выполнит ф-ию populateDatabase
                 scope.launch {
                     populateDatabase(database.wordDao())
                 }
             }
         }
 
-        suspend fun populateDatabase(wordDao: WordDao) {
-            // Delete all content here.
-            //wordDao.deleteAll()
+        suspend fun populateDatabase(wordDao: WordDao) { // ф-ия для возможных начальных данных или другого функционала
 
-            // Add sample words.
-            var word = Word("Hello")
+            //wordDao.deleteAll()          // удалит все записи при перезапуске приложения (можно вынести в отдельную кнопку)
+
+            var word = Word("Hello") // вручную добавляет слова в БД
             wordDao.insert(word)
-
             word = Word("World!")
             wordDao.insert(word)
 
-            // TODO: Add your own words!
         }
     }
 
@@ -65,5 +62,5 @@ abstract class WordRoomDatabase : RoomDatabase() {
     }
 
 
-}
+} // TODO: добавить комментариев для WordRoomDataBase
 
