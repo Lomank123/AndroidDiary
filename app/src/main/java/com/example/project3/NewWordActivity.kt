@@ -35,4 +35,4 @@ class NewWordActivity : AppCompatActivity() {
     companion object {
         const val EXTRA_REPLY = "com.example.android.wordlistsql.REPLY"
     }
-}
+}    // TODO: comment NewWordActivity class code

@@ -9,4 +9,4 @@ data class Word(@PrimaryKey @ColumnInfo(name = "word") val word: String) {
 
 
 
-}
+} // TODO: comment Word class code

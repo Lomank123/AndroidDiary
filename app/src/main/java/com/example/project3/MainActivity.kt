@@ -53,4 +53,4 @@ class MainActivity : AppCompatActivity() {
                 Toast.LENGTH_LONG).show()
         }
     }
-}
+} // TODO: comment MainActivity class code

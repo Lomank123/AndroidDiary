@@ -11,4 +11,4 @@ class WordRepository(private val wordDao: WordDao) {
     suspend fun insert(word: Word) {
         wordDao.insert(word)
     }
-}
+}   // TODO: comment WordRepository class code
