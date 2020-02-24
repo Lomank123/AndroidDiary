@@ -17,7 +17,7 @@ class WordListAdapter internal constructor(
     inner class WordViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) { // передаем сюда образец одного элемента списка
         val wordItemView: TextView = itemView.findViewById(R.id.textView)
     }
-
+    // abcd
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WordViewHolder {  // Создаем
         val itemView = inflater.inflate(R.layout.recyclerview_layout, parent, false) // parent, 3-ий арг. - не знаю, 1-ый аргумент - путь до XML файла с образцом
         return WordViewHolder(itemView) // возвращает созданный экземпляр WordViewHolder (скорее всего возвращает готовый обработанный образец)
