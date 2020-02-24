@@ -20,19 +20,21 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val recyclerView = findViewById<RecyclerView>(R.id.recyclerview)
-        val adapter = WordListAdapter(this)     // объект с помощью которого формируется RecycleView
+        val recyclerView = findViewById<RecyclerView>(R.id.recyclerview) // объект RecyclerView
+        val adapter = WordListAdapter(this)                                   // объект с помощью которого формируется RecycleView
 
-        recyclerView.adapter = adapter
-        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.adapter = adapter                                  // задаем Adapter
+        recyclerView.layoutManager = LinearLayoutManager(this)  // задаем LinearLayoutManager (пока не знаю зачем, скорее всего одинаково для всех RecyclerView)
 
-        wordViewModel = ViewModelProvider(this).get(WordViewModel::class.java)
-        wordViewModel.allWords.observe(this, Observer { words ->
-            // Update the cached copy of the words in the adapter.
-            words?.let { adapter.setWords(it) }
-        })
+        wordViewModel = ViewModelProvider(this).get(WordViewModel::class.java)     // Создаем провайдер (одинаково для всех ViewModel)
+        wordViewModel.allWords.observe(this, Observer {
+            adapter.setWords(it)            // следит за изменением данных и при наличии таковых обновляет данные в RecyclerView
+            adapter.notifyDataSetChanged()  // Для наглядности: notifyDataSetChanged() как бы "привязан" к RecyclerView и когда данные обновятся, то они обновятся и во вью
 
-        val fab = findViewById<FloatingActionButton>(R.id.fab)
+        })                                  // Если какие-либо изменения были, обсервер это заметит и даст сигнал, который задействует setWords и обновит
+                                            // данные в RecycleVIew. notifyDataSetChanged() даст сигнал о том, что данные изменились и нужно их обновить и во вью
+
+        val fab = findViewById<FloatingActionButton>(R.id.fab) // кнопка для запуска активити для добавления записи
         fab.setOnClickListener {
             val intent = Intent(this@MainActivity, NewWordActivity::class.java)
             startActivityForResult(intent, newWordActivityRequestCode)
@@ -47,7 +49,8 @@ class MainActivity : AppCompatActivity() {
                 val word = Word(it)
                 wordViewModel.insert(word)
             }
-        } else {
+        }
+        else { // Если было пустое поле
             Toast.makeText(
                 applicationContext,
                 R.string.empty_not_saved,
