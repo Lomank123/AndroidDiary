@@ -28,11 +28,9 @@ abstract class WordRoomDatabase : RoomDatabase() {
 
         suspend fun populateDatabase(wordDao: WordDao) { // ф-ия для возможных начальных данных или другого функционала
 
-            //wordDao.deleteAll()          // удалит все записи при перезапуске приложения (можно вынести в отдельную кнопку)
+            wordDao.deleteAll()          // удалит все записи при перезапуске приложения (можно вынести в отдельную кнопку)
 
-            var word = Word("Hello") // вручную добавляет слова в БД
-            wordDao.insert(word)
-            word = Word("World!")
+            val word = Word("Hello") // вручную добавляет слова в БД
             wordDao.insert(word)
 
         }

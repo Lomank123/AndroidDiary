@@ -17,7 +17,7 @@ class WordViewModel(application: Application) : AndroidViewModel(application) {
     init {
         // Gets reference to WordDao from WordRoomDatabase to construct
         // the correct WordRepository.
-        val wordsDao = WordRoomDatabase.getDatabase(application, viewModelScope).wordDao()
+        val wordsDao = WordRoomDatabase.getDatabase(application, viewModelScope).wordDao() // получаем данные из базы данных
         repository = WordRepository(wordsDao)  // связываем репозиторий с этой переменной
         allWords = repository.allWords         // передаем данные из репозитория сюда (во ViewModel)
 
@@ -33,4 +33,5 @@ class WordViewModel(application: Application) : AndroidViewModel(application) {
     fun insert(word: Word) = viewModelScope.launch { // Добавляет запись в БД посредством вызова внутренних ф-ий (см. WordRepository)
         repository.insert(word)
     }
+
 }   // TODO: comment WordViewModel class code

@@ -30,8 +30,6 @@ class MainActivity : AppCompatActivity() {
 
         wordViewModel.allWords.observe(this, Observer {
             adapter.setWords(it)            // следит за изменением данных и при наличии таковых обновляет данные в RecyclerView
-            adapter.notifyDataSetChanged()  // Для наглядности: notifyDataSetChanged() как бы "привязан" к адаптеру RecyclerView и когда данные обновятся, то они обновятся и во вью
-
         })                                  // Если какие-либо изменения были, обсервер это заметит и даст сигнал, который задействует setWords и обновит
                                             // данные в списке внутри адаптера. notifyDataSetChanged() даст сигнал о том, что данные изменились и нужно их обновить и в самом RecycleView
 
@@ -40,6 +38,15 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, NewWordActivity::class.java)
             startActivityForResult(intent, newWordActivityRequestCode) // 2-ой аргумент это requestCode по которому определяется откуда был запрос (в нашем случае из MainActivity)
         } // TODO: вынести создание другого окна в отдельный метод для кнопки
+
+        val fab1 = findViewById<FloatingActionButton>(R.id.fab1) // кнопка, которая будет выводить отсортированный список (если добавить запись все собьется)
+        fab1.setOnClickListener { // переделать
+            adapter.setNewWords(wordViewModel.allWords.value!!)
+            adapter.notifyDataSetChanged()
+
+        }
+
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) { // когда идет возврат со второй активити на первую

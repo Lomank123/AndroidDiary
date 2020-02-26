@@ -37,9 +37,14 @@ class WordListAdapter internal constructor( // internal constructor means, that 
 
     internal fun setWords(words: List<Word>) { // используется при изменении списка
         this.words = words                     // обновляем внутренний список
-
+        notifyDataSetChanged()
     }                                          // ВАЖНО: setWords вызывается в момент того, когда обсервер заметил изменения в записях
                                                // и чтобы зафиксировать эти изменения в RecyclerView, нужно передавать новый список сюда
+
+    internal fun setNewWords(words: List<Word>){ // сортирует список слов по алфавиту
+        this.words = words.sortedBy { it.word }
+        notifyDataSetChanged()
+    }
 
     override fun getItemCount() = words.size // сколько эл-тов будет в списке
 }

@@ -1,10 +1,8 @@
 package com.example.project3
 
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.lifecycle.MutableLiveData
+import androidx.room.*
 
 @Dao                        // Тут хранятся ВСЕ запросы к БД напрямую
 interface WordDao {
@@ -20,6 +18,7 @@ interface WordDao {
 
     @Query("DELETE FROM word_table") // Удалить ВСЕ записи
     suspend fun deleteAll()
+
 }
 
 // TODO: добавить новые запросы для редактирования, удаления, создания и тд.
