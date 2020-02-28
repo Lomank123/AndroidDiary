@@ -24,6 +24,10 @@ class MainActivity : AppCompatActivity() {
 
         val adapter = WordListAdapter(this) {
             val intent = Intent(this, ClickedActivity::class.java)   // TODO: Непонятно как работает listener внутри адаптера, выяснить
+            intent.putExtra("tag", it.word)                                  // TODO: исп. startActivityForResult
+
+
+
             startActivity(intent)                                                       // запускает ClickedActivity из MainActivity путем нажатия на элемент RecyclerView
                                                                                         // то, что в фигурных скобках это и есть аргумент listener : (Word) -> Unit в адаптере (догадки)
         }    // адаптер для RecyclerView
