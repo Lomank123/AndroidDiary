@@ -1,7 +1,6 @@
 package com.example.project3
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.room.*
 
 @Dao                        // Тут хранятся ВСЕ запросы к БД напрямую

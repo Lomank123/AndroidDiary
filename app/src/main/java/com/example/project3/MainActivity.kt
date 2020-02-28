@@ -21,7 +21,12 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerview) // объект RecyclerView
-        val adapter = WordListAdapter(this)                                   // адаптер для RecyclerView
+
+        val adapter = WordListAdapter(this) {
+            val intent = Intent(this, ClickedActivity::class.java)   // TODO: Непонятно как работает listener внутри адаптера, выяснить
+            startActivity(intent)                                                       // запускает ClickedActivity из MainActivity путем нажатия на элемент RecyclerView
+                                                                                        // то, что в фигурных скобках это и есть аргумент listener : (Word) -> Unit в адаптере (догадки)
+        }    // адаптер для RecyclerView
 
         recyclerView.adapter = adapter                                  // задаем Adapter
         recyclerView.layoutManager = LinearLayoutManager(this)  // задаем LinearLayoutManager (одинаково для всех RecyclerView)
@@ -48,6 +53,7 @@ class MainActivity : AppCompatActivity() {
 
 
     }
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) { // когда идет возврат со второй активити на первую
         super.onActivityResult(requestCode, resultCode, data)
