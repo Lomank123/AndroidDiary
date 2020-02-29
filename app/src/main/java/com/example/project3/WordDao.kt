@@ -12,7 +12,7 @@ interface WordDao {
     @Query("SELECT * from word_table") // Выдает все записи в порядке их поступления в БД
     fun getWords(): LiveData<List<Word>>
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE) // Добавить запись
+    @Insert(onConflict = OnConflictStrategy.IGNORE) // Добавить запись, onConflict - аргумент, отвечающий за одинаковые записи (IGNORE позволяет одинаковые записи)
     suspend fun insert(word: Word)
 
     @Query("DELETE FROM word_table") // Удалить ВСЕ записи

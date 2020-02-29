@@ -5,8 +5,17 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "word_table")
-data class Word(@PrimaryKey @ColumnInfo(name = "word") val word: String) {
-} // TODO: comment Word class code
+data class Word(@ColumnInfo(name = "word") val word: String,
+                @ColumnInfo(name = "description") val description : String
+)
+{
+    @PrimaryKey(autoGenerate = true)
+    var id : Int = 0
 
-@Entity(tableName = "pic_table")
-data class Picture(val pic : String)
+}
+
+//@Entity(tableName = "note_table")
+//data class Note(@PrimaryKey(autoGenerate = true) var id : String,
+//                @ColumnInfo(name = "note_name") val note : String,
+//                @ColumnInfo(name = "text") val text : String
+//){}

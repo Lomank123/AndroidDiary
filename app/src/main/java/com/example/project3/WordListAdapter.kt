@@ -24,9 +24,11 @@ class WordListAdapter internal constructor( // internal constructor means, that 
     inner class WordViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) { // передаем сюда образец одного элемента списка
 
         private val wordItemView: TextView = itemView.findViewById(R.id.textView1)           // textView1 - вью из файла recyclerview_layout.xml
+        private val wordDescriptionView: TextView = itemView.findViewById(R.id.textView)
 
         fun bindView(word: Word, listener : (Word) -> Unit) {   // эта функция применяется для каждого члена RecyclerView т.к. вызывается в onBindViewHolder
             wordItemView.text = word.word                       // Устанавливаем соотв. слово из списка в TextView
+            wordDescriptionView.text = word.description
             itemView.setOnClickListener {                       // Устанавливаем обработчик нажатий
                 listener(word)                                  // возможно он применяет то, что описано в фигурных скобках в MainActivity
             }

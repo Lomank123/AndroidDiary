@@ -16,6 +16,18 @@
         android:layout_marginTop="@dimen/big_padding"
         android:textSize="18sp" />
 
+    <EditText
+        android:id="@+id/edit_descr"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/big_padding"
+        android:layout_marginBottom="@dimen/big_padding"
+        android:fontFamily="sans-serif-light"
+        android:hint="@string/description"
+        android:inputType="textAutoComplete"
+        android:padding="@dimen/small_padding"
+        android:textSize="18sp" />
+
     <Button
         android:id="@+id/button_save"
         android:layout_width="match_parent"

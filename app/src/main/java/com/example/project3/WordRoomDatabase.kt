@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -28,13 +29,20 @@ abstract class WordRoomDatabase : RoomDatabase() {
 
         suspend fun populateDatabase(wordDao: WordDao) { // ф-ия для возможных начальных данных или другого функционала
 
-            //wordDao.deleteAll()          // удалит все записи при перезапуске приложения (можно вынести в отдельную кнопку)
+            wordDao.deleteAll()          // удалит все записи при перезапуске приложения (можно вынести в отдельную кнопку)
 
-            val word = Word("Hello") // вручную добавляет слова в БД
+            val word = Word(word ="Sample word", description = "Sample description") // вручную добавляет слова в БД
             wordDao.insert(word)
 
         }
     }
+
+ //   val migration_1_2 = object : Migration(1, 2) {
+ //       override fun migrate(database: SupportSQLiteDatabase) {
+ //           database.execSQL("ALTER TABLE Word ADD COLUMN description TEXT NOT NULL DEFAULT ''")
+ //           database.execSQL("ALTER TABLE Word ADD COLUMN id INTEGER PRIMARY KEY NOT NULL DEFAULT 0")
+ //       }
+ //   }
 
     companion object {
         // Singleton prevents multiple instances of database opening at the
@@ -51,6 +59,7 @@ abstract class WordRoomDatabase : RoomDatabase() {
 
             val instance = Room.databaseBuilder(context.applicationContext, WordRoomDatabase::class.java, "word_database")
                 .addCallback(WordDatabaseCallback(scope))
+                //.fallbackToDestructiveMigration()  // ОСТОРОЖНО!! УДАЛЯЕТ ВСЕ ДАННЫЕ ИЗ БД И ПЕРЕСОЗДАЕТ ЕЕ ЕСЛИ ИЗМЕНИЛИ ЧТО-ТО В Word.kt (замена миграций)
                 .build()
 
             INSTANCE = instance

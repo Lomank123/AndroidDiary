@@ -9,7 +9,8 @@ class ClickedActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_clicked)
-        textView1.text = "You have selected " + intent.getStringExtra("tag")
+        val st = intent.getStringExtra("tag")
+        textView1.text = "You have selected " + st
 
 
     }

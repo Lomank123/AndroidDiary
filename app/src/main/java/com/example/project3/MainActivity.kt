@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -19,7 +20,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
+        Log.i("info", "Created")
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerview) // объект RecyclerView
 
         val adapter = WordListAdapter(this) {
@@ -49,7 +50,7 @@ class MainActivity : AppCompatActivity() {
         } // TODO: вынести создание другого окна в отдельный метод для кнопки
 
         val fab1 = findViewById<FloatingActionButton>(R.id.fab1) // кнопка, которая будет выводить отсортированный список (если добавить запись все собьется)
-        fab1.setOnClickListener { // переделать
+        fab1.setOnClickListener {
             adapter.setNewWords(wordViewModel.allWords.value!!)
             adapter.notifyDataSetChanged()
 
@@ -63,8 +64,8 @@ class MainActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (requestCode == newWordActivityRequestCode && resultCode == Activity.RESULT_OK) {
-            data?.getStringExtra(NewWordActivity.EXTRA_REPLY)?.let {
-                val word = Word(it)                          // получаем из экстра данных нашу строку и создаем объект Word с той же строкой
+            data?.getStringArrayListExtra(NewWordActivity.EXTRA_REPLY)?.let {
+                val word = Word(it[0], it[1])                          // получаем из экстра данных нашу строку и создаем объект Word с той же строкой
                 wordViewModel.insert(word)
             }                                                // добавляем слово в БД
         }
