@@ -9,8 +9,11 @@ import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import kotlinx.android.synthetic.main.activity_main.*
+import recyclerviewadapter.WordListAdapter
+import roomdatabase.Word
+import viewmodel.WordViewModel
 
 class MainActivity : AppCompatActivity() {
 
@@ -20,60 +23,90 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        Log.i("info", "Created")
-        val recyclerView = findViewById<RecyclerView>(R.id.recyclerview) // объект RecyclerView
+        Log.i("info", "Created") // запись в логи
 
+        // адаптер для RecyclerView
         val adapter = WordListAdapter(this) {
-            val intent = Intent(this, ClickedActivity::class.java)   // TODO: Непонятно как работает listener внутри адаптера, выяснить
-            intent.putExtra("tag", it.word)                                  // TODO: исп. startActivityForResult
+
+            // TODO: сделать еще 1 RecyclerView для заметок
+            // отсюда будет запускаться новый RecyclerView для отображения списка заметок
+
+            val intent = Intent(this, ClickedActivity::class.java)
+
+            intent.putExtra("tag", it.word)
+
+            // запускает ClickedActivity из MainActivity путем нажатия на элемент RecyclerView
+            startActivity(intent)
+
+        }
+        // то, что в фигурных скобках это и есть аргумент listener : (Word) -> Unit в адаптере
 
 
+        // задаем Adapter (одинаково для всех RecyclerView)
+        recyclerview.adapter = adapter
 
-            startActivity(intent)                                                       // запускает ClickedActivity из MainActivity путем нажатия на элемент RecyclerView
-                                                                                        // то, что в фигурных скобках это и есть аргумент listener : (Word) -> Unit в адаптере (догадки)
-        }    // адаптер для RecyclerView
+        // задаем LinearLayoutManager (одинаково для всех RecyclerView)
+        recyclerview.layoutManager = LinearLayoutManager(this)
 
-        recyclerView.adapter = adapter                                  // задаем Adapter
-        recyclerView.layoutManager = LinearLayoutManager(this)  // задаем LinearLayoutManager (одинаково для всех RecyclerView)
+        // Создаем провайдер, связывая с соотв. классом ViewModel (одинаково для всех ViewModel)
+        wordViewModel = ViewModelProvider(this).get(WordViewModel::class.java)
 
-        wordViewModel = ViewModelProvider(this).get(WordViewModel::class.java)     // Создаем провайдер, связывая с соотв. классом ViewModel (одинаково для всех ViewModel)
 
+        // следит за изменением данных и при наличии таковых обновляет данные в RecyclerView
+        // Если какие-либо изменения были, обсервер это заметит и даст сигнал, который задействует
+        // setWords и обновит данные в списке внутри адаптера.
+        // notifyDataSetChanged() даст сигнал о том, что данные изменились
+        // и нужно их обновить и в самом RecycleView
         wordViewModel.allWords.observe(this, Observer {
-            adapter.setWords(it)            // следит за изменением данных и при наличии таковых обновляет данные в RecyclerView
-        })                                  // Если какие-либо изменения были, обсервер это заметит и даст сигнал, который задействует setWords и обновит
-                                            // данные в списке внутри адаптера. notifyDataSetChanged() даст сигнал о том, что данные изменились и нужно их обновить и в самом RecycleView
+            adapter.setWords(it)
+        })
 
-        val fab = findViewById<FloatingActionButton>(R.id.fab) // кнопка для запуска активити для добавления записи
+        // кнопка для запуска активити для добавления записи
+        val fab = findViewById<FloatingActionButton>(R.id.fab)
         fab.setOnClickListener {
+
             val intent = Intent(this, NewWordActivity::class.java)
-            startActivityForResult(intent, newWordActivityRequestCode) // 2-ой аргумент это requestCode по которому определяется откуда был запрос (в нашем случае из MainActivity)
+
+            // 2-ой аргумент это requestCode по которому определяется откуда был запрос
+            startActivityForResult(intent, newWordActivityRequestCode)
+
         } // TODO: вынести создание другого окна в отдельный метод для кнопки
 
-        val fab1 = findViewById<FloatingActionButton>(R.id.fab1) // кнопка, которая будет выводить отсортированный список (если добавить запись все собьется)
+        // кнопка, которая будет выводить отсортированный список (если добавить запись все собьется)
+        val fab1 = findViewById<FloatingActionButton>(R.id.fab1)
         fab1.setOnClickListener {
+
             adapter.setNewWords(wordViewModel.allWords.value!!)
             adapter.notifyDataSetChanged()
 
         }
 
-
     }
 
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) { // когда идет возврат со второй активити на первую
+    // когда идет возврат со второй активити на первую
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (requestCode == newWordActivityRequestCode && resultCode == Activity.RESULT_OK) {
+        if (requestCode == newWordActivityRequestCode && resultCode == Activity.RESULT_OK)
+        {
             data?.getStringArrayListExtra(NewWordActivity.EXTRA_REPLY)?.let {
-                val word = Word(it[0], it[1])                          // получаем из экстра данных нашу строку и создаем объект Word с той же строкой
-                wordViewModel.insert(word)
-            }                                                // добавляем слово в БД
+
+                // получаем из экстра данных нашу строку и создаем объект Word с той же строкой
+                val word = Word(it[0], it[1])
+
+                wordViewModel.insert(word) // добавляем запись в БД
+
+            }
+
         }
-        else {                      // Если было пустое поле
-            Toast.makeText(         // выводим сообщение о том что поле пустое, ничего не меняя в БД
-                applicationContext,
-                R.string.empty_not_saved,
+        else    // Если было пустое поле
+        {
+            // выводим сообщение о том что поле пустое, ничего не меняя в БД
+            Toast.makeText(applicationContext, R.string.empty_not_saved,
                 Toast.LENGTH_LONG).show()
+
         }
+
     }
+
 }

@@ -1,8 +1,10 @@
-package com.example.project3
+package roomdatabase
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+
+// Здесь хранятся все сущности для бд, все поля, колонки, их обозначения
 
 @Entity(tableName = "word_table")
 data class Word(@ColumnInfo(name = "word") val word: String,
@@ -15,7 +17,9 @@ data class Word(@ColumnInfo(name = "word") val word: String,
 }
 
 //@Entity(tableName = "note_table")
-//data class Note(@PrimaryKey(autoGenerate = true) var id : String,
-//                @ColumnInfo(name = "note_name") val note : String,
+//data class Note(@ColumnInfo(name = "note_name") val note : String,
 //                @ColumnInfo(name = "text") val text : String
-//){}
+//){
+//    @PrimaryKey(autoGenerate = true)
+//    var id : Int = 0
+//    }

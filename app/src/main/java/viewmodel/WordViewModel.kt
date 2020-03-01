@@ -1,10 +1,13 @@
-package com.example.project3
+package viewmodel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
+import roomdatabase.Word
+import roomdatabase.WordRoomDatabase
 import kotlinx.coroutines.launch
+import repository.WordRepository
 
 // Class extends AndroidViewModel and requires application as a parameter.
 class WordViewModel(application: Application) : AndroidViewModel(application) {
@@ -17,9 +20,14 @@ class WordViewModel(application: Application) : AndroidViewModel(application) {
     init {
         // Gets reference to WordDao from WordRoomDatabase to construct
         // the correct WordRepository.
-        val wordsDao = WordRoomDatabase.getDatabase(application, viewModelScope).wordDao() // получаем данные из базы данных
-        repository = WordRepository(wordsDao)  // связываем репозиторий с этой переменной
-        allWords = repository.allWords         // передаем данные из репозитория сюда (во ViewModel)
+
+        // получаем данные из БД
+        val wordsDao = WordRoomDatabase.getDatabase(application, viewModelScope).wordDao()
+
+        // связываем репозиторий с этой переменной
+        repository = WordRepository(wordsDao)
+        // передаем данные из репозитория сюда (во ViewModel)
+        allWords = repository.allWords
 
     }
 
@@ -30,7 +38,8 @@ class WordViewModel(application: Application) : AndroidViewModel(application) {
      * ViewModels have a coroutine scope based on their lifecycle called
      * viewModelScope which we can use here.
      */
-    fun insert(word: Word) = viewModelScope.launch { // Добавляет запись в БД посредством вызова внутренних ф-ий (см. WordRepository)
+    // Добавляет запись в БД посредством вызова внутренних ф-ий (см. WordRepository)
+    fun insert(word: Word) = viewModelScope.launch {
         repository.insert(word)
     }
 

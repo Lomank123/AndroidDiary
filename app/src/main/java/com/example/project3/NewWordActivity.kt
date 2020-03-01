@@ -5,8 +5,6 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.TextUtils
-import android.widget.Button
-import android.widget.EditText
 import kotlinx.android.synthetic.main.activity_new_word.*
 
 class NewWordActivity : AppCompatActivity() {
@@ -25,9 +23,11 @@ class NewWordActivity : AppCompatActivity() {
                 setResult(Activity.RESULT_CANCELED, replyIntent) // resultCode будет негативным
             }
             else {
-                val word = arrayListOf(edit_word.text.toString(), edit_descr.text.toString())
+                val word = arrayListOf(edit_word.text.toString(),
+                    edit_descr.text.toString())
 
-                replyIntent.putExtra(EXTRA_REPLY, word)     // кладем то, что написано в editText в word и передаем по тегу EXTRA_REPLY (ниже)
+                // кладем то, что написано в editText в word и передаем по тегу EXTRA_REPLY (ниже)
+                replyIntent.putExtra(EXTRA_REPLY, word)
 
                 setResult(Activity.RESULT_OK, replyIntent) // resultCode будет RESULT_OK
             }
