@@ -2,6 +2,7 @@ package roomdatabase
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
+import repository.NotesAndWords
 
 // Тут хранятся ВСЕ запросы к БД
 @Dao
@@ -24,6 +25,28 @@ interface WordDao {
     @Query("DELETE FROM word_table")
     suspend fun deleteAll()
 
+
+
+// NOTES
+
+    @Query("SELECT * from note_table ORDER BY note_name ASC")
+    fun getAlphabetizedNotes(): LiveData<List<Note>>
+
+    @Query("SELECT * from note_table")
+    fun getNotes(): LiveData<List<Note>>
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertNote(note: Note)
+
+    @Query("DELETE FROM note_table")
+    suspend fun deleteAllNotes()
+
+    @Transaction
+    @Query("SELECT * from word_table ")
+    fun getSomeNotes() : LiveData<List<NotesAndWords>>
+
+   // @Query("SELECT * from note_table WHERE diaryId =:ID")
+   // fun getNeededNotes(ID : Long) : LiveData<List<Note>>
 }
 
 // TODO: добавить новые запросы для редактирования, удаления, создания и тд.

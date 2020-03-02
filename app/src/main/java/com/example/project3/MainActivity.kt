@@ -28,12 +28,11 @@ class MainActivity : AppCompatActivity() {
         // адаптер для RecyclerView
         val adapter = WordListAdapter(this) {
 
-            // TODO: сделать еще 1 RecyclerView для заметок
             // отсюда будет запускаться новый RecyclerView для отображения списка заметок
 
-            val intent = Intent(this, ClickedActivity::class.java)
+            val intent = Intent(this, NoteActivity::class.java)
 
-            intent.putExtra("tag", it.word)
+            intent.putExtra("tag", it.id)
 
             // запускает ClickedActivity из MainActivity путем нажатия на элемент RecyclerView
             startActivity(intent)
