@@ -13,7 +13,7 @@ import roomdatabase.Word
 
 class NoteListAdapter internal constructor(
     context: Context,
-    val wordId: Long,
+    private val wordId: Long,
     private val listener : (Note) -> Unit   // похоже на какой-то template для функций
 ) : RecyclerView.Adapter<NoteListAdapter.NoteViewHolder>() {
 
@@ -23,8 +23,8 @@ class NoteListAdapter internal constructor(
 
     //private val mContext = context
 
-    private var notes = emptyList<NotesAndWords>()   // Cached copy of words
-    private var notesMapped = mutableMapOf<Long, List<Note>>()
+    private var notes = emptyList<Note>()   // Cached copy of words
+    //private var notesMapped = mutableMapOf<Long, List<Note>>()
 
     // передаем сюда образец одного элемента списка
     // этот класс ХРАНИТ в себе то самое вью, в котором будут что-то менять
@@ -40,7 +40,7 @@ class NoteListAdapter internal constructor(
 
             // устанавливаем значения во вью
 
-                noteItemView.text = note.diaryId.toString()
+                noteItemView.text = note.note
 
                 noteDescriptionView.text = note.text
 
@@ -65,17 +65,13 @@ class NoteListAdapter internal constructor(
 
     // Устанавливает значение для каждого элемента RecyclerView
     override fun onBindViewHolder(holder: NoteViewHolder, position: Int) {
-        holder.bindView(notesMapped[wordId]!![position], listener)
+        holder.bindView(notes[position], listener)
     }
 
     // ВАЖНО: setWords вызывается в момент того, когда обсервер заметил изменения в записях
     // и чтобы зафиксировать эти изменения в RecyclerView, нужно передавать новый список сюда
-    internal fun setNotes(notes: List<NotesAndWords>) {
+    internal fun setNotes(notes: List<Note>) {
         this.notes = notes      // обновляем внутренний список
-
-        for (i in this.notes) {
-            notesMapped[i.word.id] = i.notes
-        }
 
         notifyDataSetChanged()  // даем понять адаптеру, что были внесены изменения
     }
@@ -88,5 +84,5 @@ class NoteListAdapter internal constructor(
 //    }
 
 
-    override fun getItemCount() = notesMapped[wordId]!!.size // сколько эл-тов будет в списке
+    override fun getItemCount() = notes.size // сколько эл-тов будет в списке
 }

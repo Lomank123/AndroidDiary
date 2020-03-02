@@ -40,7 +40,7 @@ class WordListAdapter internal constructor(
         fun bindView(word: Word, listener : (Word) -> Unit) {
 
             // устанавливаем значения во вью
-            wordItemView.text = word.id.toString()
+            wordItemView.text = word.word
             wordDescriptionView.text = word.description
 
             // возможно он применяет то, что описано в фигурных скобках в MainActivity

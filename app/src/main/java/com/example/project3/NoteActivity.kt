@@ -19,27 +19,42 @@ class NoteActivity : AppCompatActivity() {
     private val newWordActivityRequestCode = 1              // для onActivityResult
     private lateinit var noteViewModel: NoteViewModel       // добавляем ViewModel
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_note)
 
-        val adapter = NoteListAdapter(this, intent.getLongExtra("tag", -1) ){
+        val wordId = intent.getLongExtra("tag", -1)
+
+        val adapter = NoteListAdapter(this, wordId ){
 
             val intent = Intent(this, ClickedActivity::class.java)
 
-            intent.putExtra("tag", it.note)
+            intent.putExtra("tag1", it.note)
 
             // запускает ClickedActivity из MainActivity путем нажатия на элемент RecyclerView
             startActivity(intent)
 
         }
 
+
         recyclerview1.adapter = adapter
         recyclerview1.layoutManager = LinearLayoutManager(this)
         noteViewModel = ViewModelProvider(this).get(NoteViewModel::class.java)
 
+
         noteViewModel.allNotes.observe(this, Observer {
-            adapter.setNotes(it)
+            var getList = emptyList<Note>()
+            for(i in it)
+            {
+                if(i.word.id == wordId)
+                {
+                    getList = i.notes
+                    break
+                }
+            }
+
+            adapter.setNotes(getList)
         })
 
         val fab = findViewById<FloatingActionButton>(R.id.fab)

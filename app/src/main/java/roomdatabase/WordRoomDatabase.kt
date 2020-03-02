@@ -31,15 +31,10 @@ abstract class WordRoomDatabase : RoomDatabase() {
         suspend fun populateDatabase(wordDao: WordDao) {
 
             // удалит все записи при перезапуске приложения (можно вынести в отдельную кнопку)
-            wordDao.deleteAll()
-            wordDao.deleteAllNotes()
+            //wordDao.deleteAll()
+            //wordDao.deleteAllNotes()
 
             // вручную добавляет слова в БД
-            val word = Word(word = "Sample word", description = "Sample description")
-            wordDao.insert(word)
-
-            val note = Note("Sample", "Sample text", word.id)
-            wordDao.insertNote(note)
 
         }
     }
