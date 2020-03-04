@@ -45,6 +45,11 @@ interface WordDao {
     @Query("SELECT * from word_table ")
     fun getSomeNotes() : LiveData<List<NotesAndWords>>
 
+    @Transaction
+    @Query("DELETE FROM note_table WHERE idNote = :noteId")
+    suspend fun deleteOneNote(noteId: Long)
+
+
    // @Query("SELECT * from note_table WHERE diaryId =:ID")
    // fun getNeededNotes(ID : Long) : LiveData<List<Note>>
 }

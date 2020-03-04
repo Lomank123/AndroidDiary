@@ -4,7 +4,9 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.project3.R
 import repository.NotesAndWords
@@ -21,7 +23,7 @@ class NoteListAdapter internal constructor(
     // которая используется в onCreateViewHolder
     private val inflater: LayoutInflater = LayoutInflater.from(context)
 
-    //private val mContext = context
+    private val mContext = context
 
     private var notes = emptyList<Note>()   // Cached copy of words
     //private var notesMapped = mutableMapOf<Long, List<Note>>()
@@ -48,6 +50,27 @@ class NoteListAdapter internal constructor(
             // возможно он применяет то, что описано в фигурных скобках в MainActivity
             itemView.setOnClickListener {   // Устанавливаем обработчик нажатий
                 listener(note)
+            }
+
+            itemView.setOnLongClickListener{
+                Toast.makeText(mContext, "Long Click", Toast.LENGTH_LONG).show()
+                val popupMenu = PopupMenu(mContext, it)
+                popupMenu.setOnMenuItemClickListener { item ->
+                    when(item.itemId) {
+                        R.id.delete_note -> {
+                            Toast.makeText(mContext, "Delete note", Toast.LENGTH_SHORT).show()
+                            true
+                        }
+                        R.id.open_note -> {
+                            Toast.makeText(mContext, "Open note", Toast.LENGTH_SHORT).show()
+                            true
+                        }
+                        else -> false
+                    }
+                }
+                popupMenu.inflate(R.menu.menu_notes)
+                popupMenu.show()
+                return@setOnLongClickListener true
             }
 
         }

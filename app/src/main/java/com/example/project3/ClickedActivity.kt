@@ -10,7 +10,7 @@ class ClickedActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_clicked)
 
-        textView1.text = intent.getStringExtra("tag")
+        textView1.text = intent.getStringExtra("tag1")
 
     }
 

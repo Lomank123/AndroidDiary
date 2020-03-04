@@ -4,6 +4,9 @@ import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -19,6 +22,8 @@ class NoteActivity : AppCompatActivity() {
     private val newWordActivityRequestCode = 1              // для onActivityResult
     private lateinit var noteViewModel: NoteViewModel       // добавляем ViewModel
 
+
+    private var isFabOpen : Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,12 +42,9 @@ class NoteActivity : AppCompatActivity() {
 
         }
 
-
         recyclerview1.adapter = adapter
         recyclerview1.layoutManager = LinearLayoutManager(this)
         noteViewModel = ViewModelProvider(this).get(NoteViewModel::class.java)
-
-
         noteViewModel.allNotes.observe(this, Observer {
             var getList = emptyList<Note>()
             for(i in it)
@@ -53,27 +55,77 @@ class NoteActivity : AppCompatActivity() {
                     break
                 }
             }
-
             adapter.setNotes(getList)
         })
 
-        val fab = findViewById<FloatingActionButton>(R.id.fab)
+
+        val fab = findViewById<FloatingActionButton>(R.id.fab) // main button
         fab.setOnClickListener {
+            if (!isFabOpen)
+            {
+                showFabMenu()
+            }
+            else
+            {
+                closeFabMenu()
+            }
 
-            val intent = Intent(this, NewWordActivity::class.java)
 
-            // 2-ой аргумент это requestCode по которому определяется откуда был запрос
-            startActivityForResult(intent, newWordActivityRequestCode)
-
-        } // TODO: вынести создание другого окна в отдельный метод для кнопки
-
-        // кнопка, которая будет выводить отсортированный список (если добавить запись все собьется)
-        val fab1 = findViewById<FloatingActionButton>(R.id.fab1)
-        fab1.setOnClickListener {
-         //   adapter.setNewNotes(noteViewModel.allNotes.value!!)
-         //   adapter.notifyDataSetChanged()
         }
+
+        fab1.setOnClickListener {
+
+        //    val a = noteViewModel.allNotes.value?.get(0) // удаляет заметки в ПЕРВОМ дневнике (для проверки, потом переделать)
+        //    if(a != null)
+        //    {
+        //        noteViewModel.deleteNote(a.notes[0])
+        //    }
+
+            closeFabMenu()
+            Toast.makeText(this, "Message", Toast.LENGTH_SHORT).show()
+        }
+
+        fab2.setOnClickListener {
+
+            closeFabMenu()
+            val intent = Intent(this, NewWordActivity::class.java)
+            //  // 2-ой аргумент это requestCode по которому определяется откуда был запрос
+            startActivityForResult(intent, newWordActivityRequestCode)
+        }
+
+        bg_fab_menu.setOnClickListener {
+            closeFabMenu()
+        }
+
     }
+
+
+    private fun closeFabMenu() {
+        isFabOpen = false
+
+        fab.animate().rotation(0f)
+        bg_fab_menu.animate().alpha(0f)
+        fab1.animate().translationY(0f).rotation(90f)
+        fab2.animate().translationY(0f).rotation(90f)
+
+        Handler().postDelayed({fab1.visibility = GONE}, 250)
+        Handler().postDelayed({fab2.visibility = GONE}, 250)
+        Handler().postDelayed({bg_fab_menu.visibility = GONE}, 250)
+    }
+
+    private fun showFabMenu() {
+        isFabOpen = true
+        fab1.visibility = VISIBLE
+        fab2.visibility = VISIBLE
+        bg_fab_menu.visibility = VISIBLE
+
+        fab.animate().rotation(135f)
+        bg_fab_menu.animate().alpha(1f)
+        fab1.animate().translationY(-300f).rotation(0f)
+        fab2.animate().translationY(-165f).rotation(0f)
+    }
+
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -94,14 +146,6 @@ class NoteActivity : AppCompatActivity() {
                 Toast.LENGTH_LONG).show()
         }
     }
-
-
-
-
-
-
-
-
 
 
 

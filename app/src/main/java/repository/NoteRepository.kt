@@ -25,4 +25,11 @@ class NoteRepository (private val wordDao : WordDao) {
 
     }
 
+    suspend fun deleteNote(note : Note)
+    {
+        wordDao.deleteOneNote(note.idNote)
+
+
+    }
+
 }
