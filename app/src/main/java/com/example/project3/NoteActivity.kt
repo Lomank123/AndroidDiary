@@ -31,7 +31,7 @@ class NoteActivity : AppCompatActivity() {
 
         val wordId = intent.getLongExtra("tag", -1)
 
-        val adapter = NoteListAdapter(this, wordId ){
+        val adapter = NoteListAdapter(this, wordId, {
 
             val intent = Intent(this, ClickedActivity::class.java)
 
@@ -40,7 +40,9 @@ class NoteActivity : AppCompatActivity() {
             // запускает ClickedActivity из MainActivity путем нажатия на элемент RecyclerView
             startActivity(intent)
 
-        }
+        }, {
+            deleteNote(it)
+        })
 
         recyclerview1.adapter = adapter
         recyclerview1.layoutManager = LinearLayoutManager(this)
@@ -69,8 +71,6 @@ class NoteActivity : AppCompatActivity() {
             {
                 closeFabMenu()
             }
-
-
         }
 
         fab1.setOnClickListener {
@@ -96,6 +96,7 @@ class NoteActivity : AppCompatActivity() {
         bg_fab_menu.setOnClickListener {
             closeFabMenu()
         }
+
 
     }
 
@@ -125,7 +126,10 @@ class NoteActivity : AppCompatActivity() {
         fab2.animate().translationY(-165f).rotation(0f)
     }
 
-
+    fun deleteNote(note : Note)
+    {
+        noteViewModel.deleteNote(note)
+    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -146,6 +150,7 @@ class NoteActivity : AppCompatActivity() {
                 Toast.LENGTH_LONG).show()
         }
     }
+
 
 
 

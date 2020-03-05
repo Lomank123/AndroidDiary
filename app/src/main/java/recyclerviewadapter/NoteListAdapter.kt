@@ -7,16 +7,20 @@ import android.view.ViewGroup
 import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.Toast
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
+import com.example.project3.NoteActivity
 import com.example.project3.R
 import repository.NotesAndWords
 import roomdatabase.Note
 import roomdatabase.Word
+import viewmodel.NoteViewModel
 
 class NoteListAdapter internal constructor(
     context: Context,
     private val wordId: Long,
-    private val listener : (Note) -> Unit   // похоже на какой-то template для функций
+    private val listenerOpen : (Note) -> Unit,  // похоже на какой-то template для функций
+    private val listenerDelete : (Note) -> Unit
 ) : RecyclerView.Adapter<NoteListAdapter.NoteViewHolder>() {
 
     // По сути переменная inflater используется как метка на родительский XML,
@@ -27,6 +31,8 @@ class NoteListAdapter internal constructor(
 
     private var notes = emptyList<Note>()   // Cached copy of words
     //private var notesMapped = mutableMapOf<Long, List<Note>>()
+
+
 
     // передаем сюда образец одного элемента списка
     // этот класс ХРАНИТ в себе то самое вью, в котором будут что-то менять
@@ -52,16 +58,18 @@ class NoteListAdapter internal constructor(
                 listener(note)
             }
 
-            itemView.setOnLongClickListener{
+            itemView.setOnLongClickListener{ // При long click'е будет срабатывать контекстное меню
                 Toast.makeText(mContext, "Long Click", Toast.LENGTH_LONG).show()
                 val popupMenu = PopupMenu(mContext, it)
                 popupMenu.setOnMenuItemClickListener { item ->
                     when(item.itemId) {
                         R.id.delete_note -> {
+                            listenerDelete(note)
                             Toast.makeText(mContext, "Delete note", Toast.LENGTH_SHORT).show()
                             true
                         }
                         R.id.open_note -> {
+                            listener(note) // открывает заметку
                             Toast.makeText(mContext, "Open note", Toast.LENGTH_SHORT).show()
                             true
                         }
@@ -88,7 +96,7 @@ class NoteListAdapter internal constructor(
 
     // Устанавливает значение для каждого элемента RecyclerView
     override fun onBindViewHolder(holder: NoteViewHolder, position: Int) {
-        holder.bindView(notes[position], listener)
+        holder.bindView(notes[position], listenerOpen)
     }
 
     // ВАЖНО: setWords вызывается в момент того, когда обсервер заметил изменения в записях
@@ -108,4 +116,5 @@ class NoteListAdapter internal constructor(
 
 
     override fun getItemCount() = notes.size // сколько эл-тов будет в списке
+
 }
