@@ -2,7 +2,6 @@ package roomdatabase
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 
 // Здесь хранятся все сущности для бд, все поля, колонки, их обозначения

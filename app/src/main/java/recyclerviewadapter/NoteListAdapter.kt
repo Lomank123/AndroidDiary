@@ -7,18 +7,12 @@ import android.view.ViewGroup
 import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.Toast
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
-import com.example.project3.NoteActivity
 import com.example.project3.R
-import repository.NotesAndWords
 import roomdatabase.Note
-import roomdatabase.Word
-import viewmodel.NoteViewModel
 
 class NoteListAdapter internal constructor(
     context: Context,
-    private val wordId: Long,
     private val listenerOpen : (Note) -> Unit,  // похоже на какой-то template для функций
     private val listenerDelete : (Note) -> Unit
 ) : RecyclerView.Adapter<NoteListAdapter.NoteViewHolder>() {
@@ -59,17 +53,19 @@ class NoteListAdapter internal constructor(
             }
 
             itemView.setOnLongClickListener{ // При long click'е будет срабатывать контекстное меню
-                Toast.makeText(mContext, "Long Click", Toast.LENGTH_LONG).show()
+                Toast.makeText(mContext, "Long Click", Toast.LENGTH_SHORT).show()
+
                 val popupMenu = PopupMenu(mContext, it)
+
                 popupMenu.setOnMenuItemClickListener { item ->
                     when(item.itemId) {
-                        R.id.delete_note -> {
+                        R.id.delete_note -> { // удаление записи
                             listenerDelete(note)
                             Toast.makeText(mContext, "Delete note", Toast.LENGTH_SHORT).show()
                             true
                         }
-                        R.id.open_note -> {
-                            listener(note) // открывает заметку
+                        R.id.open_note -> { // открытие записи
+                            listener(note)
                             Toast.makeText(mContext, "Open note", Toast.LENGTH_SHORT).show()
                             true
                         }

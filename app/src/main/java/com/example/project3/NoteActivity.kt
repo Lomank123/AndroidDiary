@@ -31,7 +31,7 @@ class NoteActivity : AppCompatActivity() {
 
         val wordId = intent.getLongExtra("tag", -1)
 
-        val adapter = NoteListAdapter(this, wordId, {
+        val adapter = NoteListAdapter(this, {
 
             val intent = Intent(this, ClickedActivity::class.java)
 
@@ -64,31 +64,20 @@ class NoteActivity : AppCompatActivity() {
         val fab = findViewById<FloatingActionButton>(R.id.fab) // main button
         fab.setOnClickListener {
             if (!isFabOpen)
-            {
                 showFabMenu()
-            }
             else
-            {
                 closeFabMenu()
-            }
         }
 
         fab1.setOnClickListener {
-
-        //    val a = noteViewModel.allNotes.value?.get(0) // удаляет заметки в ПЕРВОМ дневнике (для проверки, потом переделать)
-        //    if(a != null)
-        //    {
-        //        noteViewModel.deleteNote(a.notes[0])
-        //    }
-
             closeFabMenu()
             Toast.makeText(this, "Message", Toast.LENGTH_SHORT).show()
         }
 
         fab2.setOnClickListener {
-
             closeFabMenu()
             val intent = Intent(this, NewWordActivity::class.java)
+
             //  // 2-ой аргумент это requestCode по которому определяется откуда был запрос
             startActivityForResult(intent, newWordActivityRequestCode)
         }
@@ -96,12 +85,10 @@ class NoteActivity : AppCompatActivity() {
         bg_fab_menu.setOnClickListener {
             closeFabMenu()
         }
-
-
     }
 
 
-    private fun closeFabMenu() {
+    private fun closeFabMenu() { // закрытие выдвиг. меню
         isFabOpen = false
 
         fab.animate().rotation(0f)
@@ -114,7 +101,7 @@ class NoteActivity : AppCompatActivity() {
         Handler().postDelayed({bg_fab_menu.visibility = GONE}, 250)
     }
 
-    private fun showFabMenu() {
+    private fun showFabMenu() { // открытие выдвиг. меню
         isFabOpen = true
         fab1.visibility = VISIBLE
         fab2.visibility = VISIBLE
@@ -126,7 +113,7 @@ class NoteActivity : AppCompatActivity() {
         fab2.animate().translationY(-165f).rotation(0f)
     }
 
-    fun deleteNote(note : Note)
+    private fun deleteNote(note : Note) // удаление записи
     {
         noteViewModel.deleteNote(note)
     }

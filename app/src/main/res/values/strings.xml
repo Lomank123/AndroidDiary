@@ -6,4 +6,6 @@
     <string name="image">Image Text</string>
     <string name="sample">Sample Text</string>
     <string name="description">Description…</string>
+    <string name="open_btn">Open</string>
+    <string name="delete_btn">Delete</string>
 </resources>
