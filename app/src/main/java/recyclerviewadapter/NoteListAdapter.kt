@@ -59,12 +59,12 @@ class NoteListAdapter internal constructor(
 
                 popupMenu.setOnMenuItemClickListener { item ->
                     when(item.itemId) {
-                        R.id.delete_note -> { // удаление записи
+                        R.id.delete -> { // удаление записи
                             listenerDelete(note)
                             Toast.makeText(mContext, "Delete note", Toast.LENGTH_SHORT).show()
                             true
                         }
-                        R.id.open_note -> { // открытие записи
+                        R.id.open -> { // открытие записи
                             listener(note)
                             Toast.makeText(mContext, "Open note", Toast.LENGTH_SHORT).show()
                             true

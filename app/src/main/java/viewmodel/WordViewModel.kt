@@ -39,8 +39,13 @@ class WordViewModel(application: Application) : AndroidViewModel(application) {
      * viewModelScope which we can use here.
      */
     // Добавляет запись в БД посредством вызова внутренних ф-ий (см. WordRepository)
-    fun insert(word: Word) = viewModelScope.launch {
-        repository.insert(word)
+    fun insertWord(word: Word) = viewModelScope.launch {
+        repository.insertWord(word)
     }
+
+    fun deleteWord(word: Word) = viewModelScope.launch {
+        repository.deleteWord(word)
+    }
+
 
 }   // TODO: comment WordViewModel class code

@@ -4,7 +4,9 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.project3.R
 import roomdatabase.Word
@@ -15,6 +17,7 @@ import roomdatabase.Word
 // RecyclerView.Adapter - тип, который дает понять, что весь класс - адаптер
 class WordListAdapter internal constructor(
     context: Context,
+    private val listenerDeleteWord : (Word) -> Unit,
     private val listener : (Word) -> Unit   // похоже на какой-то template для функций
 ) : RecyclerView.Adapter<WordListAdapter.WordViewHolder>() {
 
@@ -22,7 +25,7 @@ class WordListAdapter internal constructor(
     // которая используется в onCreateViewHolder
     private val inflater: LayoutInflater = LayoutInflater.from(context)
 
-    //private val mContext = context
+    private val mContext = context
 
     private var words = emptyList<Word>()   // Cached copy of words
 
@@ -46,7 +49,30 @@ class WordListAdapter internal constructor(
             // возможно он применяет то, что описано в фигурных скобках в MainActivity
             itemView.setOnClickListener {   // Устанавливаем обработчик нажатий
                 listener(word)
-                // TODO: Непонятно как работает listener внутри адаптера, выяснить
+            }
+            itemView.setOnLongClickListener{ // При long click'е будет срабатывать контекстное меню
+                Toast.makeText(mContext, "Long Click", Toast.LENGTH_SHORT).show()
+
+                val popupMenu = PopupMenu(mContext, it)
+
+                popupMenu.setOnMenuItemClickListener { item ->
+                    when(item.itemId) {
+                        R.id.delete -> { // удаление дневника
+                            listenerDeleteWord(word)
+                            Toast.makeText(mContext, "Delete diary", Toast.LENGTH_SHORT).show()
+                            true
+                        }
+                        R.id.open -> { // открытие дневника
+                            listener(word)
+                            Toast.makeText(mContext, "Open diary", Toast.LENGTH_SHORT).show()
+                            true
+                        }
+                        else -> false
+                    }
+                }
+                popupMenu.inflate(R.menu.menu_notes)
+                popupMenu.show()
+                return@setOnLongClickListener true
             }
 
         }
@@ -80,7 +106,6 @@ class WordListAdapter internal constructor(
         this.words = words.sortedBy { it.word }
         notifyDataSetChanged()
     }
-
 
     override fun getItemCount() = words.size // сколько эл-тов будет в списке
 }

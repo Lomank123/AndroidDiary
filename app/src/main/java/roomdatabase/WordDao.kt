@@ -19,7 +19,7 @@ interface WordDao {
     // Добавить запись, onConflict - аргумент, отвечающий за одинаковые записи,
     // IGNORE позволяет одинаковые записи
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insert(word: Word)
+    suspend fun insertWord(word: Word)
 
     // Удалить ВСЕ записи
     @Query("DELETE FROM word_table")
@@ -49,6 +49,13 @@ interface WordDao {
     @Query("DELETE FROM note_table WHERE idNote = :noteId")
     suspend fun deleteOneNote(noteId: Long)
 
+    @Transaction
+    @Query("DELETE FROM word_table WHERE id = :wordId")
+    suspend fun deleteWord(wordId: Long)
+
+    @Transaction
+    @Query("DELETE FROM note_table WHERE diaryId = :wordId")
+    suspend fun deleteNotes(wordId: Long)
 
    // @Query("SELECT * from note_table WHERE diaryId =:ID")
    // fun getNeededNotes(ID : Long) : LiveData<List<Note>>

@@ -34,7 +34,7 @@ abstract class WordRoomDatabase : RoomDatabase() {
             //wordDao.deleteAll()
             //wordDao.deleteAllNotes()
 
-            // вручную добавляет слова в БД
+
 
         }
     }

@@ -26,9 +26,13 @@ class WordRepository(private val wordDao: WordDao) {
 
 
     // вставляет новую запись в БД посредством вызова внутренней функции WordDao через другой поток
-    suspend fun insert(word: Word) {
-        wordDao.insert(word)
+    suspend fun insertWord(word: Word) {
+        wordDao.insertWord(word)
     }
 
-
+    suspend fun deleteWord(word: Word)
+    {
+        wordDao.deleteNotes(word.id) // Сначала удаляем ВСЕ заметки у этого дневника
+        wordDao.deleteWord(word.id)  // Затем удаляем САМ дневник
+    }
 }

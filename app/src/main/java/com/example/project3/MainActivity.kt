@@ -26,19 +26,18 @@ class MainActivity : AppCompatActivity() {
         Log.i("info", "Created") // запись в логи
 
         // адаптер для RecyclerView
-        val adapter = WordListAdapter(this) {
+        val adapter = WordListAdapter(this,
+            {
+                deleteWord(it)
+            }, {
 
             // отсюда будет запускаться новый RecyclerView для отображения списка заметок
-
             val intent = Intent(this, NoteActivity::class.java)
-
             intent.putExtra("tag", it.id)
-
             // запускает ClickedActivity из MainActivity путем нажатия на элемент RecyclerView
             startActivity(intent)
+        })  // то, что в фигурных скобках это и есть аргумент listener : (Word) -> Unit в адаптере
 
-        }
-        // то, что в фигурных скобках это и есть аргумент listener : (Word) -> Unit в адаптере
 
 
         // задаем Adapter (одинаково для всех RecyclerView)
@@ -77,8 +76,13 @@ class MainActivity : AppCompatActivity() {
 
             adapter.setNewWords(wordViewModel.allWords.value!!)
             adapter.notifyDataSetChanged()
-
         }
+
+    }
+
+    private fun deleteWord(word : Word)
+    {
+        wordViewModel.deleteWord(word)
 
     }
 
@@ -93,7 +97,7 @@ class MainActivity : AppCompatActivity() {
                 // получаем из экстра данных нашу строку и создаем объект Word с той же строкой
                 val word = Word(it[0], it[1])
 
-                wordViewModel.insert(word) // добавляем запись в БД
+                wordViewModel.insertWord(word) // добавляем запись в БД
 
             }
 
