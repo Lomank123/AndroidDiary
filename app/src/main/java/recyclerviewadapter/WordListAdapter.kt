@@ -44,7 +44,19 @@ class WordListAdapter internal constructor(
 
             // устанавливаем значения во вью
             wordItemView.text = word.word
-            wordDescriptionView.text = word.description
+
+            var count : Int = 0
+            var str : String = ""
+            for(i in word.description) {
+                if (count == 16) {
+                    str += "..."
+                    break
+                }
+                str += i
+                count++
+            }
+
+            wordDescriptionView.text = str
 
             // возможно он применяет то, что описано в фигурных скобках в MainActivity
             itemView.setOnClickListener {   // Устанавливаем обработчик нажатий

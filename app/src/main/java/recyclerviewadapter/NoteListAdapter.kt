@@ -44,7 +44,18 @@ class NoteListAdapter internal constructor(
 
                 noteItemView.text = note.note
 
-                noteDescriptionView.text = note.text
+                var count : Int = 0
+                var str : String = ""
+                for(i in note.text) {
+                    if (count == 16) {
+                        str += "..."
+                        break
+                    }
+                    str += i
+                    count++
+                }
+
+                noteDescriptionView.text = str
 
 
             // возможно он применяет то, что описано в фигурных скобках в MainActivity
