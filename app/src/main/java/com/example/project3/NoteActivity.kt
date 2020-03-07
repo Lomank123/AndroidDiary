@@ -133,7 +133,6 @@ class NoteActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        // Результат для добавления заметки
         if (requestCode == newWordActivityRequestCode && resultCode == Activity.RESULT_OK)
         {
             data?.getStringArrayListExtra(NewWordActivity.EXTRA_REPLY)?.let {
@@ -143,8 +142,15 @@ class NoteActivity : AppCompatActivity() {
                 noteViewModel.insertNote(note) // добавляем запись в БД
             }
         }
+        else    // Если было пустое поле
+        {
+            // выводим сообщение о том что поле пустое, ничего не меняя в БД
+            Toast.makeText(applicationContext, R.string.empty_not_saved,
+                Toast.LENGTH_LONG).show()
+        }
 
-        // Результат для обновления заметки
+
+
         if (requestCode == clickedActivityRequestCode && resultCode == Activity.RESULT_OK) {
 
             data?.getStringArrayListExtra(EXTRA_REPLY_EDIT)?.let {
