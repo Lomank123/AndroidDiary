@@ -59,6 +59,7 @@ interface WordDao {
 
    // @Query("SELECT * from note_table WHERE diaryId =:ID")
    // fun getNeededNotes(ID : Long) : LiveData<List<Note>>
+
    // обновляет заметку
     @Update
     suspend fun updateNote(note : Note)
