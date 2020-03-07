@@ -32,4 +32,14 @@ class NoteRepository (private val wordDao : WordDao) {
 
     }
 
+    suspend fun deleteWord(word: Word)
+    {
+        wordDao.deleteNotes(word.id) // Сначала удаляем ВСЕ заметки у этого дневника
+        wordDao.deleteWord(word.id)  // Затем удаляем САМ дневник
+    }
+
+    suspend fun updateNote(note : Note){
+        wordDao.updateNote(note)
+    }
+
 }

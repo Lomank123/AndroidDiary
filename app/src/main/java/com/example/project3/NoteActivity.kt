@@ -11,15 +11,18 @@ import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.project3.ClickedActivity.Companion.EXTRA_REPLY_EDIT
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.android.synthetic.main.activity_note.*
 import recyclerviewadapter.NoteListAdapter
 import roomdatabase.Note
+import roomdatabase.Word
 import viewmodel.NoteViewModel
 
 class NoteActivity : AppCompatActivity() {
 
     private val newWordActivityRequestCode = 1              // для onActivityResult
+    private val clickedActivityRequestCode = 2
     private lateinit var noteViewModel: NoteViewModel       // добавляем ViewModel
 
 
@@ -35,10 +38,12 @@ class NoteActivity : AppCompatActivity() {
 
             val intent = Intent(this, ClickedActivity::class.java)
 
+            intent.putExtra("idTag", it.idNote)
             intent.putExtra("tag1", it.note)
+            intent.putExtra("tag2", it.text)
 
             // запускает ClickedActivity из MainActivity путем нажатия на элемент RecyclerView
-            startActivity(intent)
+            startActivityForResult(intent, clickedActivityRequestCode)
 
         }, {
             deleteNote(it)
@@ -72,6 +77,7 @@ class NoteActivity : AppCompatActivity() {
         fab1.setOnClickListener {
             closeFabMenu()
             Toast.makeText(this, "Message", Toast.LENGTH_SHORT).show()
+
         }
 
         fab2.setOnClickListener {
@@ -118,6 +124,12 @@ class NoteActivity : AppCompatActivity() {
         noteViewModel.deleteNote(note)
     }
 
+    private fun deleteBoth(word: Word)
+    {
+        noteViewModel.deleteWord(word)
+
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -136,6 +148,19 @@ class NoteActivity : AppCompatActivity() {
             Toast.makeText(applicationContext, R.string.empty_not_saved,
                 Toast.LENGTH_LONG).show()
         }
+
+
+
+        if (requestCode == clickedActivityRequestCode && resultCode == Activity.RESULT_OK) {
+
+            data?.getStringArrayListExtra(EXTRA_REPLY_EDIT)?.let {
+                val note1 = Note(it[0], it[1], intent.getLongExtra("tag", -1))
+                note1.idNote = data.getLongExtra("noteId", -1)
+                noteViewModel.updateNote(note1)
+            }
+
+        }
+
     }
 
 
