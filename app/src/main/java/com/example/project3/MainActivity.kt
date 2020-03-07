@@ -2,10 +2,11 @@ package com.example.project3
 
 import android.app.Activity
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -14,6 +15,9 @@ import kotlinx.android.synthetic.main.activity_main.*
 import recyclerviewadapter.WordListAdapter
 import roomdatabase.Word
 import viewmodel.WordViewModel
+import java.text.DateFormat
+import java.util.*
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -24,6 +28,17 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         Log.i("info", "Created") // запись в логи
+
+        val calendar = Calendar.getInstance()               //Добавляю переменную текущей даты
+        val currentDate =                                   //Преобразуем ее в строку (DD.MM.YYYY)
+            DateFormat.getDateInstance(DateFormat.FULL)
+                .format(calendar.time)
+
+        //в дальнейшем определенный текст, а именно для каждого нового дневника и заметки
+        //будет найден по айди и ему будет присвоено значение текущей даты, во время
+        //создания дневника или заметки
+        //val textViewDate: TextView = findViewById(R.id.text_view_date)
+        //textViewDate.text = currentDate
 
         // адаптер для RecyclerView
         val adapter = WordListAdapter(this,
