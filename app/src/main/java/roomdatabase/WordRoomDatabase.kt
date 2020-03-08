@@ -17,7 +17,7 @@ abstract class WordRoomDatabase : RoomDatabase() {
 
     private class WordDatabaseCallback(private val scope: CoroutineScope) : RoomDatabase.Callback()
     {
-
+        // Вызывается при открытии бд (1 раз за сеанс)
         override fun onOpen(db: SupportSQLiteDatabase) {
             super.onOpen(db)
             INSTANCE?.let { database ->
@@ -29,21 +29,11 @@ abstract class WordRoomDatabase : RoomDatabase() {
 
         // ф-ия для возможных начальных данных или другого функционала
         suspend fun populateDatabase(wordDao: WordDao) {
-
             // удалит все записи при перезапуске приложения (можно вынести в отдельную кнопку)
             //wordDao.deleteAll()
             //wordDao.deleteAllNotes()
-
-
-
         }
     }
-
- //   val migration_1_2 = object : Migration(1, 2) {
- //       override fun migrate(database: SupportSQLiteDatabase) {
- //           database.execSQL("ALTER TABLE Word ADD COLUMN description TEXT NOT NULL DEFAULT ''")
- //       }
- //   }
 
     companion object {
         // Singleton prevents multiple instances of database opening at the
@@ -58,18 +48,16 @@ abstract class WordRoomDatabase : RoomDatabase() {
                 return tempInstance
             }
 
+            // .fallbackToDestructiveMigration() применять только на этапе разработки, т.к. в
+            // дальнейшем базу данных нельзя пересоздавать чтобы не потерять данные
             val instance = Room.databaseBuilder(context.applicationContext,
                 WordRoomDatabase::class.java, "word_database")
                 .addCallback(WordDatabaseCallback(scope))
-                .fallbackToDestructiveMigration()
+                //.fallbackToDestructiveMigration()
                 .build()
-
             INSTANCE = instance
             return instance
-
         }
     }
-
-
 } // TODO: добавить комментариев для WordRoomDataBase
 

@@ -17,7 +17,7 @@ import viewmodel.WordViewModel
 
 class MainActivity : AppCompatActivity() {
 
-    private val newWordActivityRequestCode = 1              // для onActivityResult
+    private val newWordActivityRequestCode = 1  // для NewWordActivity
     private lateinit var wordViewModel: WordViewModel       // добавляем ViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,17 +28,16 @@ class MainActivity : AppCompatActivity() {
         // адаптер для RecyclerView
         val adapter = WordListAdapter(this,
             {
+                // Первый listener, отвечает за удаление дневника
                 deleteWord(it)
             }, {
-
+            // Второй listener
             // отсюда будет запускаться новый RecyclerView для отображения списка заметок
             val intent = Intent(this, NoteActivity::class.java)
-            intent.putExtra("tag", it.id)
+            intent.putExtra("tag", it.id) // передаем id дневника
             // запускает ClickedActivity из MainActivity путем нажатия на элемент RecyclerView
             startActivity(intent)
         })  // то, что в фигурных скобках это и есть аргумент listener : (Word) -> Unit в адаптере
-
-
 
         // задаем Adapter (одинаково для всех RecyclerView)
         recyclerview.adapter = adapter
@@ -48,7 +47,6 @@ class MainActivity : AppCompatActivity() {
 
         // Создаем провайдер, связывая с соотв. классом ViewModel (одинаково для всех ViewModel)
         wordViewModel = ViewModelProvider(this).get(WordViewModel::class.java)
-
 
         // следит за изменением данных и при наличии таковых обновляет данные в RecyclerView
         // Если какие-либо изменения были, обсервер это заметит и даст сигнал, который задействует
@@ -77,40 +75,32 @@ class MainActivity : AppCompatActivity() {
             adapter.setNewWords(wordViewModel.allWords.value!!)
             adapter.notifyDataSetChanged()
         }
-
     }
 
+    // Удаляет дневник. Вызов происходит через ViewModel
     private fun deleteWord(word : Word)
     {
         wordViewModel.deleteWord(word)
-
     }
 
-    // когда идет возврат со второй активити на первую
+    // функция для обработки результата после вызова startActivityForResult()
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (requestCode == newWordActivityRequestCode && resultCode == Activity.RESULT_OK)
-        {
+        if (requestCode == newWordActivityRequestCode && resultCode == Activity.RESULT_OK) {
             data?.getStringArrayListExtra(NewWordActivity.EXTRA_REPLY)?.let {
-
                 // получаем из экстра данных нашу строку и создаем объект Word с той же строкой
                 val word = Word(it[0], it[1])
-
                 wordViewModel.insertWord(word) // добавляем запись в БД
-
             }
-
         }
         else    // Если было пустое поле
         {
             // выводим сообщение о том что поле пустое, ничего не меняя в БД
-            Toast.makeText(applicationContext, R.string.empty_not_saved,
-                Toast.LENGTH_LONG).show()
-
+            Toast.makeText(
+                applicationContext, R.string.empty_not_saved,
+                Toast.LENGTH_LONG
+            ).show()
         }
-
     }
-    //test_Evgeny na commit
-    //test_2_1 1
 }

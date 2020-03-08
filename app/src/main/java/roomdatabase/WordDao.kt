@@ -8,11 +8,13 @@ import repository.NotesAndWords
 @Dao
 interface WordDao {
 
+    // WORDS
+
     // Выдает все записи в алфавитном порядке
     @Query("SELECT * from word_table ORDER BY word ASC")
     fun getAlphabetizedWords(): LiveData<List<Word>>
 
-    // Выдает все записи в порядке их поступления в БД
+    // Выдает все записи
     @Query("SELECT * from word_table")
     fun getWords(): LiveData<List<Word>>
 
@@ -25,44 +27,48 @@ interface WordDao {
     @Query("DELETE FROM word_table")
     suspend fun deleteAll()
 
-
-
-// NOTES
-
-    @Query("SELECT * from note_table ORDER BY note_name ASC")
-    fun getAlphabetizedNotes(): LiveData<List<Note>>
-
-    @Query("SELECT * from note_table")
-    fun getNotes(): LiveData<List<Note>>
-
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertNote(note: Note)
-
-    @Query("DELETE FROM note_table")
-    suspend fun deleteAllNotes()
-
-    @Transaction
-    @Query("SELECT * from word_table ")
-    fun getSomeNotes() : LiveData<List<NotesAndWords>>
-
-    @Transaction
-    @Query("DELETE FROM note_table WHERE idNote = :noteId")
-    suspend fun deleteOneNote(noteId: Long)
-
+    // удаляет 1 дневник (в WordRepository при удалении также используется deleteNotes для заметок)
+    // таким образом удаляется дневник + все заметки, связанные с этим дневником
     @Transaction
     @Query("DELETE FROM word_table WHERE id = :wordId")
     suspend fun deleteWord(wordId: Long)
 
+
+    // NOTES
+
+    // Выдает заметки
+    @Query("SELECT * from note_table")
+    fun getNotes(): LiveData<List<Note>>
+
+    // Добавляет заметку
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertNote(note: Note)
+
+    // удаляет ВСЕ заметки из ВСЕХ дневников
+    @Query("DELETE FROM note_table")
+    suspend fun deleteAllNotes()
+
+    // Удаляет заметку с выбранным id
+    @Transaction
+    @Query("DELETE FROM note_table WHERE idNote = :noteId")
+    suspend fun deleteOneNote(noteId: Long)
+
+    // См. выше (функция deleteWord)
+    // удаляет все заметки, с diaryId таким же как и у дневника
     @Transaction
     @Query("DELETE FROM note_table WHERE diaryId = :wordId")
     suspend fun deleteNotes(wordId: Long)
 
-   // @Query("SELECT * from note_table WHERE diaryId =:ID")
-   // fun getNeededNotes(ID : Long) : LiveData<List<Note>>
-   // обновляет заметку
+    // обновляет заметку
     @Update
     suspend fun updateNote(note : Note)
 
-}
 
-// TODO: добавить новые запросы для редактирования, удаления, создания и тд.
+    // NOTES AND WORDS
+
+    // Выдает все записи для класса NotesAndWords (см. NoteRepository)
+    @Transaction
+    @Query("SELECT * from word_table ")
+    fun getSomeNotes() : LiveData<List<NotesAndWords>>
+
+}

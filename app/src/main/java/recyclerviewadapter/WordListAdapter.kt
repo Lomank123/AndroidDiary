@@ -14,20 +14,19 @@ import roomdatabase.Word
 // internal constructor means, that a constructor of an internal class is only
 // visible within the same module, module means this full project
 
-// RecyclerView.Adapter - тип, который дает понять, что весь класс - адаптер
 class WordListAdapter internal constructor(
     context: Context,
     private val listenerDeleteWord : (Word) -> Unit,
-    private val listener : (Word) -> Unit   // похоже на какой-то template для функций
+    private val listenerOpenWord : (Word) -> Unit
 ) : RecyclerView.Adapter<WordListAdapter.WordViewHolder>() {
 
     // По сути переменная inflater используется как метка на родительский XML,
     // которая используется в onCreateViewHolder
     private val inflater: LayoutInflater = LayoutInflater.from(context)
 
-    private val mContext = context
+    private val mContext = context // откуда было запущено активити
 
-    private var words = emptyList<Word>()   // Cached copy of words
+    private var words = emptyList<Word>()   // Сюда будут сохраняться дневники
 
 
     // передаем сюда образец одного элемента списка
@@ -45,64 +44,70 @@ class WordListAdapter internal constructor(
             // устанавливаем значения во вью
             wordItemView.text = word.word
 
-            var count : Int = 0
-            var str : String = ""
-            for(i in word.description) {
+            // Лимит на кол-во символов в описании: 16
+            var count = 0
+            var str = ""
+            for(i in word.description) { // записываем в строку первые 16 символов
                 if (count == 16) {
-                    str += "..."
+                    str += "..." // если их > 16, добавляем многоточие и завершаем цикл
                     break
                 }
                 str += i
                 count++
             }
+            wordDescriptionView.text = str // записываем в TextView строку (описание)
 
-            wordDescriptionView.text = str
-
-            // возможно он применяет то, что описано в фигурных скобках в MainActivity
-            itemView.setOnClickListener {   // Устанавливаем обработчик нажатий
+            // Устанавливаем обработчик нажатий на элемент RecyclerView, при нажатии
+            // будет вызываться первый listener, который открывает дневник
+            itemView.setOnClickListener {
                 listener(word)
             }
-            itemView.setOnLongClickListener{ // При long click'е будет срабатывать контекстное меню
+
+            // обработчик долгих нажатий для вызова контекстного меню
+            itemView.setOnLongClickListener{
                 Toast.makeText(mContext, "Long Click", Toast.LENGTH_SHORT).show()
 
+                // Устанавливаем контекстное меню
                 val popupMenu = PopupMenu(mContext, it)
 
+                // Устанавливаем обработчик нажатий на пункты контекстного меню
                 popupMenu.setOnMenuItemClickListener { item ->
-                    when(item.itemId) {
-                        R.id.delete -> { // удаление дневника
-                            listenerDeleteWord(word)
+                    when(item.itemId) {     // сколько пунктов меню - столько и вариантов в when()
+                        R.id.delete -> {    // удаление дневника
+                            listenerDeleteWord(word) // вызываем listener, описанный в NoteActivity
                             Toast.makeText(mContext, "Delete diary", Toast.LENGTH_SHORT).show()
                             true
                         }
                         R.id.open -> { // открытие дневника
-                            listener(word)
+                            listener(word) // listener, описанный в NoteActivity
                             Toast.makeText(mContext, "Open diary", Toast.LENGTH_SHORT).show()
+                            // Т.к. в этом обработчике нужно вернуть boolean, возвращаем true
                             true
                         }
+                        // Иначе вернем false (если when не сработал ни разу)
                         else -> false
                     }
                 }
+                // Связываем XML-файл menu_notes и показываем меню
                 popupMenu.inflate(R.menu.menu_notes)
                 popupMenu.show()
+                // Т.к. в LongClickListener нужно вернуть boolean, возвращаем его
                 return@setOnLongClickListener true
             }
-
         }
-
     }
 
+    // создание ViewHolder (одинаково для всех RecyclerView)
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WordViewHolder {
-
         // добавляет контент(XML) из 1-го аргумента, и помещает во второй (родительский)
         val itemView = inflater.inflate(R.layout.recyclerview_layout, parent,
             false)
-
-        return WordViewHolder(itemView)     // (одинаково для всех RecyclerView)
+        return WordViewHolder(itemView)
     }
 
     // Устанавливает значение для каждого элемента RecyclerView
     override fun onBindViewHolder(holder: WordViewHolder, position: Int) {
-        holder.bindView(words[position], listener)
+        holder.bindView(words[position], listenerOpenWord)
     }
 
     // ВАЖНО: setWords вызывается в момент того, когда обсервер заметил изменения в записях
@@ -116,7 +121,7 @@ class WordListAdapter internal constructor(
     internal fun setNewWords(words: List<Word>)
     {
         this.words = words.sortedBy { it.word }
-        notifyDataSetChanged()
+        notifyDataSetChanged()  // даем понять адаптеру, что были внесены изменения
     }
 
     override fun getItemCount() = words.size // сколько эл-тов будет в списке

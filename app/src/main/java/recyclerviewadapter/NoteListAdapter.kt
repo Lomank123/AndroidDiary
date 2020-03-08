@@ -21,12 +21,10 @@ class NoteListAdapter internal constructor(
     // которая используется в onCreateViewHolder
     private val inflater: LayoutInflater = LayoutInflater.from(context)
 
-    private val mContext = context
+    private val mContext = context // NoteActivity
 
-    private var notes = emptyList<Note>()   // Cached copy of words
+    private var notes = emptyList<Note>()   // Сохраненная копия заметок
     //private var notesMapped = mutableMapOf<Long, List<Note>>()
-
-
 
     // передаем сюда образец одного элемента списка
     // этот класс ХРАНИТ в себе то самое вью, в котором будут что-то менять
@@ -41,64 +39,68 @@ class NoteListAdapter internal constructor(
         fun bindView(note: Note, listener : (Note) -> Unit) {
 
             // устанавливаем значения во вью
+            noteItemView.text = note.note // название заметки
 
-                noteItemView.text = note.note
-
-                var count : Int = 0
-                var str : String = ""
-                for(i in note.text) {
-                    if (count == 16) {
-                        str += "..."
-                        break
-                    }
-                    str += i
-                    count++
+            // Лимит на кол-во символов в тексте заметки для отображения: 16
+            var count = 0
+            var str = ""
+            for(i in note.text) { // записываем в строку первые 16 символов
+                if (count == 16) {
+                    str += "..." // если их > 16, добавляем многоточие и завершаем цикл
+                    break
                 }
+                str += i
+                count++
+            }
+            // в RecyclerView будут видны первые 16 символов текста заметки
+            noteDescriptionView.text = str // текст заметки
 
-                noteDescriptionView.text = str
-
-
-            // возможно он применяет то, что описано в фигурных скобках в MainActivity
-            itemView.setOnClickListener {   // Устанавливаем обработчик нажатий
+            // Устанавливаем обработчик нажатий на элемент RecyclerView, при нажатии
+            // будет вызываться первый listener (listenerOpen), который открывает заметку
+            itemView.setOnClickListener {
                 listener(note)
             }
 
-            itemView.setOnLongClickListener{ // При long click'е будет срабатывать контекстное меню
+            // обработчик долгих нажатий для вызова контекстного меню
+            itemView.setOnLongClickListener{
                 Toast.makeText(mContext, "Long Click", Toast.LENGTH_SHORT).show()
 
+                // Устанавливаем контекстное меню
                 val popupMenu = PopupMenu(mContext, it)
 
+                // Устанавливаем обработчик нажатий на пункты контекстного меню
                 popupMenu.setOnMenuItemClickListener { item ->
-                    when(item.itemId) {
-                        R.id.delete -> { // удаление записи
-                            listenerDelete(note)
+                    when(item.itemId) {     // сколько пунктов меню - столько и вариантов в when()
+                        R.id.delete -> {
+                            listenerDelete(note)  // удаление записи
                             Toast.makeText(mContext, "Delete note", Toast.LENGTH_SHORT).show()
                             true
                         }
-                        R.id.open -> { // открытие записи
-                            listener(note)
+                        R.id.open -> {
+                            listener(note)  // открытие записи
                             Toast.makeText(mContext, "Open note", Toast.LENGTH_SHORT).show()
+                            // Т.к. в этом обработчике нужно вернуть boolean, возвращаем true
                             true
                         }
+                        // Иначе вернем false (если when не сработал ни разу)
                         else -> false
                     }
                 }
+                // Связываем XML-файл menu_notes и показываем меню
                 popupMenu.inflate(R.menu.menu_notes)
                 popupMenu.show()
+                // Т.к. в LongClickListener нужно вернуть boolean, возвращаем его
                 return@setOnLongClickListener true
             }
-
         }
-
     }
 
+    // создание ViewHolder (одинаково для всех RecyclerView)
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoteViewHolder {
-
         // добавляет контент(XML) из 1-го аргумента, и помещает во второй (родительский)
         val itemView = inflater.inflate(R.layout.recyclerview_layout, parent,
             false)
-
-        return NoteViewHolder(itemView)     // (одинаково для всех RecyclerView)
+        return NoteViewHolder(itemView)
     }
 
     // Устанавливает значение для каждого элемента RecyclerView
@@ -110,17 +112,8 @@ class NoteListAdapter internal constructor(
     // и чтобы зафиксировать эти изменения в RecyclerView, нужно передавать новый список сюда
     internal fun setNotes(notes: List<Note>) {
         this.notes = notes      // обновляем внутренний список
-
         notifyDataSetChanged()  // даем понять адаптеру, что были внесены изменения
     }
-
-    // сортирует список слов по алфавиту
-//    internal fun setNewNotes(notes: List<Note>)
-//    {
-//        this.notes = notes.sortedBy { it.note }
-//        notifyDataSetChanged()
-//    }
-
 
     override fun getItemCount() = notes.size // сколько эл-тов будет в списке
 

@@ -12,9 +12,9 @@ import repository.WordRepository
 // Class extends AndroidViewModel and requires application as a parameter.
 class WordViewModel(application: Application) : AndroidViewModel(application) {
 
-    // The ViewModel maintains a reference to the repository to get data.
+    // ViewModel поддерживает ссылку на репозиторий для получения данных.
     private val repository: WordRepository
-    // LiveData gives us updated words when they change.
+    // LiveData дают нам обновленные слова, когда они меняются.
     val allWords: LiveData<List<Word>>
 
     init {
@@ -23,12 +23,10 @@ class WordViewModel(application: Application) : AndroidViewModel(application) {
 
         // получаем данные из БД
         val wordsDao = WordRoomDatabase.getDatabase(application, viewModelScope).wordDao()
-
         // связываем репозиторий с этой переменной
         repository = WordRepository(wordsDao)
         // передаем данные из репозитория сюда (во ViewModel)
         allWords = repository.allWords
-
     }
 
     /**
@@ -38,14 +36,14 @@ class WordViewModel(application: Application) : AndroidViewModel(application) {
      * ViewModels have a coroutine scope based on their lifecycle called
      * viewModelScope which we can use here.
      */
+
     // Добавляет запись в БД посредством вызова внутренних ф-ий (см. WordRepository)
     fun insertWord(word: Word) = viewModelScope.launch {
         repository.insertWord(word)
     }
 
+    // Удаляет дневник и записи в нем, вызывая ф-ию в WordRepository
     fun deleteWord(word: Word) = viewModelScope.launch {
         repository.deleteWord(word)
     }
-
-
-}   // TODO: comment WordViewModel class code
+}

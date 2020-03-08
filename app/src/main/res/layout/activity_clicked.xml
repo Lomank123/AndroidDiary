@@ -8,9 +8,8 @@
 
     <EditText
         android:id="@+id/editText1"
-        android:layout_width="360dp"
-        android:layout_height="367dp"
-        android:layout_marginTop="32dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:autofillHints="text"
         android:ems="10"
         android:gravity="start|top"
@@ -18,16 +17,16 @@
         android:inputType="textMultiLine"
         app:layout_constraintBottom_toTopOf="@+id/button_save1"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.485"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView1"
-        app:layout_constraintVertical_bias="0.564" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/textView1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="4dp"
         android:gravity="center_horizontal"
         android:text="@string/sample"
         android:textAlignment="center"
