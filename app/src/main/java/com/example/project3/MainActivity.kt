@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity() {
             // Второй listener
             // отсюда будет запускаться новый RecyclerView для отображения списка заметок
             val intent = Intent(this, NoteActivity::class.java)
-            intent.putExtra("tag", it.id) // передаем id дневника
+            intent.putExtra("word_id", it.id) // передаем id дневника
             // запускает ClickedActivity из MainActivity путем нажатия на элемент RecyclerView
             startActivity(intent)
         })  // то, что в фигурных скобках это и есть аргумент listener : (Word) -> Unit в адаптере
