@@ -37,6 +37,8 @@ class MainActivity : AppCompatActivity() {
         //создания дневника или заметки
         //val textViewDate: TextView = findViewById(R.id.text_view_date)
         //textViewDate.text = currentDate
+        //пробую бренч
+
 
         // адаптер для RecyclerView
         val adapter = WordListAdapter(this,
