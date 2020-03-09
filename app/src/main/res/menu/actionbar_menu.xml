@@ -8,11 +8,13 @@
         android:id="@+id/open"
         android:title="@string/open_btn" />
     <item
-        android:id="@+id/add_btn"
-        android:title="Item" />
+        android:id="@+id/sample_btn"
+        android:title="@string/sample" />
     <item
-        android:id="@+id/back_btn"
-        android:title="Item" />
+        android:id="@+id/add_btn"
+        android:icon="@drawable/ic_add_black_24dp"
+        android:title="@string/sample"
+        app:showAsAction="ifRoom" />
 
 
 </menu>

@@ -104,29 +104,6 @@ class NoteActivity : AppCompatActivity() {
         }
     }
 
-    // создает OptionsMenu
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_notes, menu)
-        return super.onCreateOptionsMenu(menu)
-    }
-
-    // когда выбираешь элемент меню
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId){
-            R.id.delete -> {
-                // удаление записи
-                Toast.makeText(this, "Delete note", Toast.LENGTH_SHORT).show()
-                return super.onOptionsItemSelected(item)
-            }
-            R.id.open -> {
-                // открытие записи
-                Toast.makeText(this, "Open note", Toast.LENGTH_SHORT).show()
-                return super.onOptionsItemSelected(item)
-            }
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
     // закрывает выдвиг. меню
     private fun closeFabMenu() {
         isFabOpen = false
@@ -205,5 +182,29 @@ class NoteActivity : AppCompatActivity() {
             Toast.makeText(this, "Canceled", Toast.LENGTH_SHORT).show()
         }
     }
+
+    // создает OptionsMenu
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.actionbar_menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    // когда выбираешь элемент меню
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.delete -> {
+                // удаление записи
+                Toast.makeText(this, "Delete note", Toast.LENGTH_SHORT).show()
+                return super.onOptionsItemSelected(item)
+            }
+            R.id.open -> {
+                // открытие записи
+                Toast.makeText(this, "Open note", Toast.LENGTH_SHORT).show()
+                return super.onOptionsItemSelected(item)
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
 
 }
