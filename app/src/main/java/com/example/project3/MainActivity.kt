@@ -27,8 +27,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         Log.i("info", "Created") // запись в логи
 
-        val calendar = Calendar.getInstance()               //Добавляю переменную текущей даты
-        val currentDate =                                   //Преобразуем ее в строку (DD.MM.YYYY)
+        val calendar = Calendar.getInstance()       // Добавляю переменную текущей даты
+        val currentDate =                             // Преобразуем ее в строку (DD.MM.YYYY)
             DateFormat.getDateInstance(DateFormat.FULL)
                 .format(calendar.time)
 

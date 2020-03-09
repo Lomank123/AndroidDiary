@@ -5,6 +5,8 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.Toast
@@ -101,6 +103,29 @@ class NoteActivity : AppCompatActivity() {
             // т.е. если нажать на затемненный фон меню закроется
             closeFabMenu()
         }
+    }
+
+    // создает OptionsMenu
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_notes, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    // когда выбираешь элемент меню
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.delete -> {
+                // удаление записи
+                Toast.makeText(this, "Delete note", Toast.LENGTH_SHORT).show()
+                return super.onOptionsItemSelected(item)
+            }
+            R.id.open -> {
+                // открытие записи
+                Toast.makeText(this, "Open note", Toast.LENGTH_SHORT).show()
+                return super.onOptionsItemSelected(item)
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     // закрывает выдвиг. меню
