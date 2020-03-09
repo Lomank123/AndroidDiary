@@ -181,6 +181,11 @@ class NoteActivity : AppCompatActivity() {
                 noteViewModel.insertNote(note) // добавляем запись в БД
             }
         }
+        if (requestCode == newWordActivityRequestCode && resultCode == Activity.RESULT_CANCELED)
+        {
+            Toast.makeText(this, "Can't add a note without a name",
+                Toast.LENGTH_SHORT).show()
+        }
 
         // Результат для обновления заметки
         if (requestCode == clickedActivityRequestCode && resultCode == Activity.RESULT_OK)
@@ -196,9 +201,10 @@ class NoteActivity : AppCompatActivity() {
                 noteViewModel.updateNote(note) // обновляем заметку
             }
         }
+        if(requestCode == clickedActivityRequestCode && resultCode == Activity.RESULT_CANCELED)
+        {
+            Toast.makeText(this, "Canceled", Toast.LENGTH_SHORT).show()
+        }
     }
 
-
-
-
-}
+} // TODO: СОЗДАТЬ КОПИЮ NewWordActivity ДЛЯ НОВЫХ ЗАМЕТОК!!!

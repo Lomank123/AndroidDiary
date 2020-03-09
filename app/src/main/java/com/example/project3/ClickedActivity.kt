@@ -36,6 +36,13 @@ class ClickedActivity : AppCompatActivity() {
             // Завершаем работу с активити
             finish()
         }
+
+        // обработчик нажатий на кнопку Cancel
+        button_cancel1.setOnClickListener {
+            // устанавливаем результат и завершаем работу с активити
+            setResult(Activity.RESULT_CANCELED)
+            finish()
+        }
     }
 
     // тег для распознавания именно этого запроса
