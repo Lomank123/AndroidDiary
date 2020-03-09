@@ -13,7 +13,6 @@ import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.project3.ClickedActivity.Companion.EXTRA_REPLY_EDIT
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.android.synthetic.main.activity_note.*
 import recyclerviewadapter.NoteListAdapter
@@ -22,7 +21,7 @@ import viewmodel.NoteViewModel
 
 class NoteActivity : AppCompatActivity() {
 
-    private val newWordActivityRequestCode = 1              // для NewWordActivity (requestCode)
+    private val newNoteActivityRequestCode = 1              // для NewWordActivity (requestCode)
     private val clickedActivityRequestCode = 2              // для ClickedActivity (requestCode)
     private lateinit var noteViewModel: NoteViewModel       // добавляем ViewModel
 
@@ -94,9 +93,9 @@ class NoteActivity : AppCompatActivity() {
         // обработчик нажатий на 2-ую кнопку (вызывает NewWordActivity для создания заметки)
         fab2.setOnClickListener {
             closeFabMenu()
-            val intent = Intent(this, NewWordActivity::class.java)
+            val intent = Intent(this, NewNoteActivity::class.java)
             // 2-ой аргумент это requestCode по которому определяется откуда был запрос
-            startActivityForResult(intent, newWordActivityRequestCode)
+            startActivityForResult(intent, newNoteActivityRequestCode)
         }
         // обработчик нажатий на ФОН (когда вызывается popupMenu фон затемняется)
         bg_fab_menu.setOnClickListener {
@@ -170,9 +169,9 @@ class NoteActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
 
         // Результат для добавления заметки
-        if (requestCode == newWordActivityRequestCode && resultCode == Activity.RESULT_OK)
+        if (requestCode == newNoteActivityRequestCode && resultCode == Activity.RESULT_OK)
         {
-            data?.getStringArrayListExtra(NewWordActivity.EXTRA_REPLY)?.let {
+            data?.getStringArrayListExtra(NewNoteActivity.EXTRA_REPLY_NOTE)?.let {
 
                 // получаем из экстра данных массив с названием и текстом
                 // и создаем объект Note с этими данными, причем устанавливаем diaryId такой же
@@ -181,16 +180,16 @@ class NoteActivity : AppCompatActivity() {
                 noteViewModel.insertNote(note) // добавляем запись в БД
             }
         }
-        if (requestCode == newWordActivityRequestCode && resultCode == Activity.RESULT_CANCELED)
+        if (requestCode == newNoteActivityRequestCode && resultCode == Activity.RESULT_CANCELED)
         {
-            Toast.makeText(this, "Can't add a note without a name",
+            Toast.makeText(this, "Canceled or note name is empty",
                 Toast.LENGTH_SHORT).show()
         }
 
         // Результат для обновления заметки
         if (requestCode == clickedActivityRequestCode && resultCode == Activity.RESULT_OK)
         {
-            data?.getStringArrayListExtra(EXTRA_REPLY_EDIT)?.let {
+            data?.getStringArrayListExtra(ClickedActivity.EXTRA_REPLY_EDIT)?.let {
                 // получаем массив с новыми данными, создаем объект
                 // 0-ой элемент - название, 1-ый - текст заметки
                 // 3-ий параметр - id дневника, к которому заметка привязана
@@ -207,4 +206,4 @@ class NoteActivity : AppCompatActivity() {
         }
     }
 
-} // TODO: СОЗДАТЬ КОПИЮ NewWordActivity ДЛЯ НОВЫХ ЗАМЕТОК!!!
+}

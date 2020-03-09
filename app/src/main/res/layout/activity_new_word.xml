@@ -36,4 +36,12 @@
         android:text="@string/button_save"
         android:textColor="@color/buttonLabel" />
 
+    <Button
+        android:id="@+id/button_cancel_word1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorAccent"
+        android:text="@string/cancel_btn"
+        android:textColor="@color/buttonLabel" />
+
 </LinearLayout>

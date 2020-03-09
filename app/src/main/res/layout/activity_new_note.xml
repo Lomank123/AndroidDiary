@@ -5,11 +5,10 @@
     android:layout_height="match_parent">
 
     <EditText
-        android:id="@+id/edit_word"
+        android:id="@+id/edit_note"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fontFamily="sans-serif-light"
-        android:hint="@string/hint_word"
+        android:hint="@string/hint_note"
         android:inputType="textAutoComplete"
         android:padding="@dimen/small_padding"
         android:layout_marginBottom="@dimen/big_padding"
@@ -17,19 +16,18 @@
         android:textSize="18sp" />
 
     <EditText
-        android:id="@+id/edit_descr"
+        android:id="@+id/edit_text_note"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/big_padding"
         android:layout_marginBottom="@dimen/big_padding"
-        android:fontFamily="sans-serif-light"
-        android:hint="@string/description"
+        android:hint="@string/hint_text_note"
         android:inputType="textAutoComplete"
         android:padding="@dimen/small_padding"
         android:textSize="18sp" />
 
     <Button
-        android:id="@+id/button_save"
+        android:id="@+id/button_save_note"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorPrimary"
@@ -37,7 +35,7 @@
         android:textColor="@color/buttonLabel" />
 
     <Button
-        android:id="@+id/button_cancel_word1"
+        android:id="@+id/button_cancel_note1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorAccent"
