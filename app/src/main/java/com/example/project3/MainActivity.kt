@@ -11,10 +11,13 @@ import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_note.*
 import recyclerviewadapter.WordListAdapter
 import roomdatabase.Word
+import viewmodel.TopSpacingItemDecoration
 import viewmodel.WordViewModel
 import java.text.DateFormat
 import java.util.*
@@ -29,10 +32,10 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         Log.i("info", "Created") // запись в логи
 
-        val calendar = Calendar.getInstance()       // Добавляю переменную текущей даты
-        val currentDate =                             // Преобразуем ее в строку (DD.MM.YYYY)
-            DateFormat.getDateInstance(DateFormat.FULL)
-                .format(calendar.time)
+        //val calendar = Calendar.getInstance()       // Добавляю переменную текущей даты
+        //val currentDate =                             // Преобразуем ее в строку (DD.MM.YYYY)
+            //DateFormat.getDateInstance(DateFormat.FULL)
+                //.format(calendar.time)
 
         //в дальнейшем определенный текст, а именно для каждого нового дневника и заметки
         //будет найден по айди и ему будет присвоено значение текущей даты, во время
@@ -61,6 +64,13 @@ class MainActivity : AppCompatActivity() {
 
         // задаем LinearLayoutManager (одинаково для всех RecyclerView)
         recyclerview.layoutManager = LinearLayoutManager(this)
+
+        //присваиваем переменной тот самый *отступ*
+        val topSpacingDecoration = TopSpacingItemDecoration(20)
+
+        //добавляет в декорацию элемента дневника и заметки этот отступ
+        recyclerview.addItemDecoration(topSpacingDecoration)
+        //recyclerview1.addItemDecoration(topSpacingDecoration)
 
         // Создаем провайдер, связывая с соотв. классом ViewModel (одинаково для всех ViewModel)
         wordViewModel = ViewModelProvider(this).get(WordViewModel::class.java)
