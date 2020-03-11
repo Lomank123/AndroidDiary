@@ -83,7 +83,7 @@ class MainActivity : AppCompatActivity() {
             // 2-ой аргумент это requestCode по которому определяется откуда был запрос
             startActivityForResult(intent, newWordActivityRequestCode)
 
-        } // TODO: вынести создание другого окна в отдельный метод для кнопки
+        }
 
         // кнопка, которая будет выводить отсортированный список (если добавить запись все собьется)
         val fab1 = findViewById<FloatingActionButton>(R.id.fab1)
