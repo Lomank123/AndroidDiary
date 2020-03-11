@@ -53,6 +53,10 @@ dependencies {
     // ViewModel Kotlin support
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$rootProject.archLifecycleVersion"
 
+    // Card View
+    def cardview_version = "1.0.0"
+    implementation "androidx.cardview:cardview:$cardview_version"
+
     // Coroutines
     api "org.jetbrains.kotlinx:kotlinx-coroutines-android:$rootProject.coroutines"
 

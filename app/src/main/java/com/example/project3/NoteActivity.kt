@@ -18,6 +18,7 @@ import kotlinx.android.synthetic.main.activity_note.*
 import recyclerviewadapter.NoteListAdapter
 import roomdatabase.Note
 import viewmodel.NoteViewModel
+import viewmodel.TopSpacingItemDecoration
 
 class NoteActivity : AppCompatActivity() {
 
@@ -57,6 +58,10 @@ class NoteActivity : AppCompatActivity() {
         noteViewModel = ViewModelProvider(this).get(NoteViewModel::class.java)
 
         // чтобы получить список заметок выбранного дневника
+
+        //любимые отступы
+        val topSpacingDecoration = TopSpacingItemDecoration(20)
+        recyclerview1.addItemDecoration(topSpacingDecoration)
 
         // полученный список заметок передаем в RecyclerView для отображения
         noteViewModel.allNotes.observe(this, Observer {
