@@ -59,16 +59,7 @@ class ClickedActivity : AppCompatActivity() {
     // когда выбираешь элемент меню
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
-            R.id.delete_edit -> {
-                // удаление записи
-                Toast.makeText(this, "Delete note", Toast.LENGTH_SHORT).show()
-                return super.onOptionsItemSelected(item)
-            }
-            R.id.open_edit -> {
-                // открытие записи
-                Toast.makeText(this, "Open note", Toast.LENGTH_SHORT).show()
-                return super.onOptionsItemSelected(item)
-            }
+
             R.id.save_btn_edit -> { // Кнопка Save
                 val noteId = intent.getLongExtra("note_idNote", -1)
                 val replyIntent = Intent()

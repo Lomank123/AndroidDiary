@@ -2,17 +2,15 @@
 <menu xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/delete"
-        android:title="@string/delete_btn"/>
+        android:id="@+id/settings"
+        android:title="@string/settings_btn"/>
     <item
-        android:id="@+id/open"
-        android:title="@string/open_btn" />
+        android:id="@+id/about"
+        android:title="@string/about_btn" />
+
     <item
-        android:id="@+id/sample_btn"
-        android:title="@string/sample" />
-    <item
-        android:id="@+id/add_btn"
-        android:icon="@drawable/ic_add_black_24dp"
+        android:id="@+id/calendar_btn"
+        android:icon="@android:drawable/ic_menu_my_calendar"
         android:title="@string/sample"
         app:showAsAction="ifRoom" />
 

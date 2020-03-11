@@ -197,14 +197,14 @@ class NoteActivity : AppCompatActivity() {
     // когда выбираешь элемент меню
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
-            R.id.delete -> {
-                // удаление записи
-                Toast.makeText(this, "Delete note", Toast.LENGTH_SHORT).show()
+            R.id.settings -> {
+                // открытие окна "Настройки"
+                Toast.makeText(this, "Settings", Toast.LENGTH_SHORT).show()
                 return super.onOptionsItemSelected(item)
             }
-            R.id.open -> {
-                // открытие записи
-                Toast.makeText(this, "Open note", Toast.LENGTH_SHORT).show()
+            R.id.about -> {
+                // открытие окна "О нас"
+                Toast.makeText(this, "About", Toast.LENGTH_SHORT).show()
                 return super.onOptionsItemSelected(item)
             }
         }
