@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.TextUtils
+import androidx.core.net.toUri
 import kotlinx.android.synthetic.main.activity_new_word.*
 
 class NewWordActivity : AppCompatActivity() {
@@ -38,14 +39,31 @@ class NewWordActivity : AppCompatActivity() {
             finish()
         }
         button_cancel_word1.setOnClickListener {
+
+            // TODO: убрать этот кусок, вставить для другой кнопки выбора фото!!!
+        //    val i1 = Intent(Intent.ACTION_PICK)
+        //    i1.type = "image/*"
+        //    startActivityForResult(i1, 4)
+
             // устанавливаем результат и завершаем работу с активити
             setResult(Activity.RESULT_CANCELED)
             finish()
         }
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == 4 && resultCode == Activity.RESULT_OK)
+        {
+            imageView5.setImageURI(data?.data)
+        }
+
+    }
+
     // тег для распознавания именно этого запроса
     companion object {
         const val EXTRA_REPLY = "com.example.android.wordlistsql.REPLY"
+        const val EXTRA_IMAGE = "img"
     }
-} // TODO: Добавить кнопку Cancel
+} // TODO: поправить выбор фото в XML файле, чтобы выглядело презентабельно

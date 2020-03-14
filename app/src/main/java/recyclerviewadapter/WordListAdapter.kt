@@ -37,6 +37,7 @@ class WordListAdapter internal constructor(
         private val wordItemView: TextView = itemView.findViewById(R.id.textView1)
         // textView - вью из файла recyclerview_layout.xml, отвечает за описание
         private val wordDescriptionView: TextView = itemView.findViewById(R.id.textView)
+        private val wordDateView: TextView = itemView.findViewById(R.id.date_text)
 
         // эта функция применяется для каждого члена RecyclerView т.к. вызывается в onBindViewHolder
         fun bindView(word: Word, listener : (Word) -> Unit) {
@@ -56,6 +57,7 @@ class WordListAdapter internal constructor(
                 count++
             }
             wordDescriptionView.text = str // записываем в TextView строку (описание)
+            wordDateView.text = word.date // записываем дату
 
             // Устанавливаем обработчик нажатий на элемент RecyclerView, при нажатии
             // будет вызываться первый listener, который открывает дневник

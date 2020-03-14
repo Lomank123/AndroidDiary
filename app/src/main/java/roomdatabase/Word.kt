@@ -8,7 +8,9 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "word_table")   // название - word_table
 data class Word(@ColumnInfo(name = "word") val word: String,                 // название дневника
-                @ColumnInfo(name = "description") val description : String)  // описание дневника
+                @ColumnInfo(name = "description") val description : String,
+                @ColumnInfo(name = "date") val date : String
+                )  // описание дневника
 {
     // Первичный ключ - id с авто-генерацией ключей
     @PrimaryKey(autoGenerate = true)
@@ -24,4 +26,5 @@ data class Note(@ColumnInfo(name = "note_name") val note : String,  // назв�
     // Первичный ключ - idNote с авто-генерацией ключей
     @PrimaryKey(autoGenerate = true)
     var idNote : Long = 0
+
 }

@@ -117,7 +117,14 @@ class MainActivity : AppCompatActivity() {
         if (requestCode == newWordActivityRequestCode && resultCode == Activity.RESULT_OK) {
             data?.getStringArrayListExtra(NewWordActivity.EXTRA_REPLY)?.let {
                 // получаем из экстра данных нашу строку и создаем объект Word с той же строкой
-                val word = Word(it[0], it[1])
+
+                // получаем текущую дату и вставляем в объект дневника
+                val calendar = Calendar.getInstance()       // Добавляю переменную текущей даты
+                val currentDate =                             // Преобразуем ее в строку (DD.MM.YYYY)
+                    DateFormat.getDateInstance(DateFormat.FULL)
+                    .format(calendar.time)
+
+                val word = Word(it[0], it[1], currentDate)
                 wordViewModel.insertWord(word) // добавляем запись в БД
             }
         }

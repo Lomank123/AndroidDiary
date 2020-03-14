@@ -8,9 +8,8 @@
     app:cardCornerRadius="20dp"
     app:cardPreventCornerOverlap="false">
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
+    <RelativeLayout
+        android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="15dp">
 
@@ -48,5 +47,17 @@
         android:text="@string/sample"
         android:textColor="#000"
         android:textSize="17sp" />
+
+        <TextView
+            android:id="@+id/date_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/imageView"
+            android:layout_marginStart="83dp"
+            android:layout_marginLeft="83dp"
+            android:layout_marginBottom="50dp"
+            android:layout_toEndOf="@+id/textView1"
+            android:layout_toRightOf="@+id/textView1"
+            android:text="@string/sample" />
     </RelativeLayout>
 </androidx.cardview.widget.CardView>
