@@ -11,10 +11,9 @@ import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import com.example.project3.NewWordActivity.Companion.EXTRA_IMAGE
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_note.*
 import recyclerviewadapter.WordListAdapter
 import roomdatabase.Word
 import viewmodel.TopSpacingItemDecoration
@@ -53,11 +52,12 @@ class MainActivity : AppCompatActivity() {
             }, {
             // Второй listener
             // отсюда будет запускаться новый RecyclerView для отображения списка заметок
-            val intent = Intent(this, NoteActivity::class.java)
-            intent.putExtra("word_id", it.id) // передаем id дневника
+                val intent = Intent(this, NoteActivity::class.java)
+                intent.putExtra("word_id", it.id) // передаем id дневника
+                intent.putExtra("word_img", it.img)
             // запускает ClickedActivity из MainActivity путем нажатия на элемент RecyclerView
-            startActivity(intent)
-        })  // то, что в фигурных скобках это и есть аргумент listener : (Word) -> Unit в адаптере
+                startActivity(intent)
+            })  // то, что в фигурных скобках это и есть аргумент listener : (Word) -> Unit в адаптере
 
         // задаем Adapter (одинаково для всех RecyclerView)
         recyclerview.adapter = adapter
@@ -124,7 +124,9 @@ class MainActivity : AppCompatActivity() {
                     DateFormat.getDateInstance(DateFormat.FULL)
                     .format(calendar.time)
 
-                val word = Word(it[0], it[1], currentDate)
+                //val uriImage = Uri.parse(data.getStringExtra(EXTRA_IMAGE))
+
+                val word = Word(it[0], it[1], currentDate, data.getStringExtra(EXTRA_IMAGE))
                 wordViewModel.insertWord(word) // добавляем запись в БД
             }
         }

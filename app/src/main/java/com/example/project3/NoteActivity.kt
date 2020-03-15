@@ -13,12 +13,15 @@ import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.project3.NewNoteActivity.Companion.EXTRA_IMAGE_NOTE
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.android.synthetic.main.activity_note.*
 import recyclerviewadapter.NoteListAdapter
 import roomdatabase.Note
 import viewmodel.NoteViewModel
 import viewmodel.TopSpacingItemDecoration
+import java.text.DateFormat
+import java.util.*
 
 class NoteActivity : AppCompatActivity() {
 
@@ -44,6 +47,8 @@ class NoteActivity : AppCompatActivity() {
             intent.putExtra("note_idNote", it.idNote)
             intent.putExtra("note_name", it.note)
             intent.putExtra("note_text", it.text)
+            intent.putExtra("note_date", it.dateNote)
+            intent.putExtra("note_img", it.imgNote)
 
             // запускает ClickedActivity из MainActivity путем нажатия на элемент RecyclerView
             startActivityForResult(intent, clickedActivityRequestCode)
@@ -158,8 +163,18 @@ class NoteActivity : AppCompatActivity() {
                 // получаем из экстра данных массив с названием и текстом
                 // и создаем объект Note с этими данными, причем устанавливаем diaryId такой же
                 // как и id у дневника, из которого происходил вызов
-                val note = Note(it[0], it[1], intent.getLongExtra("word_id", -1))
-                noteViewModel.insertNote(note) // добавляем запись в БД
+
+                val calendar = Calendar.getInstance()       // Добавляю переменную текущей даты
+                val currentDate =                             // Преобразуем ее в строку (DD.MM.YYYY)
+                    DateFormat.getDateInstance(DateFormat.FULL)
+                        .format(calendar.time)
+
+
+                val note = Note(it[0], it[1], intent.getLongExtra("word_id",
+                    -1), currentDate, data.getStringExtra(EXTRA_IMAGE_NOTE))
+                noteViewModel.insertNote(note)
+
+                 // добавляем запись в БД
             }
         }
         if (requestCode == newNoteActivityRequestCode && resultCode == Activity.RESULT_CANCELED)
@@ -175,11 +190,18 @@ class NoteActivity : AppCompatActivity() {
                 // получаем массив с новыми данными, создаем объект
                 // 0-ой элемент - название, 1-ый - текст заметки
                 // 3-ий параметр - id дневника, к которому заметка привязана
-                val note = Note(it[0], it[1], intent.getLongExtra("word_id", -1))
-                // устанавливаем первичный ключ как у заметки, в которой что-то меняли
-                // чтобы корректно обновить данные
+
+                val calendar = Calendar.getInstance()       // Добавляю переменную текущей даты
+                val currentDate =                             // Преобразуем ее в строку (DD.MM.YYYY)
+                    DateFormat.getDateInstance(DateFormat.FULL)
+                        .format(calendar.time)
+
+                val note = Note(it[0], it[1], intent.getLongExtra("word_id",
+                    -1), currentDate, data.getStringExtra(EXTRA_IMAGE_NOTE))
                 note.idNote = data.getLongExtra("noteId", -1)
                 noteViewModel.updateNote(note) // обновляем заметку
+                // устанавливаем первичный ключ как у заметки, в которой что-то меняли
+                // чтобы корректно обновить данные
             }
         }
         if(requestCode == clickedActivityRequestCode && resultCode == Activity.RESULT_CANCELED)
@@ -212,4 +234,4 @@ class NoteActivity : AppCompatActivity() {
     }
 
 
-}
+} // TODO: ПОФИКСИТЬ БАГ: ИЗОБРАЖЕНИЯ НЕ СОХРАНЯЮТСЯ

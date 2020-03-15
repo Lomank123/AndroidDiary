@@ -1,9 +1,11 @@
 package recyclerviewadapter
 
 import android.content.Context
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.Toast
@@ -38,6 +40,7 @@ class WordListAdapter internal constructor(
         // textView - вью из файла recyclerview_layout.xml, отвечает за описание
         private val wordDescriptionView: TextView = itemView.findViewById(R.id.textView)
         private val wordDateView: TextView = itemView.findViewById(R.id.date_text)
+        private val wordImageView: ImageView = itemView.findViewById(R.id.imageView)
 
         // эта функция применяется для каждого члена RecyclerView т.к. вызывается в onBindViewHolder
         fun bindView(word: Word, listener : (Word) -> Unit) {
@@ -58,6 +61,13 @@ class WordListAdapter internal constructor(
             }
             wordDescriptionView.text = str // записываем в TextView строку (описание)
             wordDateView.text = word.date // записываем дату
+
+            // установка фото
+            if (word.img != null)
+            {
+                val uriImage = Uri.parse(word.img)
+                wordImageView.setImageURI(uriImage)
+            }
 
             // Устанавливаем обработчик нажатий на элемент RecyclerView, при нажатии
             // будет вызываться первый listener, который открывает дневник

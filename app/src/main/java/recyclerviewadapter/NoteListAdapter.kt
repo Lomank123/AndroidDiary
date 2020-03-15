@@ -1,9 +1,11 @@
 package recyclerviewadapter
 
 import android.content.Context
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.Toast
@@ -31,9 +33,14 @@ class NoteListAdapter internal constructor(
     inner class NoteViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         // textView1 - вью из файла recyclerview_layout.xml, отвечает за название
-        private val noteItemView: TextView = itemView.findViewById(R.id.textView1)
+        private val noteItemView : TextView = itemView.findViewById(R.id.textView1)
         // textView - вью из файла recyclerview_layout.xml, отвечает за описание
-        private val noteDescriptionView: TextView = itemView.findViewById(R.id.textView)
+        private val noteDescriptionView : TextView = itemView.findViewById(R.id.textView)
+
+        private val noteImageView : ImageView = itemView.findViewById(R.id.imageView)
+
+        private val noteDateView : TextView = itemView.findViewById(R.id.date_text)
+
 
         // эта функция применяется для каждого члена RecyclerView т.к. вызывается в onBindViewHolder
         fun bindView(note: Note, listener : (Note) -> Unit) {
@@ -54,6 +61,13 @@ class NoteListAdapter internal constructor(
             }
             // в RecyclerView будут видны первые 16 символов текста заметки
             noteDescriptionView.text = str // текст заметки
+            noteDateView.text = note.dateNote // дата
+
+            if (note.imgNote != null)
+            {
+                val uriImage = Uri.parse(note.imgNote)
+                noteImageView.setImageURI(uriImage)
+            }
 
             // Устанавливаем обработчик нажатий на элемент RecyclerView, при нажатии
             // будет вызываться первый listener (listenerOpen), который открывает заметку

@@ -9,14 +9,16 @@ import kotlinx.android.synthetic.main.activity_new_note.*
 
 class NewNoteActivity : AppCompatActivity() {
 
+    private val choosePhotoRequestCode = 1
+
+    private val replyIntent = Intent()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_new_note)
 
         // обработчик нажатий на кнопку Save
         button_save_note.setOnClickListener {
-
-            val replyIntent = Intent()
 
             // если поле пустое устанавливаем отриц. результат
             if (TextUtils.isEmpty(edit_note.text)) {
@@ -41,10 +43,30 @@ class NewNoteActivity : AppCompatActivity() {
             setResult(Activity.RESULT_CANCELED)
             finish()
         }
+
+        photo_button_note.setOnClickListener{
+            // Выбираем фото из галереи
+            val choosePhotoIntent = Intent(Intent.ACTION_PICK)
+            choosePhotoIntent.type = "image/*"
+            startActivityForResult(choosePhotoIntent, choosePhotoRequestCode)
+        }
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == choosePhotoRequestCode && resultCode == Activity.RESULT_OK)
+        {
+            imageView_note.setImageURI(data?.data)
+            replyIntent.putExtra(EXTRA_IMAGE_NOTE, data?.data.toString())
+        }
+
+    }
+
 
     // тег для распознавания именно этого запроса
     companion object {
         const val EXTRA_REPLY_NOTE = "NewNoteReply"
+        const val EXTRA_IMAGE_NOTE = "imgNote"
     }
 } // TODO: Добавить кнопку Cancel

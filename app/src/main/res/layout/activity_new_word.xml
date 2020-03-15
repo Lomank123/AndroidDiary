@@ -45,6 +45,13 @@
         android:text="@string/cancel_btn"
         android:textColor="@color/buttonLabel" />
 
+    <Button
+        android:id="@+id/photo_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#78B562"
+        android:text="@string/photo_choose" />
+
     <ImageView
         android:id="@+id/imageView5"
         android:layout_width="match_parent"

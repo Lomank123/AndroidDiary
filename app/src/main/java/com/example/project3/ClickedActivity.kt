@@ -2,6 +2,7 @@ package com.example.project3
 
 import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
@@ -22,6 +23,14 @@ class ClickedActivity : AppCompatActivity() {
         // получаем экстра данные из NoteActivity
         textView1.text = intent.getStringExtra("note_name")
         editText1.setText(intent.getStringExtra("note_text"))
+        textView_date.text = intent.getStringExtra("note_date")
+
+        if (intent.getStringExtra("note_img") != null &&
+            intent.getStringExtra("note_img") != "")
+        {
+            val uriImage = Uri.parse(intent.getStringExtra("note_img"))
+            imageView_clicked.setImageURI(uriImage)
+        }
 
         // Обработчик нажатий для кнопки Save
         button_save1.setOnClickListener {

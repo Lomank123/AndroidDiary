@@ -5,19 +5,23 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.TextUtils
-import androidx.core.net.toUri
 import kotlinx.android.synthetic.main.activity_new_word.*
 
 class NewWordActivity : AppCompatActivity() {
+
+    // RequestCode для выбора фото
+    private val choosePhotoRequestCode = 1
+
+    private val replyIntent = Intent()
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_new_word)
 
+
+
         // обработчик нажатий на кнопку Save
         button_save.setOnClickListener {
-
-            val replyIntent = Intent()
 
             // если поле пустое устанавливаем отриц. результат
             if (TextUtils.isEmpty(edit_word.text)) {
@@ -29,34 +33,38 @@ class NewWordActivity : AppCompatActivity() {
                 // создаем массив с названием и описанием дневника
                 val word = arrayListOf(edit_word.text.toString(),
                     edit_descr.text.toString())
-
                 // кладем то, что написано в editText в word и передаем по тегу EXTRA_REPLY (ниже)
                 replyIntent.putExtra(EXTRA_REPLY, word)
-
                 setResult(Activity.RESULT_OK, replyIntent) // resultCode будет RESULT_OK
             }
             // завершаем работу с активити
             finish()
         }
+
+        // слушатель для кнопки Cancel
         button_cancel_word1.setOnClickListener {
-
-            // TODO: убрать этот кусок, вставить для другой кнопки выбора фото!!!
-        //    val i1 = Intent(Intent.ACTION_PICK)
-        //    i1.type = "image/*"
-        //    startActivityForResult(i1, 4)
-
             // устанавливаем результат и завершаем работу с активити
             setResult(Activity.RESULT_CANCELED)
             finish()
         }
+
+        // слушатель для кнопки Choose photo
+        photo_button.setOnClickListener{
+            // Выбираем фото из галереи
+            val choosePhotoIntent = Intent(Intent.ACTION_PICK)
+            choosePhotoIntent.type = "image/*"
+            startActivityForResult(choosePhotoIntent, choosePhotoRequestCode)
+        }
     }
 
+    // обрабатываем выбор фото из галереи
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (requestCode == 4 && resultCode == Activity.RESULT_OK)
+        if (requestCode == choosePhotoRequestCode && resultCode == Activity.RESULT_OK)
         {
             imageView5.setImageURI(data?.data)
+            replyIntent.putExtra(EXTRA_IMAGE, data?.data.toString())
         }
 
     }
