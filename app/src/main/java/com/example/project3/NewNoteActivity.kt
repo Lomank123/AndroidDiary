@@ -69,4 +69,4 @@ class NewNoteActivity : AppCompatActivity() {
         const val EXTRA_REPLY_NOTE = "NewNoteReply"
         const val EXTRA_IMAGE_NOTE = "imgNote"
     }
-} // TODO: Добавить кнопку Cancel
+}

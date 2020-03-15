@@ -126,7 +126,8 @@ class MainActivity : AppCompatActivity() {
 
                 //val uriImage = Uri.parse(data.getStringExtra(EXTRA_IMAGE))
 
-                val word = Word(it[0], it[1], currentDate, data.getStringExtra(EXTRA_IMAGE))
+                val word = Word(it[0], it[1], currentDate)
+                word.img = data.getStringExtra(EXTRA_IMAGE)
                 wordViewModel.insertWord(word) // добавляем запись в БД
             }
         }

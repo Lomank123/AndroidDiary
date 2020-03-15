@@ -20,17 +20,21 @@ class ClickedActivity : AppCompatActivity() {
 
         val noteId = intent.getLongExtra("note_idNote", -1)
 
+
         // получаем экстра данные из NoteActivity
         textView1.text = intent.getStringExtra("note_name")
         editText1.setText(intent.getStringExtra("note_text"))
         textView_date.text = intent.getStringExtra("note_date")
 
-        if (intent.getStringExtra("note_img") != null &&
-            intent.getStringExtra("note_img") != "")
-        {
-            val uriImage = Uri.parse(intent.getStringExtra("note_img"))
-            imageView_clicked.setImageURI(uriImage)
-        }
+        //TODO: доработать возможность сохранения картинки в качестве заднего фона
+        // и передачи картинки обратно
+        // или оставить возможность выбора картинки ТОЛЬКО для дневника
+       // val noteImg = intent.getStringExtra("note_img")
+       // if (noteImg != null)
+       // {
+       //     val uriImage = Uri.parse(noteImg)
+       //     imageView_clicked.setImageURI(uriImage)
+       // }
 
         // Обработчик нажатий для кнопки Save
         button_save1.setOnClickListener {

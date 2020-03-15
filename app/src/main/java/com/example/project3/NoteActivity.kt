@@ -48,8 +48,13 @@ class NoteActivity : AppCompatActivity() {
             intent.putExtra("note_name", it.note)
             intent.putExtra("note_text", it.text)
             intent.putExtra("note_date", it.dateNote)
+
+            //TODO: доработать передачу и возврат картинки
+
+            // передает картинку
             intent.putExtra("note_img", it.imgNote)
 
+            intent.putExtra("word_id1", wordId) // передаем id дневника
             // запускает ClickedActivity из MainActivity путем нажатия на элемент RecyclerView
             startActivityForResult(intent, clickedActivityRequestCode)
         }, {
@@ -168,13 +173,22 @@ class NoteActivity : AppCompatActivity() {
                 val currentDate =                             // Преобразуем ее в строку (DD.MM.YYYY)
                     DateFormat.getDateInstance(DateFormat.FULL)
                         .format(calendar.time)
+                val noteImg = data.getStringExtra(EXTRA_IMAGE_NOTE)
 
-
-                val note = Note(it[0], it[1], intent.getLongExtra("word_id",
-                    -1), currentDate, data.getStringExtra(EXTRA_IMAGE_NOTE))
-                noteViewModel.insertNote(note)
-
-                 // добавляем запись в БД
+                if(noteImg != null)
+                {
+                    val note = Note(it[0], it[1], intent.getLongExtra("word_id",
+                        -1), currentDate)
+                    note.imgNote = noteImg
+                    noteViewModel.insertNote(note)
+                }
+                else
+                {
+                    val note = Note(it[0], it[1], intent.getLongExtra("word_id",
+                        -1), currentDate)
+                    note.imgNote = intent.getStringExtra("word_img")
+                    noteViewModel.insertNote(note)
+                }
             }
         }
         if (requestCode == newNoteActivityRequestCode && resultCode == Activity.RESULT_CANCELED)
@@ -197,9 +211,11 @@ class NoteActivity : AppCompatActivity() {
                         .format(calendar.time)
 
                 val note = Note(it[0], it[1], intent.getLongExtra("word_id",
-                    -1), currentDate, data.getStringExtra(EXTRA_IMAGE_NOTE))
+                    -1), currentDate)
+
                 note.idNote = data.getLongExtra("noteId", -1)
                 noteViewModel.updateNote(note) // обновляем заметку
+
                 // устанавливаем первичный ключ как у заметки, в которой что-то меняли
                 // чтобы корректно обновить данные
             }
