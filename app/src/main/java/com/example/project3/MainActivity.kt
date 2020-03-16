@@ -31,19 +31,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         Log.i("info", "Created") // запись в логи
 
-        //val calendar = Calendar.getInstance()       // Добавляю переменную текущей даты
-        //val currentDate =                             // Преобразуем ее в строку (DD.MM.YYYY)
-            //DateFormat.getDateInstance(DateFormat.FULL)
-                //.format(calendar.time)
-
-        //в дальнейшем определенный текст, а именно для каждого нового дневника и заметки
-        //будет найден по айди и ему будет присвоено значение текущей даты, во время
-        //создания дневника или заметки
-        //val textViewDate: TextView = findViewById(R.id.text_view_date)
-        //textViewDate.text = currentDate
-        //пробую бренч
-
-
         // адаптер для RecyclerView
         val adapter = WordListAdapter(this,
             {
@@ -54,10 +41,10 @@ class MainActivity : AppCompatActivity() {
             // отсюда будет запускаться новый RecyclerView для отображения списка заметок
                 val intent = Intent(this, NoteActivity::class.java)
                 intent.putExtra("word_id", it.id) // передаем id дневника
-                intent.putExtra("word_img", it.img)
+                intent.putExtra("word_img", it.img) // передаем картинку
             // запускает ClickedActivity из MainActivity путем нажатия на элемент RecyclerView
                 startActivity(intent)
-            })  // то, что в фигурных скобках это и есть аргумент listener : (Word) -> Unit в адаптере
+            })// то, что в фигурных скобках это и есть аргумент listener : (Word) -> Unit в адаптере
 
         // задаем Adapter (одинаково для всех RecyclerView)
         recyclerview.adapter = adapter
@@ -67,10 +54,8 @@ class MainActivity : AppCompatActivity() {
 
         //присваиваем переменной тот самый *отступ*
         val topSpacingDecoration = TopSpacingItemDecoration(20)
-
         //добавляет в декорацию элемента дневника и заметки этот отступ
         recyclerview.addItemDecoration(topSpacingDecoration)
-        //recyclerview1.addItemDecoration(topSpacingDecoration)
 
         // Создаем провайдер, связывая с соотв. классом ViewModel (одинаково для всех ViewModel)
         wordViewModel = ViewModelProvider(this).get(WordViewModel::class.java)
@@ -87,18 +72,16 @@ class MainActivity : AppCompatActivity() {
         // кнопка для запуска активити для добавления записи
         val fab = findViewById<FloatingActionButton>(R.id.fab)
         fab.setOnClickListener {
-
             val intent = Intent(this, NewWordActivity::class.java)
 
             // 2-ой аргумент это requestCode по которому определяется откуда был запрос
             startActivityForResult(intent, newWordActivityRequestCode)
-
         }
 
+        // TODO: Изменить или убрать сортировку (за ненадобностью)
         // кнопка, которая будет выводить отсортированный список (если добавить запись все собьется)
         val fab1 = findViewById<FloatingActionButton>(R.id.fab1)
         fab1.setOnClickListener {
-
             adapter.setNewWords(wordViewModel.allWords.value!!)
             adapter.notifyDataSetChanged()
         }
@@ -116,16 +99,14 @@ class MainActivity : AppCompatActivity() {
 
         if (requestCode == newWordActivityRequestCode && resultCode == Activity.RESULT_OK) {
             data?.getStringArrayListExtra(NewWordActivity.EXTRA_REPLY)?.let {
-                // получаем из экстра данных нашу строку и создаем объект Word с той же строкой
 
+                // TODO: Поменять формат вывода даты (Женя)
                 // получаем текущую дату и вставляем в объект дневника
                 val calendar = Calendar.getInstance()       // Добавляю переменную текущей даты
                 val currentDate =                             // Преобразуем ее в строку (DD.MM.YYYY)
                     DateFormat.getDateInstance(DateFormat.FULL)
                     .format(calendar.time)
-
-                //val uriImage = Uri.parse(data.getStringExtra(EXTRA_IMAGE))
-
+                // получаем из экстра данных нашу строку и создаем объект Word с той же строкой
                 val word = Word(it[0], it[1], currentDate)
                 word.img = data.getStringExtra(EXTRA_IMAGE)
                 wordViewModel.insertWord(word) // добавляем запись в БД
@@ -135,9 +116,7 @@ class MainActivity : AppCompatActivity() {
         {
             // выводим сообщение о том что поле пустое, ничего не меняя в БД
             Toast.makeText(
-                applicationContext, R.string.empty_not_saved,
-                Toast.LENGTH_LONG
-            ).show()
+                applicationContext, R.string.empty_not_saved, Toast.LENGTH_LONG).show()
         }
     }
 
@@ -166,8 +145,4 @@ class MainActivity : AppCompatActivity() {
         }
         return super.onOptionsItemSelected(item)
     }
-
-
-
-
-}
+} // TODO: ПОМЕНЯТЬ НАЗВАНИЯ КНОПОК ВО ВСЕХ ФАЙЛАХ ЧТОБЫ БЫЛО ПО СМЫСЛУ (ОПЦИОНАЛЬНО)

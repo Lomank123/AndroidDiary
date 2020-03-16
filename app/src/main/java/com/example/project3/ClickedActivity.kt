@@ -9,46 +9,36 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_clicked.*
+import roomdatabase.Note
 
 class ClickedActivity : AppCompatActivity() {
-
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_clicked)
 
-        val noteId = intent.getLongExtra("note_idNote", -1)
 
+        val note = intent.getSerializableExtra("noteSerializable") as? Note
 
         // получаем экстра данные из NoteActivity
-        textView1.text = intent.getStringExtra("note_name")
-        editText1.setText(intent.getStringExtra("note_text"))
-        textView_date.text = intent.getStringExtra("note_date")
+        textView1.text = note!!.note
+        editText1.setText(note.text)
+        textView_date.text = note.dateNote
 
-        //TODO: доработать возможность сохранения картинки в качестве заднего фона
-        // и передачи картинки обратно
-        // или оставить возможность выбора картинки ТОЛЬКО для дневника
-       // val noteImg = intent.getStringExtra("note_img")
-       // if (noteImg != null)
-       // {
-       //     val uriImage = Uri.parse(noteImg)
-       //     imageView_clicked.setImageURI(uriImage)
-       // }
+        if (note.imgNote != null)
+        {
+            val uriImage = Uri.parse(note.imgNote)
+            imageView_clicked.setImageURI(uriImage)
+        }
 
         // Обработчик нажатий для кнопки Save
         button_save1.setOnClickListener {
 
             val replyIntent = Intent()
 
-            // создаем массив с названием и текстом заметки
-            val note = arrayListOf(textView1.text.toString(),
-                editText1.text.toString())
+            note.text = editText1.text.toString()
 
-            // кладем то, что записано в массив и передаем по тегу EXTRA_REPLY_EDIT
             replyIntent.putExtra(EXTRA_REPLY_EDIT, note)
-            // также передаем idNote заметки чтобы обновить ее в NoteActivity
-            replyIntent.putExtra("noteId", noteId)
 
             setResult(Activity.RESULT_OK, replyIntent) // resultCode будет RESULT_OK
             // Завершаем работу с активити
@@ -63,6 +53,7 @@ class ClickedActivity : AppCompatActivity() {
         }
     }
 
+
     // создает OptionsMenu
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_edit_note, menu)
@@ -71,23 +62,19 @@ class ClickedActivity : AppCompatActivity() {
 
     // когда выбираешь элемент меню
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+        val note = intent.getSerializableExtra("noteSerializable") as? Note
+
         when(item.itemId){
 
             R.id.save_btn_edit -> { // Кнопка Save
-                val noteId = intent.getLongExtra("note_idNote", -1)
                 val replyIntent = Intent()
 
-                // создаем массив с названием и текстом заметки
-                val note = arrayListOf(textView1.text.toString(),
-                    editText1.text.toString())
+                note!!.text = editText1.text.toString()
 
-                // кладем то, что записано в массив и передаем по тегу EXTRA_REPLY_EDIT
                 replyIntent.putExtra(EXTRA_REPLY_EDIT, note)
-                // также передаем idNote заметки чтобы обновить ее в NoteActivity
-                replyIntent.putExtra("noteId", noteId)
 
                 setResult(Activity.RESULT_OK, replyIntent) // resultCode будет RESULT_OK
-
                 // Завершаем работу с активити
                 Toast.makeText(this, "Saved", Toast.LENGTH_SHORT).show()
                 finish()

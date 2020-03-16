@@ -13,7 +13,6 @@ import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.project3.NewNoteActivity.Companion.EXTRA_IMAGE_NOTE
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.android.synthetic.main.activity_note.*
 import recyclerviewadapter.NoteListAdapter
@@ -44,17 +43,8 @@ class NoteActivity : AppCompatActivity() {
             val intent = Intent(this, ClickedActivity::class.java)
 
             // передаем необходимые данные в ClickedActivity
-            intent.putExtra("note_idNote", it.idNote)
-            intent.putExtra("note_name", it.note)
-            intent.putExtra("note_text", it.text)
-            intent.putExtra("note_date", it.dateNote)
+            intent.putExtra("noteSerializable", it)
 
-            //TODO: доработать передачу и возврат картинки
-
-            // передает картинку
-            intent.putExtra("note_img", it.imgNote)
-
-            intent.putExtra("word_id1", wordId) // передаем id дневника
             // запускает ClickedActivity из MainActivity путем нажатия на элемент RecyclerView
             startActivityForResult(intent, clickedActivityRequestCode)
         }, {
@@ -66,8 +56,6 @@ class NoteActivity : AppCompatActivity() {
         recyclerview1.adapter = adapter
         recyclerview1.layoutManager = LinearLayoutManager(this)
         noteViewModel = ViewModelProvider(this).get(NoteViewModel::class.java)
-
-        // чтобы получить список заметок выбранного дневника
 
         //любимые отступы
         val topSpacingDecoration = TopSpacingItemDecoration(20)
@@ -169,11 +157,12 @@ class NoteActivity : AppCompatActivity() {
                 // и создаем объект Note с этими данными, причем устанавливаем diaryId такой же
                 // как и id у дневника, из которого происходил вызов
 
+                // TODO: Поменять формат вывода даты (Женя)
                 val calendar = Calendar.getInstance()       // Добавляю переменную текущей даты
                 val currentDate =                             // Преобразуем ее в строку (DD.MM.YYYY)
                     DateFormat.getDateInstance(DateFormat.FULL)
                         .format(calendar.time)
-                val noteImg = data.getStringExtra(EXTRA_IMAGE_NOTE)
+                val noteImg = data.getStringExtra(NewNoteActivity.EXTRA_IMAGE_NOTE)
 
                 if(noteImg != null)
                 {
@@ -200,27 +189,14 @@ class NoteActivity : AppCompatActivity() {
         // Результат для обновления заметки
         if (requestCode == clickedActivityRequestCode && resultCode == Activity.RESULT_OK)
         {
-            data?.getStringArrayListExtra(ClickedActivity.EXTRA_REPLY_EDIT)?.let {
-                // получаем массив с новыми данными, создаем объект
-                // 0-ой элемент - название, 1-ый - текст заметки
-                // 3-ий параметр - id дневника, к которому заметка привязана
-
-                val calendar = Calendar.getInstance()       // Добавляю переменную текущей даты
-                val currentDate =                             // Преобразуем ее в строку (DD.MM.YYYY)
-                    DateFormat.getDateInstance(DateFormat.FULL)
-                        .format(calendar.time)
-
-                val note = Note(it[0], it[1], intent.getLongExtra("word_id",
-                    -1), currentDate)
-
-                note.idNote = data.getLongExtra("noteId", -1)
-                noteViewModel.updateNote(note) // обновляем заметку
-
-                // устанавливаем первичный ключ как у заметки, в которой что-то меняли
-                // чтобы корректно обновить данные
+            // получаем с помощью Serializable наш объект класса Note из ClickedActivity
+            val note = data?.getSerializableExtra(ClickedActivity.EXTRA_REPLY_EDIT) as? Note
+            if (note != null)
+            {
+                noteViewModel.updateNote(note)  // обновляем заметку
             }
         }
-        if(requestCode == clickedActivityRequestCode && resultCode == Activity.RESULT_CANCELED)
+        if (requestCode == clickedActivityRequestCode && resultCode == Activity.RESULT_CANCELED)
         {
             Toast.makeText(this, "Canceled", Toast.LENGTH_SHORT).show()
         }
@@ -248,6 +224,4 @@ class NoteActivity : AppCompatActivity() {
         }
         return super.onOptionsItemSelected(item)
     }
-
-
-} // TODO: ПОФИКСИТЬ БАГ: ИЗОБРАЖЕНИЯ НЕ СОХРАНЯЮТСЯ
+}

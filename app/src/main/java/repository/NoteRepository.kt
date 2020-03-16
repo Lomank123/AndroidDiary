@@ -6,12 +6,13 @@ import androidx.room.Relation
 import roomdatabase.Note
 import roomdatabase.Word
 import roomdatabase.WordDao
+import java.io.Serializable
 
 // класс, в котором описывается объект, содержащий данные о дневнике
 // и о ВСЕХ его заметках, заметки помещены в список
 data class NotesAndWords (@Embedded val word : Word,
                           @Relation(parentColumn = "id", entityColumn = "diaryId")
-                          val notes : List<Note>)
+                          val notes : List<Note>) : Serializable
 
 // класс репозитория
 class NoteRepository (private val wordDao : WordDao) {
