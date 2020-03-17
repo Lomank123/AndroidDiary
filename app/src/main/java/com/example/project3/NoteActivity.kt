@@ -20,6 +20,7 @@ import roomdatabase.Note
 import viewmodel.NoteViewModel
 import viewmodel.TopSpacingItemDecoration
 import java.text.DateFormat
+import java.text.SimpleDateFormat
 import java.util.*
 
 class NoteActivity : AppCompatActivity() {
@@ -157,11 +158,11 @@ class NoteActivity : AppCompatActivity() {
                 // и создаем объект Note с этими данными, причем устанавливаем diaryId такой же
                 // как и id у дневника, из которого происходил вызов
 
-                // TODO: Поменять формат вывода даты (Женя)
-                val calendar = Calendar.getInstance()       // Добавляю переменную текущей даты
-                val currentDate =                             // Преобразуем ее в строку (DD.MM.YYYY)
-                    DateFormat.getDateInstance(DateFormat.FULL)
-                        .format(calendar.time)
+                // получаем текущую дату и вставляем в объект дневника
+                val pattern = "\t\t\tHH:mm\n\ndd.MM.yyyy"
+                val simpleDateFormat =
+                    SimpleDateFormat(pattern)
+                val currentDate = simpleDateFormat.format(Date())
                 val noteImg = data.getStringExtra(NewNoteActivity.EXTRA_IMAGE_NOTE)
 
                 if(noteImg != null)

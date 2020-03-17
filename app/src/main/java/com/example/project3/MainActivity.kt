@@ -100,7 +100,6 @@ class MainActivity : AppCompatActivity() {
         if (requestCode == newWordActivityRequestCode && resultCode == Activity.RESULT_OK) {
             data?.getStringArrayListExtra(NewWordActivity.EXTRA_REPLY)?.let {
 
-                // TODO: Поменять формат вывода даты (Женя)
                 // получаем текущую дату и вставляем в объект дневника
                 val pattern = "\t\t\tHH:mm\n\ndd.MM.yyyy"
                 val simpleDateFormat =
