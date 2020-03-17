@@ -17,6 +17,7 @@
     <string name="jenya">Eugene Taychinov</string>
     <string name="robert">Robert Khakimov</string>
     <string name="photo_choose">Choose photo</string>
+    <string name="title_activity_settings">Settings</string>
 
 
 </resources>

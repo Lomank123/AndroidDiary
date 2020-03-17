@@ -213,6 +213,9 @@ class NoteActivity : AppCompatActivity() {
         when(item.itemId){
             R.id.settings -> {
                 // открытие окна "Настройки"
+                val intentSettings = Intent(this, SettingsActivity::class.java)
+                startActivity(intentSettings)
+
                 Toast.makeText(this, "Settings", Toast.LENGTH_SHORT).show()
                 return super.onOptionsItemSelected(item)
             }
