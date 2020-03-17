@@ -2,12 +2,12 @@ package com.example.project3
 
 import android.app.Activity
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,7 +18,7 @@ import recyclerviewadapter.WordListAdapter
 import roomdatabase.Word
 import viewmodel.TopSpacingItemDecoration
 import viewmodel.WordViewModel
-import java.text.DateFormat
+import java.text.SimpleDateFormat
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
@@ -102,10 +102,10 @@ class MainActivity : AppCompatActivity() {
 
                 // TODO: Поменять формат вывода даты (Женя)
                 // получаем текущую дату и вставляем в объект дневника
-                val calendar = Calendar.getInstance()       // Добавляю переменную текущей даты
-                val currentDate =                             // Преобразуем ее в строку (DD.MM.YYYY)
-                    DateFormat.getDateInstance(DateFormat.FULL)
-                    .format(calendar.time)
+                val pattern = "\t\t\tHH:mm\n\ndd.MM.yyyy"
+                val simpleDateFormat =
+                    SimpleDateFormat(pattern)
+                val currentDate = simpleDateFormat.format(Date())
                 // получаем из экстра данных нашу строку и создаем объект Word с той же строкой
                 val word = Word(it[0], it[1], currentDate)
                 word.img = data.getStringExtra(EXTRA_IMAGE)
