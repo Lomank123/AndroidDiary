@@ -25,8 +25,8 @@ class NoteActivity : AppCompatActivity() {
 
     private val newNoteActivityRequestCode = 1              // для NewWordActivity (requestCode)
     private val clickedActivityRequestCode = 2              // для ClickedActivity (requestCode)
+    private val settingsActivityRequestCode = 3
     private lateinit var noteViewModel: NoteViewModel       // добавляем ViewModel
-    private val settingsFragment = SettingsActivityNew()    // объект настроек
 
 
     private var isFabOpen : Boolean = false                 // по умолч. меню закрыто
@@ -34,13 +34,6 @@ class NoteActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_note)
-
-        // прячем фрагмент с настройками
-        supportFragmentManager
-            .beginTransaction()
-            .replace(R.id.linLayout, settingsFragment)
-            .hide(settingsFragment)
-            .commit()
 
         // id дневника
         val wordId = intent.getLongExtra("word_id", -1)
@@ -93,17 +86,6 @@ class NoteActivity : AppCompatActivity() {
                 showFabMenu()
             else
                 closeFabMenu()
-        }
-
-        save_changes_button.setOnClickListener{
-            // после нажатия на кнопку настройки исчезнут и все вернется как было
-            supportFragmentManager
-                .beginTransaction()
-                .hide(settingsFragment)
-                .commit()
-            save_changes_button.visibility = GONE
-            recyclerview1.visibility = VISIBLE
-            fab.visibility = VISIBLE
         }
 
         // обработчик нажатий на 1-ую кнопку (пока ничего не делает)
@@ -233,14 +215,9 @@ class NoteActivity : AppCompatActivity() {
         when(item.itemId){
             R.id.settings -> {
                 // открытие окна "Настройки"
-                recyclerview1.visibility = GONE
-                fab.visibility = GONE
-                bg_fab_menu.visibility = GONE
-                save_changes_button.visibility = VISIBLE
-                supportFragmentManager
-                    .beginTransaction()
-                    .show(settingsFragment)
-                    .commit()
+
+                val intentSettings = Intent(this, SettingsHolderActivity::class.java)
+                startActivityForResult(intentSettings, settingsActivityRequestCode)
 
                 Toast.makeText(this, "Settings", Toast.LENGTH_SHORT).show()
                 return super.onOptionsItemSelected(item)

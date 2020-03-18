@@ -59,7 +59,7 @@ class ClickedActivity : AppCompatActivity() {
         // получаем наши настройки
         val prefs: SharedPreferences? = PreferenceManager.getDefaultSharedPreferences(this)
 
-        if (prefs!!.getBoolean("img_check", true))
+        if (prefs!!.getBoolean("img_check", false))
         {
             if (note!!.imgNote != null)
             {
