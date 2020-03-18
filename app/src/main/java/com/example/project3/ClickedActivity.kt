@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.preference.PreferenceManager
 import com.example.project3.SettingsActivity.Companion.APP_PREFERENCES
 import com.example.project3.SettingsActivity.Companion.AP_SHOW_IMG
 import kotlinx.android.synthetic.main.activity_clicked.*

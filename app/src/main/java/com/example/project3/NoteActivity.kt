@@ -7,11 +7,11 @@ import android.os.Bundle
 import android.os.Handler
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View.GONE
-import android.view.View.VISIBLE
+import android.view.View.*
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.android.synthetic.main.activity_note.*
@@ -19,7 +19,6 @@ import recyclerviewadapter.NoteListAdapter
 import roomdatabase.Note
 import viewmodel.NoteViewModel
 import viewmodel.TopSpacingItemDecoration
-import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -34,6 +33,19 @@ class NoteActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_note)
+
+        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
+
+        val iftrue = prefs.getBoolean("pref_sync", true)
+
+        if (iftrue)
+        {
+            Toast.makeText(this, "settings true", Toast.LENGTH_SHORT).show()
+        }
+        else
+        {
+            Toast.makeText(this, "settings false", Toast.LENGTH_SHORT).show()
+        }
 
         // id дневника
         val wordId = intent.getLongExtra("word_id", -1)
@@ -214,8 +226,18 @@ class NoteActivity : AppCompatActivity() {
         when(item.itemId){
             R.id.settings -> {
                 // открытие окна "Настройки"
-                val intentSettings = Intent(this, SettingsActivity::class.java)
-                startActivity(intentSettings)
+             //   val intentSettings = Intent(this, SettingsActivity::class.java)
+             //   startActivity(intentSettings)
+
+                recyclerview1.visibility = GONE
+                fab.visibility = GONE
+                fab1.visibility = GONE
+                fab2.visibility = GONE
+                bg_fab_menu.visibility = GONE
+                supportFragmentManager
+                    .beginTransaction()
+                    .replace(R.id.linLayout,SettingsActivityNew())
+                    .commit()
 
                 Toast.makeText(this, "Settings", Toast.LENGTH_SHORT).show()
                 return super.onOptionsItemSelected(item)

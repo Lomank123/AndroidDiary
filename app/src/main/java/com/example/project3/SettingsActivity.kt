@@ -54,4 +54,5 @@ class SettingsActivity : AppCompatActivity() {
         val APP_PREFERENCES = "settings_main"
         var AP_SHOW_IMG = "showImg"
     }
-} // TODO: добавить комментариев для SettingsActivity
+} // TODO: УБРАТЬ ЗА НЕНАДОБНОСТЬЮ, ВМЕСТО ЭТОГО ИСПОЛЬЗОВАТЬ SettingsActivityNew
+    // TODO: Также перенять необходимые приемы для дальнейших настроек
