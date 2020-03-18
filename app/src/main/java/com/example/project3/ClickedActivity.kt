@@ -10,21 +10,16 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.preference.PreferenceManager
-import com.example.project3.SettingsActivity.Companion.APP_PREFERENCES
-import com.example.project3.SettingsActivity.Companion.AP_SHOW_IMG
 import kotlinx.android.synthetic.main.activity_clicked.*
 import roomdatabase.Note
 
 class ClickedActivity : AppCompatActivity() {
 
-    lateinit var settings1 : SharedPreferences
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_clicked)
 
-        settings1 = getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE)
+
 
         val note = intent.getSerializableExtra("noteSerializable") as? Note
 
@@ -61,7 +56,10 @@ class ClickedActivity : AppCompatActivity() {
         super.onResume()
         val note = intent.getSerializableExtra("noteSerializable") as? Note
 
-        if (settings1.getBoolean(AP_SHOW_IMG, true))
+        // получаем наши настройки
+        val prefs: SharedPreferences? = PreferenceManager.getDefaultSharedPreferences(this)
+
+        if (prefs!!.getBoolean("img_check", true))
         {
             if (note!!.imgNote != null)
             {
@@ -108,4 +106,4 @@ class ClickedActivity : AppCompatActivity() {
     companion object {
         const val EXTRA_REPLY_EDIT = "reply_edit"
     }
-} // TODO: добавить комментариев для раздела настроек
+}

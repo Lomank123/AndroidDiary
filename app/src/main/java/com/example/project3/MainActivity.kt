@@ -3,9 +3,10 @@ package com.example.project3
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -25,11 +26,18 @@ class MainActivity : AppCompatActivity() {
 
     private val newWordActivityRequestCode = 1  // для NewWordActivity
     private lateinit var wordViewModel: WordViewModel       // добавляем ViewModel
+    private val settingsFragment = SettingsActivityNew()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        Log.i("info", "Created") // запись в логи
+
+        // прячем фрагмент с настройками
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.linLayout, settingsFragment)
+            .hide(settingsFragment)
+            .commit()
 
         // адаптер для RecyclerView
         val adapter = WordListAdapter(this,
@@ -85,6 +93,18 @@ class MainActivity : AppCompatActivity() {
             adapter.setNewWords(wordViewModel.allWords.value!!)
             adapter.notifyDataSetChanged()
         }
+        back_button.setOnClickListener{
+            // после нажатия на кнопку настройки исчезнут и все вернется как было
+            supportFragmentManager
+                .beginTransaction()
+                .hide(settingsFragment)
+                .commit()
+            back_button.visibility = GONE
+            recyclerview.visibility = VISIBLE
+            fab.visibility = VISIBLE
+            fab1.visibility = VISIBLE
+
+        }
     }
 
     // Удаляет дневник. Вызов происходит через ViewModel
@@ -130,6 +150,16 @@ class MainActivity : AppCompatActivity() {
         when(item.itemId){
             R.id.settings -> {
                 // открытие окна "Настройки"
+
+                recyclerview.visibility = GONE
+                fab.visibility = GONE
+                fab1.visibility = GONE
+                back_button.visibility = VISIBLE
+                supportFragmentManager
+                    .beginTransaction()
+                    .show(settingsFragment)
+                    .commit()
+
                 Toast.makeText(this, "Settings", Toast.LENGTH_SHORT).show()
                 return super.onOptionsItemSelected(item)
             }

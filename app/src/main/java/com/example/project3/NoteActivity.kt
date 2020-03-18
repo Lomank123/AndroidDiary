@@ -11,7 +11,6 @@ import android.view.View.*
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.android.synthetic.main.activity_note.*
@@ -27,6 +26,8 @@ class NoteActivity : AppCompatActivity() {
     private val newNoteActivityRequestCode = 1              // для NewWordActivity (requestCode)
     private val clickedActivityRequestCode = 2              // для ClickedActivity (requestCode)
     private lateinit var noteViewModel: NoteViewModel       // добавляем ViewModel
+    private val settingsFragment = SettingsActivityNew()    // объект настроек
+
 
     private var isFabOpen : Boolean = false                 // по умолч. меню закрыто
 
@@ -34,18 +35,12 @@ class NoteActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_note)
 
-        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
-
-        val iftrue = prefs.getBoolean("pref_sync", true)
-
-        if (iftrue)
-        {
-            Toast.makeText(this, "settings true", Toast.LENGTH_SHORT).show()
-        }
-        else
-        {
-            Toast.makeText(this, "settings false", Toast.LENGTH_SHORT).show()
-        }
+        // прячем фрагмент с настройками
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.linLayout, settingsFragment)
+            .hide(settingsFragment)
+            .commit()
 
         // id дневника
         val wordId = intent.getLongExtra("word_id", -1)
@@ -100,6 +95,17 @@ class NoteActivity : AppCompatActivity() {
                 closeFabMenu()
         }
 
+        save_changes_button.setOnClickListener{
+            // после нажатия на кнопку настройки исчезнут и все вернется как было
+            supportFragmentManager
+                .beginTransaction()
+                .hide(settingsFragment)
+                .commit()
+            save_changes_button.visibility = GONE
+            recyclerview1.visibility = VISIBLE
+            fab.visibility = VISIBLE
+        }
+
         // обработчик нажатий на 1-ую кнопку (пока ничего не делает)
         fab1.setOnClickListener {
             closeFabMenu()
@@ -119,6 +125,7 @@ class NoteActivity : AppCompatActivity() {
             closeFabMenu()
         }
     }
+
 
     // закрывает выдвиг. меню
     private fun closeFabMenu() {
@@ -226,17 +233,13 @@ class NoteActivity : AppCompatActivity() {
         when(item.itemId){
             R.id.settings -> {
                 // открытие окна "Настройки"
-             //   val intentSettings = Intent(this, SettingsActivity::class.java)
-             //   startActivity(intentSettings)
-
                 recyclerview1.visibility = GONE
                 fab.visibility = GONE
-                fab1.visibility = GONE
-                fab2.visibility = GONE
                 bg_fab_menu.visibility = GONE
+                save_changes_button.visibility = VISIBLE
                 supportFragmentManager
                     .beginTransaction()
-                    .replace(R.id.linLayout,SettingsActivityNew())
+                    .show(settingsFragment)
                     .commit()
 
                 Toast.makeText(this, "Settings", Toast.LENGTH_SHORT).show()

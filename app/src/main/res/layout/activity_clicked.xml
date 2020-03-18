@@ -26,6 +26,7 @@
         android:gravity="start|top"
         android:hint="@string/hint_word"
         android:inputType="textMultiLine"
+        android:typeface="monospace"
         app:layout_constraintBottom_toTopOf="@+id/button_save1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"

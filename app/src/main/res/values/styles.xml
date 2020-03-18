@@ -8,7 +8,6 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-
     <!-- The default font for RecyclerView items is too small.
 The margin is a simple delimiter between the words. -->
     <style name="word_title">
