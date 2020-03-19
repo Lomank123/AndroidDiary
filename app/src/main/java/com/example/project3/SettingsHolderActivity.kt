@@ -2,7 +2,10 @@ package com.example.project3
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.preference.ListPreference
 import androidx.preference.PreferenceFragmentCompat
+import roomdatabase.Word
+import roomdatabase.WordDao
 
 class SettingsHolderActivity : AppCompatActivity() {
 
@@ -11,12 +14,8 @@ class SettingsHolderActivity : AppCompatActivity() {
         setContentView(R.layout.settings_activity)
         supportFragmentManager
             .beginTransaction()
-            .replace(R.id.settings, SettingsFragment())
+            .replace(R.id.title_activity_settings, SettingsFragment())
             .commit()
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-
-
     }
 
     class SettingsFragment : PreferenceFragmentCompat() {

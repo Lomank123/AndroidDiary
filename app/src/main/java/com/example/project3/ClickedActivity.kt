@@ -3,6 +3,7 @@ package com.example.project3
 import android.app.Activity
 import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.Typeface
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -67,6 +68,37 @@ class ClickedActivity : AppCompatActivity() {
                 imageView_clicked.setImageURI(uriImage)
             }
         }
+
+        // стандартный шрифт - roboto_regular.ttf
+        when(prefs.getString("list_preference_1", "0"))
+        {
+            "Default" ->
+            {
+                textView1.typeface = Typeface.DEFAULT
+                editText1.typeface = Typeface.DEFAULT
+            }
+            "Serif" ->
+            {
+                textView1.typeface = Typeface.SERIF
+                editText1.typeface = Typeface.SERIF
+            }
+            "Sans Serif" ->
+            {
+                textView1.typeface = Typeface.SANS_SERIF
+                editText1.typeface = Typeface.SANS_SERIF
+            }
+            "Default Bald" ->
+            {
+                textView1.typeface = Typeface.DEFAULT_BOLD
+                editText1.typeface = Typeface.DEFAULT_BOLD
+            }
+            "Monospace" ->
+            {
+                textView1.typeface = Typeface.MONOSPACE
+                editText1.typeface = Typeface.MONOSPACE
+            }
+        }
+
     }
 
     // создает OptionsMenu

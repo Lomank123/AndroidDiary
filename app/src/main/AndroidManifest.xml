@@ -15,9 +15,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".SettingsHolderActivity"
-            android:label="@string/title_activity_settings_holder"></activity>
-        <activity android:name=".Main2Activity" />
-        <activity android:name=".SettingsActivityNew" />
+            android:label="@string/settings_btn"/>
         <activity android:name=".AboutActivity" />
         <activity android:name=".NewNoteActivity" />
         <activity
@@ -33,6 +31,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
     </application>
 
 </manifest>

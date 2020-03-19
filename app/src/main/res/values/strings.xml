@@ -19,7 +19,7 @@
     <string name="photo_choose">Choose photo</string>
     <string name="title_activity_settings">Settings</string>
     <string name="categoryMainSettings">Main settings</string>
-    <string name="theme_check">Font style</string>
+    <string name="font_check">Font style</string>
     <string name="img_check">Allow to show img</string>
     <string name="back_btn">Back</string>
 
