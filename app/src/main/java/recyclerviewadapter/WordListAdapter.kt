@@ -47,19 +47,7 @@ class WordListAdapter internal constructor(
 
             // устанавливаем значения во вью
             wordItemView.text = word.word
-
-            // Лимит на кол-во символов в описании: 16
-            var count = 0
-            var str = ""
-            for(i in word.description) { // записываем в строку первые 16 символов
-                if (count == 16) {
-                    str += "..." // если их > 16, добавляем многоточие и завершаем цикл
-                    break
-                }
-                str += i
-                count++
-            }
-            wordDescriptionView.text = str // записываем в TextView строку (описание)
+            wordDescriptionView.text = word.description // записываем в TextView строку (описание)
             wordDateView.text = word.date // записываем дату
 
             // установка фото

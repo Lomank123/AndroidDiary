@@ -13,53 +13,54 @@
     android:layout_height="wrap_content"
     android:padding="15dp">
 
-        <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        app:srcCompat="@mipmap/ic_launcher"
-        android:contentDescription="@string/sample" />
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/imageView"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:src="@mipmap/ic_launcher"
+            app:civ_border_width="2dp"
+            app:civ_border_color="#FF000000"/>
 
         <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/imageView"
-        android:layout_marginStart="30dp"
-        android:layout_marginLeft="30dp"
-        android:layout_marginTop="-32dp"
-        android:layout_toEndOf="@+id/imageView"
-        android:layout_toRightOf="@+id/imageView"
-        android:text="@string/description"
-        android:textColor="#939596"
-        android:textSize="18sp" />
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/imageView"
+            android:layout_marginStart="14dp"
+            android:layout_marginLeft="14dp"
+            android:layout_marginTop="-34dp"
+            android:layout_toEndOf="@+id/imageView"
+            android:layout_toRightOf="@+id/imageView"
+            android:text="@string/description"
+            android:textColor="#939596"
+            android:textSize="18sp" />
 
         <TextView
-        android:id="@+id/textView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/imageView"
-        android:layout_marginStart="30dp"
-        android:layout_marginLeft="30dp"
-        android:layout_marginBottom="47dp"
-        android:layout_toEndOf="@+id/imageView"
-        android:layout_toRightOf="@+id/imageView"
-        android:text="@string/sample"
-        android:textColor="#000"
-        android:textSize="17sp" />
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/imageView"
+            android:layout_marginStart="15dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginBottom="47dp"
+            android:layout_toEndOf="@+id/imageView"
+            android:layout_toRightOf="@+id/imageView"
+            android:text="@string/sample"
+            android:textColor="#000"
+            android:textSize="17sp" />
 
         <TextView
             android:id="@+id/date_text"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="53dp"
             android:layout_alignBottom="@+id/imageView"
             android:layout_marginStart="170dp"
             android:layout_marginLeft="170dp"
             android:layout_marginBottom="9dp"
-            android:layout_toRightOf="@+id/imageView"
             android:layout_toEndOf="@+id/imageView"
+            android:layout_toRightOf="@+id/imageView"
             android:text="@string/sample"
-            android:textSize="14sp"/>
+            android:textSize="14sp" />
 
     </RelativeLayout>
 </androidx.cardview.widget.CardView>
