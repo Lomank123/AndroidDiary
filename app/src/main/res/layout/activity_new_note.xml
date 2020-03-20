@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="36dp"
-        android:hint="@string/hint_word"
+        android:hint="@string/hint_note"
         android:inputType="textAutoComplete"
         android:maxLength="16"
         android:padding="@dimen/small_padding"
@@ -69,25 +69,27 @@
         android:id="@+id/photo_button_note"
         android:layout_width="145dp"
         android:layout_height="47dp"
-        android:layout_marginBottom="40dp"
+        android:layout_marginBottom="32dp"
         android:background="#78B562"
         android:text="@string/photo_choose"
         app:layout_constraintBottom_toTopOf="@+id/edit_note"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/imageView_note"
-        android:layout_width="241dp"
-        android:layout_height="229dp"
+        android:layout_width="236dp"
+        android:layout_height="256dp"
         android:layout_marginBottom="16dp"
         android:contentDescription="@string/description"
+        android:src="@mipmap/ic_launcher_round"
+        app:civ_border_color="#FF000000"
+        app:civ_border_width="2dp"
         app:layout_constraintBottom_toTopOf="@+id/photo_button_note"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.866"
-        app:srcCompat="@mipmap/ic_launcher"
-        tools:srcCompat="@mipmap/ic_launcher" />
+        app:layout_constraintVertical_bias="0.994" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -27,7 +27,6 @@ class ClickedActivity : AppCompatActivity() {
         // получаем экстра данные из NoteActivity
         textView1.text = note!!.note
         editText1.setText(note.text)
-        textView_date.text = note.dateNote
 
 
         // Обработчик нажатий для кнопки Save
