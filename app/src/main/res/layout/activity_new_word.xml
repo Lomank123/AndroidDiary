@@ -45,9 +45,10 @@
         android:layout_marginStart="24dp"
         android:layout_marginLeft="24dp"
         android:layout_marginBottom="28dp"
-        android:background="@color/colorPrimary"
+        android:background="@drawable/custom_button_save1"
         android:text="@string/button_save"
         android:textColor="@color/buttonLabel"
+        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/button_cancel_word1"
         app:layout_constraintHorizontal_bias="0.0"
@@ -60,19 +61,21 @@
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginBottom="28dp"
-        android:background="@color/colorAccent"
+        android:background="@drawable/custom_button_cancel1"
         android:text="@string/cancel_btn"
         android:textColor="@color/buttonLabel"
+        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <Button
         android:id="@+id/photo_button"
         android:layout_width="145dp"
         android:layout_height="47dp"
         android:layout_marginBottom="28dp"
-        android:background="#78B562"
+        android:background="@drawable/custom_button_rainbow1"
         android:text="@string/photo_choose"
+        android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/edit_word"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
