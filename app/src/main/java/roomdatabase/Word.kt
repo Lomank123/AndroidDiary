@@ -10,7 +10,7 @@ import java.io.Serializable
 @Entity(tableName = "word_table")   // название - word_table
 data class Word(@ColumnInfo(name = "word") val word: String,                 // название дневника
                 @ColumnInfo(name = "description") val description : String,  // описание дневника
-                @ColumnInfo(name = "date") val date : String
+                @ColumnInfo(name = "date") var date : String
 ) : Serializable
 {
     // Первичный ключ - id с авто-генерацией ключей
@@ -26,7 +26,7 @@ data class Word(@ColumnInfo(name = "word") val word: String,                 // 
 data class Note(@ColumnInfo(name = "note_name") val note : String,      // название заметки
                 @ColumnInfo(name = "text") var text : String,           // текст заметки
                 @ColumnInfo(name = "diaryId") val diaryId : Long,       // id дневника, к к-му привязана
-                @ColumnInfo(name = "dateNote") val dateNote : String
+                @ColumnInfo(name = "dateNote") var dateNote : String
 ) : Serializable
 {
     // Первичный ключ - idNote с авто-генерацией ключей

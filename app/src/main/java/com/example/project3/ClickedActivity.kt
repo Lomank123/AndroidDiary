@@ -13,6 +13,8 @@ import android.widget.Toast
 import androidx.preference.PreferenceManager
 import kotlinx.android.synthetic.main.activity_clicked.*
 import roomdatabase.Note
+import java.text.SimpleDateFormat
+import java.util.*
 
 class ClickedActivity : AppCompatActivity() {
 
@@ -28,27 +30,6 @@ class ClickedActivity : AppCompatActivity() {
         textView1.text = note!!.note
         editText1.setText(note.text)
 
-
-        // Обработчик нажатий для кнопки Save
-        button_save1.setOnClickListener {
-
-            val replyIntent = Intent()
-
-            note.text = editText1.text.toString()
-
-            replyIntent.putExtra(EXTRA_REPLY_EDIT, note)
-
-            setResult(Activity.RESULT_OK, replyIntent) // resultCode будет RESULT_OK
-            // Завершаем работу с активити
-            finish()
-        }
-
-        // обработчик нажатий на кнопку Cancel
-        button_cancel1.setOnClickListener {
-            // устанавливаем результат и завершаем работу с активити
-            setResult(Activity.RESULT_CANCELED)
-            finish()
-        }
     }
 
     override fun onResume()
@@ -116,7 +97,16 @@ class ClickedActivity : AppCompatActivity() {
             R.id.save_btn_edit -> { // Кнопка Save
                 val replyIntent = Intent()
 
+                // обновляем введенный текст
                 note!!.text = editText1.text.toString()
+
+                // обновляем дату изменения заметки
+                val pattern = "\t\t\tHH:mm\n\ndd.MM.yyyy"
+                val simpleDateFormat =
+                    SimpleDateFormat(pattern)
+                val currentDate = simpleDateFormat.format(Date())
+
+                note.dateNote = currentDate
 
                 replyIntent.putExtra(EXTRA_REPLY_EDIT, note)
 
