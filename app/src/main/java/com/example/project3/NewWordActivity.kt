@@ -74,4 +74,4 @@ class NewWordActivity : AppCompatActivity() {
         const val EXTRA_REPLY = "com.example.android.wordlistsql.REPLY"
         const val EXTRA_IMAGE = "img"
     }
-} // TODO: поправить выбор фото в XML файле, чтобы выглядело презентабельно
+}

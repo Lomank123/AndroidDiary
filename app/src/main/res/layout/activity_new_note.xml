@@ -3,11 +3,11 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <EditText
+        android:importantForAutofill="no"
         android:id="@+id/edit_note"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -24,6 +24,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <EditText
+        android:importantForAutofill="no"
         android:id="@+id/edit_text_note"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -44,7 +45,7 @@
         android:layout_marginStart="24dp"
         android:layout_marginLeft="24dp"
         android:layout_marginBottom="28dp"
-        android:background="@drawable/custom_button_save1"
+        android:background="@drawable/button_click_effect1"
         android:text="@string/button_save"
         android:textColor="@color/buttonLabel"
         android:textSize="16sp"
@@ -60,7 +61,7 @@
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginBottom="28dp"
-        android:background="@drawable/custom_button_cancel1"
+        android:background="@drawable/button_click_effect_cancel1"
         android:text="@string/cancel_btn"
         android:textColor="@color/buttonLabel"
         android:textSize="16sp"
@@ -72,7 +73,7 @@
         android:layout_width="145dp"
         android:layout_height="47dp"
         android:layout_marginBottom="32dp"
-        android:background="@drawable/custom_button_rainbow1"
+        android:background="@drawable/button_click_effect_photo1"
         android:text="@string/photo_choose"
         android:textColor="#352E35"
         android:textSize="16sp"
@@ -87,7 +88,7 @@
         android:layout_marginBottom="16dp"
         android:contentDescription="@string/description"
         android:src="@mipmap/ic_launcher_round"
-        app:civ_border_color="#FF000000"
+        app:civ_border_color="#DD8D15"
         app:civ_border_width="2dp"
         app:layout_constraintBottom_toTopOf="@+id/photo_button_note"
         app:layout_constraintEnd_toEndOf="parent"

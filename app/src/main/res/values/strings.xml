@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Diary</string>
-    <string name="hint_word">Word…</string>
+    <string name="hint_diary">Diary…</string>
     <string name="button_save">Save</string>
     <string name="empty_not_saved">Canceled or Diary name is empty</string>
     <string name="image">Image Text</string>
