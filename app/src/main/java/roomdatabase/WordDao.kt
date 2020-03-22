@@ -27,6 +27,10 @@ interface WordDao {
     @Query("DELETE FROM word_table")
     suspend fun deleteAll()
 
+    // Обновляет дневник
+    @Update
+    suspend fun updateWord(word : Word)
+
     // удаляет 1 дневник (в WordRepository при удалении также используется deleteNotes для заметок)
     // таким образом удаляется дневник + все заметки, связанные с этим дневником
     @Transaction

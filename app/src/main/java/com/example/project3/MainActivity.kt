@@ -105,8 +105,7 @@ class MainActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (requestCode == newWordActivityRequestCode && resultCode == Activity.RESULT_OK)
-        {
+        if (requestCode == newWordActivityRequestCode && resultCode == Activity.RESULT_OK) {
             data?.getStringArrayListExtra(NewWordActivity.EXTRA_REPLY)?.let {
 
                 // получаем текущую дату и вставляем в объект дневника
@@ -119,25 +118,22 @@ class MainActivity : AppCompatActivity() {
                 word.img = data.getStringExtra(EXTRA_IMAGE)
                 wordViewModel.insertWord(word) // добавляем запись в БД
             }
-        }
-        else    // Если было пустое поле
+        } else    // Если было пустое поле
         {
             // выводим сообщение о том что поле пустое, ничего не меняя в БД
             Toast.makeText(
-                applicationContext, R.string.empty_not_saved, Toast.LENGTH_LONG).show()
+                applicationContext, R.string.empty_not_saved, Toast.LENGTH_LONG
+            ).show()
         }
 
-        if (requestCode == editActivityRequestCode && resultCode == Activity.RESULT_OK)
-        {
-            // TODO: Прописать логику обновления дневника
-
-
-
-
-
+        if (requestCode == editActivityRequestCode && resultCode == Activity.RESULT_OK) {
+            val wordEdit = data?.getSerializableExtra(EditActivity.EXTRA_EDIT_WORD) as? Word
+            val imgWordEdit = data?.getStringExtra(EditActivity.EXTRA_IMAGE_EDIT_WORD)
+            if (imgWordEdit != null && imgWordEdit != "")
+                wordEdit!!.img = imgWordEdit
+            if (wordEdit != null)
+                wordViewModel.updateWord(wordEdit)
         }
-
-
     }
 
     // создает OptionsMenu

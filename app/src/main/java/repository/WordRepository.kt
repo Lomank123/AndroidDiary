@@ -33,4 +33,10 @@ class WordRepository(private val wordDao: WordDao) {
         wordDao.deleteNotes(word.id) // Сначала удаляем ВСЕ заметки у этого дневника
         wordDao.deleteWord(word.id)  // Затем удаляем САМ дневник
     }
+
+    // обновить дневник
+    suspend fun updateWord(word : Word){
+        wordDao.updateWord(word)
+    }
+
 }

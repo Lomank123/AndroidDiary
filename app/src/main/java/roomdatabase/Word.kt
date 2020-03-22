@@ -8,8 +8,8 @@ import java.io.Serializable
 // Здесь хранятся все сущности для бд, все поля, колонки, их обозначения
 
 @Entity(tableName = "word_table")   // название - word_table
-data class Word(@ColumnInfo(name = "word") val word: String,                 // название дневника
-                @ColumnInfo(name = "description") val description : String,  // описание дневника
+data class Word(@ColumnInfo(name = "word") var word: String,                 // название дневника
+                @ColumnInfo(name = "description") var description : String,  // описание дневника
                 @ColumnInfo(name = "date") var date : String
 ) : Serializable
 {
@@ -23,7 +23,7 @@ data class Word(@ColumnInfo(name = "word") val word: String,                 // 
 }
 
 @Entity(tableName = "note_table")
-data class Note(@ColumnInfo(name = "note_name") val note : String,      // название заметки
+data class Note(@ColumnInfo(name = "note_name") var note : String,      // название заметки
                 @ColumnInfo(name = "text") var text : String,           // текст заметки
                 @ColumnInfo(name = "diaryId") val diaryId : Long,       // id дневника, к к-му привязана
                 @ColumnInfo(name = "dateNote") var dateNote : String

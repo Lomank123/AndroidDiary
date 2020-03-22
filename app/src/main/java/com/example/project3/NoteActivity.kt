@@ -210,17 +210,13 @@ class NoteActivity : AppCompatActivity() {
 
         if (requestCode == editActivityRequestCode && resultCode == Activity.RESULT_OK)
         {
-            //TODO : прописать логику обновления заметки
-
-
-
-
-
-
+            val noteEdit = data?.getSerializableExtra(EditActivityNote.EXTRA_EDIT_NOTE) as? Note
+            val imgNoteEdit = data?.getStringExtra(EditActivityNote.EXTRA_IMAGE_EDIT_NOTE)
+            if (imgNoteEdit != null && imgNoteEdit != "")
+                noteEdit!!.imgNote = imgNoteEdit
+            if (noteEdit != null)
+                noteViewModel.updateNote(noteEdit)
         }
-
-
-
     }
 
     // создает OptionsMenu

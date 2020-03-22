@@ -46,4 +46,10 @@ class WordViewModel(application: Application) : AndroidViewModel(application) {
     fun deleteWord(word: Word) = viewModelScope.launch {
         repository.deleteWord(word)
     }
+
+    // обновляет запись, вызывая функцию в репозитории
+    fun updateWord(word : Word) = viewModelScope.launch{
+        repository.updateWord(word)
+    }
+
 }
