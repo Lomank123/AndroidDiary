@@ -19,7 +19,8 @@ import roomdatabase.Word
 class WordListAdapter internal constructor(
     context: Context,
     private val listenerDeleteWord : (Word) -> Unit,
-    private val listenerOpenWord : (Word) -> Unit
+    private val listenerOpenWord : (Word) -> Unit,
+    private val listenerEditWord : (Word) -> Unit
 ) : RecyclerView.Adapter<WordListAdapter.WordViewHolder>() {
 
     // По сути переменная inflater используется как метка на родительский XML,
@@ -83,6 +84,12 @@ class WordListAdapter internal constructor(
                             listener(word) // listener, описанный в NoteActivity
                             Toast.makeText(mContext, "Open diary", Toast.LENGTH_SHORT).show()
                             // Т.к. в этом обработчике нужно вернуть boolean, возвращаем true
+                            true
+                        }
+                        R.id.edit -> {
+                            listenerEditWord(word)
+                            Toast.makeText(mContext, "Edit diary", Toast.LENGTH_SHORT).show()
+
                             true
                         }
                         // Иначе вернем false (если when не сработал ни разу)

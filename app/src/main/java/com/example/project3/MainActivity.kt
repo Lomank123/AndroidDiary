@@ -23,6 +23,7 @@ import java.util.*
 class MainActivity : AppCompatActivity() {
 
     private val newWordActivityRequestCode = 1  // для NewWordActivity
+    private val editActivityRequestCode = 2
     private val settingsActivityRequestCode = 3
     private lateinit var wordViewModel: WordViewModel       // добавляем ViewModel
 
@@ -44,7 +45,14 @@ class MainActivity : AppCompatActivity() {
                 intent.putExtra("word_img", it.img) // передаем картинку
             // запускает ClickedActivity из MainActivity путем нажатия на элемент RecyclerView
                 startActivity(intent)
-            })// то, что в фигурных скобках это и есть аргумент listener : (Word) -> Unit в адаптере
+            }, {
+
+                val intent = Intent(this, EditActivity::class.java)
+                intent.putExtra("wordSerializableEdit", it)
+                startActivityForResult(intent, editActivityRequestCode)
+
+
+            }) // то, что в фигурных скобках это и есть аргумент listener : (Word) -> Unit в адаптере
 
         // задаем Adapter (одинаково для всех RecyclerView)
         recyclerview.adapter = adapter
@@ -97,7 +105,8 @@ class MainActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (requestCode == newWordActivityRequestCode && resultCode == Activity.RESULT_OK) {
+        if (requestCode == newWordActivityRequestCode && resultCode == Activity.RESULT_OK)
+        {
             data?.getStringArrayListExtra(NewWordActivity.EXTRA_REPLY)?.let {
 
                 // получаем текущую дату и вставляем в объект дневника
@@ -117,6 +126,18 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(
                 applicationContext, R.string.empty_not_saved, Toast.LENGTH_LONG).show()
         }
+
+        if (requestCode == editActivityRequestCode && resultCode == Activity.RESULT_OK)
+        {
+            // TODO: Прописать логику обновления дневника
+
+
+
+
+
+        }
+
+
     }
 
     // создает OptionsMenu

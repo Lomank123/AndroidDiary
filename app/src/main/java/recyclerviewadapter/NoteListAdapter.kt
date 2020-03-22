@@ -16,7 +16,8 @@ import roomdatabase.Note
 class NoteListAdapter internal constructor(
     context: Context,
     private val listenerOpen : (Note) -> Unit,  // похоже на какой-то template для функций
-    private val listenerDelete : (Note) -> Unit
+    private val listenerDelete : (Note) -> Unit,
+    private val listenerEdit : (Note) -> Unit
 ) : RecyclerView.Adapter<NoteListAdapter.NoteViewHolder>() {
 
     // По сути переменная inflater используется как метка на родительский XML,
@@ -95,6 +96,13 @@ class NoteListAdapter internal constructor(
                             listener(note)  // открытие записи
                             Toast.makeText(mContext, "Open note", Toast.LENGTH_SHORT).show()
                             // Т.к. в этом обработчике нужно вернуть boolean, возвращаем true
+                            true
+                        }
+                        R.id.edit -> {
+                            listenerEdit(note)
+                            Toast.makeText(mContext, "Edit note", Toast.LENGTH_SHORT).show()
+
+
                             true
                         }
                         // Иначе вернем false (если when не сработал ни разу)

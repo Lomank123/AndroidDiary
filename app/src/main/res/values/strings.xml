@@ -22,5 +22,6 @@
     <string name="font_check">Font style</string>
     <string name="img_check">Allow to show img</string>
     <string name="back_btn">Back</string>
+    <string name="edit_btn">Edit</string>
 
 </resources>

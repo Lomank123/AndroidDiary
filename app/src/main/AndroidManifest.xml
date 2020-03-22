@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     package="com.example.project3">
 
     <uses-permission android:name="android.permission.CAMERA" />
@@ -13,15 +12,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".EditActivityNote"></activity>
+        <activity android:name=".EditActivity" />
         <activity
             android:name=".SettingsHolderActivity"
-            android:label="@string/settings_btn"/>
+            android:label="@string/settings_btn" />
         <activity android:name=".AboutActivity" />
         <activity android:name=".NewNoteActivity" />
-        <activity
-            android:name=".NoteActivity"
-            android:parentActivityName=".MainActivity"
-            tools:targetApi="jelly_bean" />
+        <activity android:name=".NoteActivity" />
         <activity android:name=".ClickedActivity" />
         <activity android:name=".NewWordActivity" />
         <activity android:name=".MainActivity">
@@ -31,7 +29,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
     </application>
 
 </manifest>

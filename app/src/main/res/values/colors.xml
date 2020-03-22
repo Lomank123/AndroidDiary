@@ -6,4 +6,13 @@
     <color name="buttonLabel">#d3d3d3</color>
     <color name="white">#F8F8FF</color>
     <color name="black">#000000</color>
+
+    <!-- colors for the new theme -->
+
+    <color name="primary_color1">#F0BF5E</color>
+    <color name="primary_color_dark1">#BE984B</color>
+    <color name="navbar_color1">#26978A</color>
+    <color name="accent_color1">#FF7DCB</color>
+
+
 </resources>

@@ -2,12 +2,14 @@
 <menu xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/delete"
-        android:title="@string/delete_btn"/>
-    <item
         android:id="@+id/open"
         android:title="@string/open_btn" />
-
+    <item
+        android:id="@+id/edit"
+        android:title="@string/edit_btn" />
+    <item
+        android:id="@+id/delete"
+        android:title="@string/delete_btn"/>
 
 
 </menu>

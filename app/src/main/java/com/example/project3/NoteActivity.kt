@@ -26,6 +26,7 @@ class NoteActivity : AppCompatActivity() {
     private val newNoteActivityRequestCode = 1              // для NewWordActivity (requestCode)
     private val clickedActivityRequestCode = 2              // для ClickedActivity (requestCode)
     private val settingsActivityRequestCode = 3
+    private val editActivityRequestCode = 4
     private lateinit var noteViewModel: NoteViewModel       // добавляем ViewModel
 
 
@@ -51,7 +52,13 @@ class NoteActivity : AppCompatActivity() {
         }, {
             // второй listener, нужен для удаления заметки
             deleteNote(it)
-        })
+        } , {
+
+            val intent = Intent(this, EditActivityNote::class.java)
+            intent.putExtra("noteSerializableEdit", it)
+            startActivityForResult(intent, editActivityRequestCode)
+
+            })
 
         // Аналогично, как и в MainActivity
         recyclerview1.adapter = adapter
@@ -200,6 +207,20 @@ class NoteActivity : AppCompatActivity() {
         {
             Toast.makeText(this, "Canceled", Toast.LENGTH_SHORT).show()
         }
+
+        if (requestCode == editActivityRequestCode && resultCode == Activity.RESULT_OK)
+        {
+            //TODO : прописать логику обновления заметки
+
+
+
+
+
+
+        }
+
+
+
     }
 
     // создает OptionsMenu
