@@ -1,6 +1,10 @@
-# RoomDatabase
-Learning how to use Room database
+# AndroidDiary
 
+Описание:  
+
+  Ежедневник. Работа с текстом. Акцент на внешний вид и интересные функции. 
+  Возможность редактирования страницы ежедневника.
+  
 Word - means Diary (дневник)
 
 Note - means Note (заметка)
