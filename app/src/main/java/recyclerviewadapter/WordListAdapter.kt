@@ -49,8 +49,7 @@ class WordListAdapter internal constructor(
             // устанавливаем значения во вью
             wordItemView.text = word.word
             wordDescriptionView.text = word.description // записываем в TextView строку (описание)
-            //TODO: поменять расположение даты
-            //wordDateView.text = word.date // записываем дату
+            wordDateView.text = word.date // записываем дату
 
             // установка фото
             if (word.img != null)

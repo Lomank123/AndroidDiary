@@ -49,12 +49,12 @@ class NoteListAdapter internal constructor(
             // устанавливаем значения во вью
             noteItemView.text = note.note // название заметки
 
-            // Лимит на кол-во символов в тексте заметки для отображения: 10
+            // Лимит на кол-во символов в тексте заметки для отображения: 12
             var count = 0
             var str = ""
-            for(i in note.text) { // записываем в строку первые 10 символов
-                if (count == 10) {
-                    str += ".." // если их > 10, добавляем многоточие и завершаем цикл
+            for(i in note.text) { // записываем в строку первые 12 символов
+                if (count == 12) {
+                    str += ".." // если их > 12, добавляем многоточие и завершаем цикл
                     break
                 }
                 str += i
@@ -62,8 +62,7 @@ class NoteListAdapter internal constructor(
             }
             // в RecyclerView будут видны первые 16 символов текста заметки
             noteDescriptionView.text = str // текст заметки
-            //TODO: поменять расположение даты
-            //noteDateView.text = note.dateNote // дата
+            noteDateView.text = note.dateNote // дата
 
             if (note.imgNote != null)
             {

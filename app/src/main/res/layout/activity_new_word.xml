@@ -14,7 +14,7 @@
         android:layout_marginBottom="36dp"
         android:hint="@string/hint_diary"
         android:inputType="textAutoComplete"
-        android:maxLength="16"
+        android:maxLength="14"
         android:padding="@dimen/small_padding"
         android:textSize="18sp"
         app:fontFamily="sans-serif-light"
