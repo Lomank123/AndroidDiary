@@ -1,6 +1,5 @@
 package com.example.project3
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
@@ -18,7 +17,6 @@ class EditActivity : AppCompatActivity() {
 
     private val replyIntent = Intent()
 
-    @SuppressLint("SimpleDateFormat")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_new_word)

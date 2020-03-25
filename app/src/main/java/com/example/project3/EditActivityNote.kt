@@ -1,6 +1,5 @@
 package com.example.project3
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
@@ -18,7 +17,6 @@ class EditActivityNote : AppCompatActivity() {
 
     private val replyIntent = Intent()
 
-    @SuppressLint("SimpleDateFormat")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_new_note)
@@ -33,6 +31,7 @@ class EditActivityNote : AppCompatActivity() {
             val uriImage = Uri.parse(note.imgNote)
             imageView_note.setImageURI(uriImage)
         }
+
         button_save_note.setOnClickListener {
             if (TextUtils.isEmpty(edit_note.text)) {
                 // устанавливаем результат как RESULT_CANCELED (отменен)
@@ -54,27 +53,34 @@ class EditActivityNote : AppCompatActivity() {
             }
             finish()
         }
+
         button_cancel_note1.setOnClickListener {
             // устанавливаем результат и завершаем работу с активити
             setResult(Activity.RESULT_CANCELED)
             finish()
         }
+
         photo_button_note.setOnClickListener{
             // Выбираем фото из галереи
             val choosePhotoIntent = Intent(Intent.ACTION_PICK)
             choosePhotoIntent.type = "image/*"
             startActivityForResult(choosePhotoIntent, choosePhotoRequestCode)
         }
+
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+
         if (requestCode == choosePhotoRequestCode && resultCode == Activity.RESULT_OK)
         {
             imageView_note.setImageURI(data?.data)
             replyIntent.putExtra(EXTRA_IMAGE_EDIT_NOTE, data?.data.toString())
         }
+
     }
+
 
     // тег для распознавания именно этого запроса
     companion object {

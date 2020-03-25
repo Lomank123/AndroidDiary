@@ -12,37 +12,25 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
-        <activity
-            android:name=".EditActivityNote"
-            android:label="@string/edit_note" />
-        <activity
-            android:name=".EditActivity"
-            android:label="@string/edit_diary" />
+        <activity android:name=".EditActivityNote"
+            android:label="@string/edit_note"/>
+        <activity android:name=".EditActivity"
+            android:label="@string/edit_diary"/>
         <activity
             android:name=".SettingsHolderActivity"
             android:label="@string/settings_btn" />
-        <activity
-            android:name=".AboutActivity"
-            android:label="@string/about_btn" />
-        <activity
-            android:name=".NewNoteActivity"
-            android:label="@string/new_note" />
-        <activity
-            android:name=".NoteActivity"
-            android:label="@string/notes_btn" />
-        <activity
-            android:name=".ClickedActivity"
-            android:label="@string/clicked_note" />
-        <activity
-            android:name=".NewWordActivity"
-            android:label="@string/new_diary" />
-        <activity
-            android:name=".MainActivity"
-            android:label="@string/app_name" />
-        <activity
-            android:name=".SplashActivity"
-            android:theme="@style/SplashTheme">
+        <activity android:name=".AboutActivity"
+            android:label="@string/about_btn"/>
+        <activity android:name=".NewNoteActivity"
+            android:label="@string/new_note"/>
+        <activity android:name=".NoteActivity"
+            android:label="@string/notes_btn"/>
+        <activity android:name=".ClickedActivity"
+            android:label="@string/clicked_note"/>
+        <activity android:name=".NewWordActivity"
+            android:label="@string/new_diary"/>
+        <activity android:name=".MainActivity"
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -50,4 +38,5 @@
             </intent-filter>
         </activity>
     </application>
+
 </manifest>

@@ -1,6 +1,5 @@
 package com.example.project3
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
@@ -87,6 +86,7 @@ class MainActivity : AppCompatActivity() {
             startActivityForResult(intent, newWordActivityRequestCode)
         }
 
+        // TODO: Изменить или убрать сортировку (за ненадобностью)
         // кнопка, которая будет выводить отсортированный список (если добавить запись все собьется)
         val fab1 = findViewById<FloatingActionButton>(R.id.fab1)
         fab1.setOnClickListener {
@@ -102,7 +102,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     // функция для обработки результата после вызова startActivityForResult()
-    @SuppressLint("SimpleDateFormat")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -116,8 +115,7 @@ class MainActivity : AppCompatActivity() {
                 val currentDate = simpleDateFormat.format(Date())
                 // получаем из экстра данных нашу строку и создаем объект Word с той же строкой
                 val word = Word(it[0], it[1], currentDate)
-                if (data.getStringExtra(EXTRA_IMAGE) != "" && data.getStringExtra(EXTRA_IMAGE) != null)
-                    word.img = data.getStringExtra(EXTRA_IMAGE)
+                word.img = data.getStringExtra(EXTRA_IMAGE)
                 wordViewModel.insertWord(word) // добавляем запись в БД
             }
         } else    // Если было пустое поле
@@ -149,17 +147,22 @@ class MainActivity : AppCompatActivity() {
         when(item.itemId){
             R.id.settings -> {
                 // открытие окна "Настройки"
+
                 val intentSettings = Intent(this, SettingsHolderActivity::class.java)
                 startActivityForResult(intentSettings, settingsActivityRequestCode)
+
+                Toast.makeText(this, "Settings", Toast.LENGTH_SHORT).show()
                 return super.onOptionsItemSelected(item)
             }
             R.id.about -> {
                 // открытие окна "О нас"
                 val aboutIntent = Intent(this, AboutActivity::class.java)
                 startActivity(aboutIntent)
+
+                Toast.makeText(this, "About", Toast.LENGTH_SHORT).show()
                 return super.onOptionsItemSelected(item)
             }
         }
         return super.onOptionsItemSelected(item)
     }
-}
+} // TODO: ПОМЕНЯТЬ НАЗВАНИЯ КНОПОК ВО ВСЕХ ФАЙЛАХ ЧТОБЫ БЫЛО ПО СМЫСЛУ (ОПЦИОНАЛЬНО)
