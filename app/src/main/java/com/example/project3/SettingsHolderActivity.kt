@@ -2,7 +2,10 @@ package com.example.project3
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.preference.ListPreference
 import androidx.preference.PreferenceFragmentCompat
+import roomdatabase.Word
+import roomdatabase.WordDao
 
 class SettingsHolderActivity : AppCompatActivity() {
 

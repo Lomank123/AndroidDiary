@@ -30,10 +30,6 @@ The margin is a simple delimiter between the words. -->
         <item name="android:activityCloseExitAnimation">@anim/slide_out_right</item>
     </style>
 
-    <!-- Base splash activity theme. -->
-    <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
-        <item name="android:windowBackground">@drawable/splash_screen1</item>
-    </style>
 
 
 </resources>

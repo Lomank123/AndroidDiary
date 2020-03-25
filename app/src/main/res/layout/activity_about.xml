@@ -9,7 +9,7 @@
     <ScrollView
         android:id="@+id/scrollView2"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:layout_marginTop="1dp"
         android:layout_marginBottom="1dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -17,7 +17,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.495">
+        app:layout_constraintVertical_bias="0.0">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -25,19 +25,10 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/textView6"
+                android:id="@+id/textView5"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/app_ver"
-                android:textAlignment="textStart" />
-
-            <TextView
-                android:id="@+id/textView7"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/creators"
-                android:textAlignment="center"
-                android:textStyle="bold" />
+                android:text="TextView" />
 
             <TextView
                 android:id="@+id/textView3"
@@ -45,8 +36,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="40dp"
                 android:text="@string/robert"
-                android:textAlignment="center"
-                android:textStyle="bold" />
+                android:textAlignment="center" />
 
             <TextView
                 android:id="@+id/textView2"
@@ -54,8 +44,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="40dp"
                 android:text="@string/karina"
-                android:textAlignment="center"
-                android:textStyle="bold" />
+                android:textAlignment="center" />
 
             <TextView
                 android:id="@+id/textView4"
@@ -63,10 +52,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="40dp"
                 android:text="@string/jenya"
-                android:textAlignment="center"
-                android:textStyle="bold" />
+                android:textAlignment="center" />
 
         </LinearLayout>
     </ScrollView>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

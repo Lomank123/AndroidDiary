@@ -35,10 +35,8 @@
     <string name="clicked_note">Your note</string>
 
     <!-- Creators -->
-    <string name="creators">Creators</string>
     <string name="karina">Karina Gabbasova</string>
     <string name="jenya">Eugene Taychinov</string>
     <string name="robert">Robert Khakimov</string>
-    <string name="app_ver">App version: 1.0</string>
 
 </resources>
