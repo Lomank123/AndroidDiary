@@ -24,7 +24,7 @@ import java.util.*
 
 class NoteActivity : AppCompatActivity() {
 
-    private val newNoteActivityRequestCode = 1              // для NewWordActivity (requestCode)
+    private val newNoteActivityRequestCode = 14              // для NewWordActivity (requestCode)
     private val clickedActivityRequestCode = 2              // для ClickedActivity (requestCode)
     private val settingsActivityRequestCode = 3
     private val editActivityRequestCode = 4
