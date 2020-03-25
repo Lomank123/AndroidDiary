@@ -1,5 +1,6 @@
 package com.example.project3
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.SharedPreferences
@@ -78,7 +79,6 @@ class ClickedActivity : AppCompatActivity() {
                 editText1.typeface = Typeface.MONOSPACE
             }
         }
-
     }
 
     // создает OptionsMenu
@@ -88,6 +88,7 @@ class ClickedActivity : AppCompatActivity() {
     }
 
     // когда выбираешь элемент меню
+    @SuppressLint("SimpleDateFormat")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
         val note = intent.getSerializableExtra("noteSerializable") as? Note
@@ -117,6 +118,7 @@ class ClickedActivity : AppCompatActivity() {
             }
             R.id.cancel_btn_edit -> { // Кнопка Cancel
                 setResult(Activity.RESULT_CANCELED)
+                Toast.makeText(this, "Canceled", Toast.LENGTH_SHORT).show()
                 finish()
             }
         }

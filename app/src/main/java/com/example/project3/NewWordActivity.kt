@@ -18,8 +18,6 @@ class NewWordActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_new_word)
 
-
-
         // обработчик нажатий на кнопку Save
         button_save.setOnClickListener {
 

@@ -1,5 +1,6 @@
 package recyclerviewadapter
 
+import android.app.AlertDialog
 import android.content.Context
 import android.net.Uri
 import android.view.LayoutInflater
@@ -42,7 +43,6 @@ class NoteListAdapter internal constructor(
 
         private val noteDateView : TextView = itemView.findViewById(R.id.date_text)
 
-
         // эта функция применяется для каждого члена RecyclerView т.к. вызывается в onBindViewHolder
         fun bindView(note: Note, listener : (Note) -> Unit) {
 
@@ -69,6 +69,10 @@ class NoteListAdapter internal constructor(
                 val uriImage = Uri.parse(note.imgNote)
                 noteImageView.setImageURI(uriImage)
             }
+            else
+            {
+                noteImageView.setImageResource(R.mipmap.ic_launcher_round)
+            }
 
             // Устанавливаем обработчик нажатий на элемент RecyclerView, при нажатии
             // будет вызываться первый listener (listenerOpen), который открывает заметку
@@ -78,7 +82,6 @@ class NoteListAdapter internal constructor(
 
             // обработчик долгих нажатий для вызова контекстного меню
             itemView.setOnLongClickListener{
-                Toast.makeText(mContext, "Long Click", Toast.LENGTH_SHORT).show()
 
                 // Устанавливаем контекстное меню
                 val popupMenu = PopupMenu(mContext, it)
@@ -87,21 +90,29 @@ class NoteListAdapter internal constructor(
                 popupMenu.setOnMenuItemClickListener { item ->
                     when(item.itemId) {     // сколько пунктов меню - столько и вариантов в when()
                         R.id.delete -> {
-                            listenerDelete(note)  // удаление записи
-                            Toast.makeText(mContext, "Delete note", Toast.LENGTH_SHORT).show()
+
+                            val deleteDialog = AlertDialog.Builder(mContext)
+                            deleteDialog.setTitle("Delete")
+                            deleteDialog.setMessage("Do you want to delete this note?")
+                            deleteDialog.setPositiveButton("Yes"){dialog, id ->
+                                listenerDelete(note)  // удаление записи
+                                notifyDataSetChanged()
+                                Toast.makeText(mContext, "Deleted", Toast.LENGTH_SHORT).show()
+                            }
+                            deleteDialog.setNegativeButton("No"){dialog, id ->
+                                dialog.dismiss()
+                            }
+                            deleteDialog.show()
                             true
                         }
                         R.id.open -> {
                             listener(note)  // открытие записи
-                            Toast.makeText(mContext, "Open note", Toast.LENGTH_SHORT).show()
                             // Т.к. в этом обработчике нужно вернуть boolean, возвращаем true
                             true
                         }
                         R.id.edit -> {
                             listenerEdit(note)
-                            Toast.makeText(mContext, "Edit note", Toast.LENGTH_SHORT).show()
-
-
+                            notifyDataSetChanged()
                             true
                         }
                         // Иначе вернем false (если when не сработал ни разу)

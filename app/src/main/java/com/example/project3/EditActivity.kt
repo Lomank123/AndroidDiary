@@ -1,5 +1,6 @@
 package com.example.project3
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
@@ -17,6 +18,7 @@ class EditActivity : AppCompatActivity() {
 
     private val replyIntent = Intent()
 
+    @SuppressLint("SimpleDateFormat")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_new_word)
@@ -30,7 +32,6 @@ class EditActivity : AppCompatActivity() {
             val uriImage = Uri.parse(word.img)
             imageView5.setImageURI(uriImage)
         }
-
         button_save.setOnClickListener {
 
             if (TextUtils.isEmpty(edit_word.text)) {
@@ -55,14 +56,11 @@ class EditActivity : AppCompatActivity() {
             // завершаем работу с активити
             finish()
         }
-
-
         button_cancel_word1.setOnClickListener {
             // устанавливаем результат и завершаем работу с активити
             setResult(Activity.RESULT_CANCELED)
             finish()
         }
-
         // слушатель для кнопки Choose photo
         photo_button.setOnClickListener{
             // Выбираем фото из галереи
@@ -70,7 +68,6 @@ class EditActivity : AppCompatActivity() {
             choosePhotoIntent.type = "image/*"
             startActivityForResult(choosePhotoIntent, choosePhotoRequestCode)
         }
-
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -84,11 +81,9 @@ class EditActivity : AppCompatActivity() {
 
     }
 
-
     // тег для распознавания именно этого запроса
     companion object {
         const val EXTRA_EDIT_WORD = "WordReplyEdit"
         const val EXTRA_IMAGE_EDIT_WORD = "ImgWordReplyEdit"
     }
-
 }
