@@ -1,5 +1,6 @@
 package recyclerviewadapter
 
+import android.app.AlertDialog
 import android.content.Context
 import android.net.Uri
 import android.view.LayoutInflater
@@ -66,8 +67,6 @@ class WordListAdapter internal constructor(
 
             // обработчик долгих нажатий для вызова контекстного меню
             itemView.setOnLongClickListener{
-                Toast.makeText(mContext, "Long Click", Toast.LENGTH_SHORT).show()
-
                 // Устанавливаем контекстное меню
                 val popupMenu = PopupMenu(mContext, it)
 
@@ -75,20 +74,27 @@ class WordListAdapter internal constructor(
                 popupMenu.setOnMenuItemClickListener { item ->
                     when(item.itemId) {     // сколько пунктов меню - столько и вариантов в when()
                         R.id.delete -> {    // удаление дневника
-                            listenerDeleteWord(word) // вызываем listener, описанный в NoteActivity
-                            Toast.makeText(mContext, "Delete diary", Toast.LENGTH_SHORT).show()
+
+                            val deleteDialog = AlertDialog.Builder(mContext)
+                            deleteDialog.setTitle("Delete")
+                            deleteDialog.setMessage("Do you want to delete this diary?")
+                            deleteDialog.setPositiveButton("Yes"){dialog, id ->
+                                listenerDeleteWord(word) // вызываем listener
+                                Toast.makeText(mContext, "Deleted", Toast.LENGTH_SHORT).show()
+                            }
+                            deleteDialog.setNegativeButton("No"){dialog, id ->
+                                dialog.dismiss()
+                            }
+                            deleteDialog.show()
                             true
                         }
                         R.id.open -> { // открытие дневника
                             listener(word) // listener, описанный в NoteActivity
-                            Toast.makeText(mContext, "Open diary", Toast.LENGTH_SHORT).show()
                             // Т.к. в этом обработчике нужно вернуть boolean, возвращаем true
                             true
                         }
                         R.id.edit -> {
                             listenerEditWord(word)
-                            Toast.makeText(mContext, "Edit diary", Toast.LENGTH_SHORT).show()
-
                             true
                         }
                         // Иначе вернем false (если when не сработал ни разу)

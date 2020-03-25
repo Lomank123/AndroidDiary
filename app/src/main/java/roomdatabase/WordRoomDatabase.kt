@@ -29,7 +29,7 @@ abstract class WordRoomDatabase : RoomDatabase() {
 
         // ф-ия для возможных начальных данных или другого функционала
         suspend fun populateDatabase(wordDao: WordDao) {
-            // удалит все записи при перезапуске приложения (можно вынести в отдельную кнопку)
+            // удалит все записи при перезапуске приложения
             //wordDao.deleteAll()
             //wordDao.deleteAllNotes()
         }
