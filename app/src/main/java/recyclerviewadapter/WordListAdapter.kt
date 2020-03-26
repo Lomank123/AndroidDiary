@@ -109,15 +109,15 @@ class WordListAdapter internal constructor(
         }
     }
 
-    private fun setAnimation(viewToAnimate : View)
-    {
-        if(viewToAnimate.animation == null)
-        {
-            val animation = AnimationUtils.loadAnimation(viewToAnimate.context,
-            android.R.anim.slide_in_left)
-            viewToAnimate.animation = animation
-        }
-    }
+    //private fun setAnimation(viewToAnimate : View)
+    //{
+    //    if(viewToAnimate.animation == null)
+    //    {
+    //        val animation = AnimationUtils.loadAnimation(viewToAnimate.context,
+    //        android.R.anim.slide_in_left)
+    //        viewToAnimate.animation = animation
+    //    }
+    //}
 
     // создание ViewHolder (одинаково для всех RecyclerView)
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WordViewHolder {
@@ -130,7 +130,7 @@ class WordListAdapter internal constructor(
     // Устанавливает значение для каждого элемента RecyclerView
     override fun onBindViewHolder(holder: WordViewHolder, position: Int) {
         holder.bindView(words[position], listenerOpenWord)
-        setAnimation(holder.itemView)
+        //setAnimation(holder.itemView)
     }
 
     // ВАЖНО: setWords вызывается в момент того, когда обсервер заметил изменения в записях
