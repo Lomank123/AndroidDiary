@@ -26,8 +26,7 @@ class NoteActivity : AppCompatActivity() {
 
     private val newNoteActivityRequestCode = 1              // для NewWordActivity (requestCode)
     private val clickedActivityRequestCode = 2              // для ClickedActivity (requestCode)
-    private val settingsActivityRequestCode = 3
-    private val editActivityRequestCode = 4
+    private val editActivityRequestCode = 3
     private lateinit var noteViewModel: NoteViewModel       // добавляем ViewModel
 
 
@@ -191,9 +190,10 @@ class NoteActivity : AppCompatActivity() {
                 }
             }
         }
-        if (requestCode == newNoteActivityRequestCode && resultCode == Activity.RESULT_CANCELED)
+        if ((requestCode == newNoteActivityRequestCode || requestCode == editActivityRequestCode) &&
+            resultCode == Activity.RESULT_CANCELED)
         {
-            Toast.makeText(this, "Canceled or note name is empty",
+            Toast.makeText(this, "Canceled or diary name is empty",
                 Toast.LENGTH_SHORT).show()
         }
 
@@ -232,7 +232,7 @@ class NoteActivity : AppCompatActivity() {
             R.id.settings -> {
                 // открытие окна "Настройки"
                 val intentSettings = Intent(this, SettingsHolderActivity::class.java)
-                startActivityForResult(intentSettings, settingsActivityRequestCode)
+                startActivity(intentSettings)
                 return super.onOptionsItemSelected(item)
             }
             R.id.about -> {

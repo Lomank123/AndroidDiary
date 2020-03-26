@@ -6,6 +6,7 @@ import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.TextView
@@ -70,9 +71,7 @@ class NoteListAdapter internal constructor(
                 noteImageView.setImageURI(uriImage)
             }
             else
-            {
                 noteImageView.setImageResource(R.mipmap.ic_launcher_round)
-            }
 
             // Устанавливаем обработчик нажатий на элемент RecyclerView, при нажатии
             // будет вызываться первый listener (listenerOpen), который открывает заметку
@@ -128,6 +127,17 @@ class NoteListAdapter internal constructor(
         }
     }
 
+    private fun setAnimation(viewToAnimate : View)
+    {
+        if(viewToAnimate.animation == null)
+        {
+            val animation = AnimationUtils.loadAnimation(viewToAnimate.context,
+                android.R.anim.slide_in_left)
+            viewToAnimate.animation = animation
+        }
+    }
+
+
     // создание ViewHolder (одинаково для всех RecyclerView)
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoteViewHolder {
         // добавляет контент(XML) из 1-го аргумента, и помещает во второй (родительский)
@@ -139,6 +149,7 @@ class NoteListAdapter internal constructor(
     // Устанавливает значение для каждого элемента RecyclerView
     override fun onBindViewHolder(holder: NoteViewHolder, position: Int) {
         holder.bindView(notes[position], listenerOpen)
+        setAnimation(holder.itemView)
     }
 
     // ВАЖНО: setWords вызывается в момент того, когда обсервер заметил изменения в записях

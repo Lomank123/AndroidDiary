@@ -6,11 +6,8 @@ import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.PopupMenu
-import android.widget.TextView
-import android.widget.Toast
-import androidx.core.content.ContextCompat
+import android.view.animation.AnimationUtils
+import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import com.example.project3.R
 import roomdatabase.Word
@@ -60,26 +57,22 @@ class WordListAdapter internal constructor(
                 wordImageView.setImageURI(uriImage)
             }
             else
-            {
                 wordImageView.setImageResource(R.mipmap.ic_launcher_round)
-            }
 
             // Устанавливаем обработчик нажатий на элемент RecyclerView, при нажатии
             // будет вызываться первый listener, который открывает дневник
             itemView.setOnClickListener {
                 listener(word)
             }
-
             // обработчик долгих нажатий для вызова контекстного меню
             itemView.setOnLongClickListener{
                 // Устанавливаем контекстное меню
                 val popupMenu = PopupMenu(mContext, it)
-
                 // Устанавливаем обработчик нажатий на пункты контекстного меню
                 popupMenu.setOnMenuItemClickListener { item ->
                     when(item.itemId) {     // сколько пунктов меню - столько и вариантов в when()
                         R.id.delete -> {    // удаление дневника
-
+                            // Диалоговое окно
                             val deleteDialog = AlertDialog.Builder(mContext)
                             deleteDialog.setTitle("Delete")
                             deleteDialog.setMessage("Do you want to delete this diary?")
@@ -112,6 +105,17 @@ class WordListAdapter internal constructor(
                 // Т.к. в LongClickListener нужно вернуть boolean, возвращаем его
                 return@setOnLongClickListener true
             }
+
+        }
+    }
+
+    private fun setAnimation(viewToAnimate : View)
+    {
+        if(viewToAnimate.animation == null)
+        {
+            val animation = AnimationUtils.loadAnimation(viewToAnimate.context,
+            android.R.anim.slide_in_left)
+            viewToAnimate.animation = animation
         }
     }
 
@@ -126,6 +130,7 @@ class WordListAdapter internal constructor(
     // Устанавливает значение для каждого элемента RecyclerView
     override fun onBindViewHolder(holder: WordViewHolder, position: Int) {
         holder.bindView(words[position], listenerOpenWord)
+        setAnimation(holder.itemView)
     }
 
     // ВАЖНО: setWords вызывается в момент того, когда обсервер заметил изменения в записях

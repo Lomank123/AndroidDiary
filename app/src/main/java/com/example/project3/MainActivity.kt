@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity() {
 
     private val newWordActivityRequestCode = 1  // для NewWordActivity
     private val editActivityRequestCode = 2
-    private val settingsActivityRequestCode = 3
+
     private lateinit var wordViewModel: WordViewModel       // добавляем ViewModel
 
 
@@ -120,12 +120,6 @@ class MainActivity : AppCompatActivity() {
                     word.img = data.getStringExtra(EXTRA_IMAGE)
                 wordViewModel.insertWord(word) // добавляем запись в БД
             }
-        } else    // Если было пустое поле
-        {
-            // выводим сообщение о том что поле пустое, ничего не меняя в БД
-            Toast.makeText(
-                applicationContext, R.string.empty_not_saved, Toast.LENGTH_LONG
-            ).show()
         }
 
         if (requestCode == editActivityRequestCode && resultCode == Activity.RESULT_OK) {
@@ -135,6 +129,13 @@ class MainActivity : AppCompatActivity() {
                 wordEdit!!.img = imgWordEdit
             if (wordEdit != null)
                 wordViewModel.updateWord(wordEdit)
+        }
+
+        if ((requestCode == newWordActivityRequestCode || requestCode == editActivityRequestCode) &&
+            resultCode == Activity.RESULT_CANCELED)
+        {
+            Toast.makeText(this, "Canceled or diary name is empty",
+                Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -150,7 +151,7 @@ class MainActivity : AppCompatActivity() {
             R.id.settings -> {
                 // открытие окна "Настройки"
                 val intentSettings = Intent(this, SettingsHolderActivity::class.java)
-                startActivityForResult(intentSettings, settingsActivityRequestCode)
+                startActivity(intentSettings)
                 return super.onOptionsItemSelected(item)
             }
             R.id.about -> {
