@@ -127,15 +127,15 @@ class NoteListAdapter internal constructor(
         }
     }
 
-    private fun setAnimation(viewToAnimate : View)
-    {
-        if(viewToAnimate.animation == null)
-        {
-            val animation = AnimationUtils.loadAnimation(viewToAnimate.context,
-                android.R.anim.slide_in_left)
-            viewToAnimate.animation = animation
-        }
-    }
+    //private fun setAnimation(viewToAnimate : View)
+    //{
+    //    if(viewToAnimate.animation == null)
+    //    {
+    //        val animation = AnimationUtils.loadAnimation(viewToAnimate.context,
+    //            android.R.anim.slide_in_left)
+    //        viewToAnimate.animation = animation
+    //    }
+    //}
 
 
     // создание ViewHolder (одинаково для всех RecyclerView)
@@ -149,7 +149,7 @@ class NoteListAdapter internal constructor(
     // Устанавливает значение для каждого элемента RecyclerView
     override fun onBindViewHolder(holder: NoteViewHolder, position: Int) {
         holder.bindView(notes[position], listenerOpen)
-        setAnimation(holder.itemView)
+       // setAnimation(holder.itemView)
     }
 
     // ВАЖНО: setWords вызывается в момент того, когда обсервер заметил изменения в записях
