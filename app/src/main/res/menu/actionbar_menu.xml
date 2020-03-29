@@ -8,11 +8,5 @@
         android:id="@+id/about"
         android:title="@string/about_btn" />
 
-    <item
-        android:id="@+id/calendar_btn"
-        android:icon="@android:drawable/ic_menu_my_calendar"
-        android:title="@string/sample"
-        app:showAsAction="ifRoom" />
-
 
 </menu>
