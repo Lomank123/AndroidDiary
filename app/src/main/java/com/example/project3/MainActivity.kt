@@ -8,6 +8,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -27,7 +28,6 @@ class MainActivity : AppCompatActivity() {
     private val editActivityRequestCode = 2
 
     private lateinit var wordViewModel: WordViewModel       // добавляем ViewModel
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,8 +51,6 @@ class MainActivity : AppCompatActivity() {
                 val intent = Intent(this, EditActivity::class.java)
                 intent.putExtra("wordSerializableEdit", it)
                 startActivityForResult(intent, editActivityRequestCode)
-
-
             }) // то, что в фигурных скобках это и есть аргумент listener : (Word) -> Unit в адаптере
 
         // задаем Adapter (одинаково для всех RecyclerView)
@@ -76,6 +74,7 @@ class MainActivity : AppCompatActivity() {
         // и нужно их обновить и в самом RecycleView
         wordViewModel.allWords.observe(this, Observer {
             adapter.setWords(it)
+
         })
 
         // кнопка для запуска активити для добавления записи
@@ -87,12 +86,6 @@ class MainActivity : AppCompatActivity() {
             startActivityForResult(intent, newWordActivityRequestCode)
         }
 
-        // кнопка, которая будет выводить отсортированный список (если добавить запись все собьется)
-        val fab1 = findViewById<FloatingActionButton>(R.id.fab1)
-        fab1.setOnClickListener {
-            adapter.setNewWords(wordViewModel.allWords.value!!)
-            adapter.notifyDataSetChanged()
-        }
     }
 
     // Удаляет дневник. Вызов происходит через ViewModel
@@ -142,6 +135,69 @@ class MainActivity : AppCompatActivity() {
     // создает OptionsMenu
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.actionbar_menu, menu)
+        val searchItem = menu!!.findItem(R.id.search_view)
+        if (searchItem != null)
+        {
+
+            val searchView = searchItem.actionView as SearchView
+            searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
+
+                val adapter = WordListAdapter(this@MainActivity,
+                    {
+                        // Первый listener, отвечает за удаление дневника
+                        deleteWord(it)
+                    }, {
+                        // Второй listener
+                        // отсюда будет запускаться новый RecyclerView для отображения списка заметок
+                        val intent = Intent(this@MainActivity, NoteActivity::class.java)
+                        intent.putExtra("word_id", it.id) // передаем id дневника
+                        intent.putExtra("word_img", it.img) // передаем картинку
+                        // запускает ClickedActivity из MainActivity путем нажатия на элемент RecyclerView
+                        startActivity(intent)
+                    }, {
+
+                        val intent = Intent(this@MainActivity, EditActivity::class.java)
+                        intent.putExtra("wordSerializableEdit", it)
+                        startActivityForResult(intent, editActivityRequestCode)
+                    })
+
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    return true
+                }
+
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    recyclerview.adapter = adapter
+                    wordViewModel.allWords.observe(this@MainActivity, Observer {
+
+                        if (newText!!.isNotEmpty())
+                        {
+                            val wordList1 = mutableListOf<Word>()
+                            val search = newText.toLowerCase(Locale.ROOT)
+                            it.forEach{words ->
+                                if(words.word.toLowerCase(Locale.ROOT).contains(search))
+                                    wordList1.add(words)
+                            }
+                            adapter.setWords(wordList1)
+                        }
+                        else
+                            adapter.setWords(it)
+                    })
+                    if (newText!!.isNotEmpty())
+                    {
+                        val wordList1 = mutableListOf<Word>()
+                        val search = newText.toLowerCase(Locale.ROOT)
+                        wordViewModel.allWords.value!!.forEach{
+                            if(it.word.toLowerCase(Locale.ROOT).contains(search))
+                                wordList1.add(it)
+                        }
+                        adapter.setWords(wordList1)
+                    }
+                    else
+                        adapter.setWords(wordViewModel.allWords.value!!)
+                    return true
+                }
+            })
+        }
         return super.onCreateOptionsMenu(menu)
     }
 

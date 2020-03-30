@@ -98,7 +98,7 @@ class NoteListAdapter internal constructor(
                                 notifyDataSetChanged()
                                 Toast.makeText(mContext, "Deleted", Toast.LENGTH_SHORT).show()
                             }
-                            deleteDialog.setNegativeButton("No"){dialog, id ->
+                            deleteDialog.setNegativeButton("No"){ dialog, _ ->
                                 dialog.dismiss()
                             }
                             deleteDialog.show()

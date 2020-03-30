@@ -10,6 +10,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View.*
 import android.widget.Toast
+import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -223,6 +224,85 @@ class NoteActivity : AppCompatActivity() {
     // создает OptionsMenu
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.actionbar_menu, menu)
+
+        val searchItem = menu!!.findItem(R.id.search_view)
+        if (searchItem != null) {
+
+            val searchView = searchItem.actionView as SearchView
+            searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+
+                val adapter = NoteListAdapter(this@NoteActivity, {
+
+                    val intent = Intent(this@NoteActivity, ClickedActivity::class.java)
+
+                    // передаем необходимые данные в ClickedActivity
+                    intent.putExtra("noteSerializable", it)
+
+                    // запускает ClickedActivity из MainActivity путем нажатия на элемент RecyclerView
+                    startActivityForResult(intent, clickedActivityRequestCode)
+                }, {
+                    // второй listener, нужен для удаления заметки
+                    deleteNote(it)
+                }, {
+
+                    val intent = Intent(this@NoteActivity, EditActivityNote::class.java)
+                    intent.putExtra("noteSerializableEdit", it)
+                    startActivityForResult(intent, editActivityRequestCode)
+
+                })
+
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    return true
+                }
+
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    recyclerview1.adapter = adapter
+                    val wordId = intent.getLongExtra("word_id", -1)
+                    noteViewModel.allNotes.observe(this@NoteActivity, Observer {
+
+                        var getListNotes = emptyList<Note>()
+                        for (i in it) {
+                            if (i.word.id == wordId) {
+                                getListNotes = i.notes
+                                break
+                            }
+                        }
+                        if (newText!!.isNotEmpty()) {
+                            val noteList = mutableListOf<Note>()
+                            val search = newText.toLowerCase(Locale.ROOT)
+
+                            getListNotes.forEach{notes ->
+                                if(notes.note.toLowerCase(Locale.ROOT).contains(search))
+                                    noteList.add(notes)
+                            }
+                            adapter.setNotes(noteList)
+                        }
+                        else
+                            adapter.setNotes(getListNotes)
+                    })
+                    var getList = emptyList<Note>()
+                    for (i in noteViewModel.allNotes.value!!) {
+                        if (i.word.id == wordId) {
+                            getList = i.notes
+                            break
+                        }
+                    }
+                    if (newText!!.isNotEmpty())
+                    {
+                        val noteList = mutableListOf<Note>()
+                        val search = newText.toLowerCase(Locale.ROOT)
+                        getList.forEach{
+                            if(it.note.toLowerCase(Locale.ROOT).contains(search))
+                                noteList.add(it)
+                        }
+                        adapter.setNotes(noteList)
+                    }
+                    else
+                        adapter.setNotes(getList)
+                    return true
+                }
+            })
+        }
         return super.onCreateOptionsMenu(menu)
     }
 
