@@ -19,7 +19,7 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
 
     init {
         // Gets reference to WordDao from WordRoomDatabase to construct
-        // the correct WordRepository.
+        // the correct NoteRepository.
 
         // получаем данные из БД
         val wordsDao = WordRoomDatabase.getDatabase(application, viewModelScope).wordDao()
@@ -43,6 +43,4 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
     fun updateNote(note: Note) = viewModelScope.launch{
         repository.updateNote(note)
     }
-
-
 }

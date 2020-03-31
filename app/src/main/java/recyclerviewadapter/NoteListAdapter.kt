@@ -79,22 +79,27 @@ class NoteListAdapter internal constructor(
                 when (note.colorNote)
                 {
                     "pink" ->
-                        layoutItemView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.pink))
+                        layoutItemView.setBackgroundColor(ContextCompat.getColor(mContext,
+                            R.color.pink))
                     "green" ->
-                        layoutItemView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.green))
+                        layoutItemView.setBackgroundColor(ContextCompat.getColor(mContext,
+                            R.color.green))
                     "yellow" ->
-                        layoutItemView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.yellow))
+                        layoutItemView.setBackgroundColor(ContextCompat.getColor(mContext,
+                            R.color.yellow))
                     "blue" ->
-                        layoutItemView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.blue))
+                        layoutItemView.setBackgroundColor(ContextCompat.getColor(mContext,
+                            R.color.blue))
                     "grass" ->
-                        layoutItemView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.grass))
+                        layoutItemView.setBackgroundColor(ContextCompat.getColor(mContext,
+                            R.color.grass))
                     "purple" ->
-                        layoutItemView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.purple))
+                        layoutItemView.setBackgroundColor(ContextCompat.getColor(mContext,
+                            R.color.purple))
                 }
             }
             else
                 layoutItemView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white))
-
 
             // Устанавливаем обработчик нажатий на элемент RecyclerView, при нажатии
             // будет вызываться первый listener (listenerOpen), который открывает заметку
@@ -112,16 +117,23 @@ class NoteListAdapter internal constructor(
                 popupMenu.setOnMenuItemClickListener { item ->
                     when(item.itemId) {     // сколько пунктов меню - столько и вариантов в when()
                         R.id.delete -> {
-
                             val deleteDialog = AlertDialog.Builder(mContext)
-                            deleteDialog.setTitle("Delete")
-                            deleteDialog.setMessage("Do you want to delete this note?")
-                            deleteDialog.setPositiveButton("Yes"){ _, _ ->
+                            deleteDialog.setTitle(mContext.resources.
+                            getString(R.string.dialog_delete))
+                            deleteDialog.setMessage(mContext.resources.
+                            getString(R.string.dialog_check_delete_note))
+                            deleteDialog.setPositiveButton(mContext.resources.
+                            getString(R.string.dialog_yes))
+                            { _, _ ->
                                 listenerDelete(note)  // удаление записи
                                 notifyDataSetChanged()
-                                Toast.makeText(mContext, "Deleted", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(mContext,
+                                    mContext.resources.getString(R.string.dialog_deleted),
+                                    Toast.LENGTH_SHORT).show()
                             }
-                            deleteDialog.setNegativeButton("No"){ dialog, _ ->
+                            deleteDialog.setNegativeButton(mContext.resources.
+                            getString(R.string.dialog_no))
+                            { dialog, _ ->
                                 dialog.dismiss()
                             }
                             deleteDialog.show()
@@ -160,7 +172,6 @@ class NoteListAdapter internal constructor(
     //    }
     //}
 
-
     // создание ViewHolder (одинаково для всех RecyclerView)
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoteViewHolder {
         // добавляет контент(XML) из 1-го аргумента, и помещает во второй (родительский)
@@ -172,16 +183,12 @@ class NoteListAdapter internal constructor(
     // Устанавливает значение для каждого элемента RecyclerView
     override fun onBindViewHolder(holder: NoteViewHolder, position: Int) {
         holder.bindView(notes[position], listenerOpen)
-       // setAnimation(holder.itemView)
     }
 
-    // ВАЖНО: setWords вызывается в момент того, когда обсервер заметил изменения в записях
-    // и чтобы зафиксировать эти изменения в RecyclerView, нужно передавать новый список сюда
     internal fun setNotes(notes: List<Note>) {
         this.notes = notes      // обновляем внутренний список
         notifyDataSetChanged()  // даем понять адаптеру, что были внесены изменения
     }
 
     override fun getItemCount() = notes.size // сколько эл-тов будет в списке
-
 }

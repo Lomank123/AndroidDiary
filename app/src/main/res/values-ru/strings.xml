@@ -1,0 +1,61 @@
+<resources>
+
+    <string name="hint_diary">Дневник…</string>
+    <string name="button_save">Сохранить</string>
+    <string name="empty_not_saved">Отменено или поле с именем пустое</string>
+    <string name="empty_not_saved_note">Отменено или поле с именем пустое</string>
+    <string name="image">Image Text</string>
+    <string name="sample">Sample Text</string>
+    <string name="description">Описание…</string>
+    <string name="back_btn">Назад</string>
+    <string name="cancel_btn">Отмена</string>
+    <string name="hint_note">Заметка…</string>
+    <string name="hint_text_note">Текст…</string>
+    <string name="photo_choose">Выберите фото</string>
+    <string name="search">Поиск</string>
+    <string name="saved">Сохранено</string>
+    <string name="canceled">Отменено</string>
+    <string name="change_language">Если вы хотите изменить язык, измените
+        его в настройках вашего устройства, приложение переведется автоматически
+    </string>
+
+    <!-- Диалоговое окно -->
+    <string name="dialog_yes">Да</string>
+    <string name="dialog_no">Нет</string>
+    <string name="dialog_check_delete">Вы хотите удалить дневник?</string>
+    <string name="dialog_check_delete_note">Вы хотите удалить заметку?</string>
+    <string name="dialog_deleted">Удалено</string>
+    <string name="dialog_delete">Удаление</string>
+
+
+    <!-- Настройки -->
+    <string name="categoryMainSettings">Главные настройки</string>
+    <string name="font_check">Шрифт</string>
+    <string name="img_check">Разрешить показ фото</string>
+    <string name="color_check_diary">Цветные дневники</string>
+    <string name="color_check_note">Цветные заметки</string>
+
+    <!-- Меню -->
+    <string name="edit_btn">Редактировать</string>
+    <string name="open_btn">Открыть</string>
+    <string name="delete_btn">Удалить</string>
+
+    <!-- Надписи -->
+    <string name="about_btn">О приложении</string>
+    <string name="settings_btn">Настройки</string>
+    <string name="app_name">Дневник</string>
+    <string name="notes_btn">Заметки</string>
+    <string name="new_note">Новая заметка</string>
+    <string name="new_diary">Новый дневник</string>
+    <string name="edit_note">Изменение заметки</string>
+    <string name="edit_diary">Изменение дневника</string>
+    <string name="clicked_note">Заметка</string>
+
+    <!-- Создатели -->
+    <string name="creators">Создатели</string>
+    <string name="karina">Карина Габбасова</string>
+    <string name="jenya">Евгений Тайчинов</string>
+    <string name="robert">Роберт Хакимов</string>
+    <string name="app_ver">Версия приложения: 1.0</string>
+
+</resources>

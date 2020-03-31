@@ -69,7 +69,7 @@ class NewWordActivity : AppCompatActivity() {
 
     // тег для распознавания именно этого запроса
     companion object {
-        const val EXTRA_REPLY = "com.example.android.wordlistsql.REPLY"
+        const val EXTRA_REPLY = "extra_reply_word"
         const val EXTRA_IMAGE = "img"
     }
 }

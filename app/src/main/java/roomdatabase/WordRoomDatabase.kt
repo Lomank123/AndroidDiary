@@ -25,8 +25,7 @@ abstract class WordRoomDatabase : RoomDatabase() {
                     populateDatabase(database.wordDao())
                 }
             }
-        }   // в параллельном(?) потоке выполнит ф-ию populateDatabase
-
+        }
         // ф-ия для возможных начальных данных или другого функционала
         suspend fun populateDatabase(wordDao: WordDao) {
             // удалит все записи при перезапуске приложения (можно вынести в отдельную кнопку)

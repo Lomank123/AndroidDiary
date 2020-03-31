@@ -198,7 +198,7 @@ class NoteActivity : AppCompatActivity() {
         if ((requestCode == newNoteActivityRequestCode || requestCode == editActivityRequestCode) &&
             resultCode == Activity.RESULT_CANCELED)
         {
-            Toast.makeText(this, "Canceled or diary name is empty",
+            Toast.makeText(this, resources.getString(R.string.empty_not_saved_note),
                 Toast.LENGTH_SHORT).show()
         }
 
@@ -216,7 +216,8 @@ class NoteActivity : AppCompatActivity() {
         // Результат изменения заметки
         if (requestCode == editActivityRequestCode && resultCode == Activity.RESULT_OK)
         {
-            val noteEdit = data?.getSerializableExtra(EditActivityNote.EXTRA_EDIT_NOTE) as? Note
+            val noteEdit = data?.getSerializableExtra(EditActivityNote.EXTRA_EDIT_NOTE)
+                    as? Note
             val imgNoteEdit = data?.getStringExtra(EditActivityNote.EXTRA_IMAGE_EDIT_NOTE)
             if (imgNoteEdit != null && imgNoteEdit != "")
                 noteEdit!!.imgNote = imgNoteEdit
@@ -237,13 +238,15 @@ class NoteActivity : AppCompatActivity() {
 
                 val adapter = NoteListAdapter(this@NoteActivity, {
 
-                    val intent = Intent(this@NoteActivity, ClickedActivity::class.java)
+                    val intent = Intent(this@NoteActivity,
+                        ClickedActivity::class.java)
                     intent.putExtra("noteSerializable", it)
                     startActivityForResult(intent, clickedActivityRequestCode)
                 }, {
                     deleteNote(it)
                 }, {
-                    val intent = Intent(this@NoteActivity, EditActivityNote::class.java)
+                    val intent = Intent(this@NoteActivity,
+                        EditActivityNote::class.java)
                     intent.putExtra("noteSerializableEdit", it)
                     startActivityForResult(intent, editActivityRequestCode)
                 })

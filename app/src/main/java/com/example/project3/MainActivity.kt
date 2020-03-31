@@ -36,6 +36,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         // адаптер для RecyclerView
+        // то, что в фигурных скобках это и есть аргумент listener : (Word) -> Unit в адаптере
         val adapter = WordListAdapter(this,
             {
                 // Первый listener, отвечает за удаление дневника
@@ -49,11 +50,10 @@ class MainActivity : AppCompatActivity() {
                 // запускает ClickedActivity из MainActivity путем нажатия на элемент RecyclerView
                 startActivity(intent)
             }, {
-
                 val intent = Intent(this, EditActivity::class.java)
                 intent.putExtra("wordSerializableEdit", it)
                 startActivityForResult(intent, editActivityRequestCode)
-            }) // то, что в фигурных скобках это и есть аргумент listener : (Word) -> Unit в адаптере
+            })
 
         // задаем Adapter (одинаково для всех RecyclerView)
         recyclerview.adapter = adapter
@@ -72,11 +72,8 @@ class MainActivity : AppCompatActivity() {
         // следит за изменением данных и при наличии таковых обновляет данные в RecyclerView
         // Если какие-либо изменения были, обсервер это заметит и даст сигнал, который задействует
         // setWords и обновит данные в списке внутри адаптера.
-        // notifyDataSetChanged() даст сигнал о том, что данные изменились
-        // и нужно их обновить и в самом RecycleView
         wordViewModel.allWords.observe(this, Observer {
             adapter.setWords(it)
-
         })
 
         // кнопка для запуска активити для добавления записи
@@ -135,7 +132,7 @@ class MainActivity : AppCompatActivity() {
         if ((requestCode == newWordActivityRequestCode || requestCode == editActivityRequestCode) &&
             resultCode == Activity.RESULT_CANCELED)
         {
-            Toast.makeText(this, "Canceled or diary name is empty",
+            Toast.makeText(this, resources.getString(R.string.empty_not_saved),
                 Toast.LENGTH_SHORT).show()
         }
     }

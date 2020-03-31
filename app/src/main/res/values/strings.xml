@@ -3,6 +3,7 @@
     <string name="hint_diary">Diary…</string>
     <string name="button_save">Save</string>
     <string name="empty_not_saved">Canceled or Diary name is empty</string>
+    <string name="empty_not_saved_note">Canceled or Note name is empty</string>
     <string name="image">Image Text</string>
     <string name="sample">Sample Text</string>
     <string name="description">Description…</string>
@@ -12,7 +13,19 @@
     <string name="hint_text_note">Text…</string>
     <string name="photo_choose">Choose photo</string>
     <string name="search">Search</string>
+    <string name="saved">Saved</string>
+    <string name="canceled">Canceled</string>
+    <string name="change_language">If you want to change language,
+        do it in device settings, the app will be translated automatically
+    </string>
 
+    <!-- Dialog screen -->
+    <string name="dialog_yes">Yes</string>
+    <string name="dialog_no">No</string>
+    <string name="dialog_check_delete">Do you want to delete this diary?</string>
+    <string name="dialog_check_delete_note">Do you want to delete this note?</string>
+    <string name="dialog_deleted">Deleted</string>
+    <string name="dialog_delete">Delete</string>
 
     <!-- Settings -->
     <string name="categoryMainSettings">Main settings</string>

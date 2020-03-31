@@ -113,12 +113,12 @@ class ClickedActivity : AppCompatActivity() {
 
                 setResult(Activity.RESULT_OK, replyIntent) // resultCode будет RESULT_OK
                 // Завершаем работу с активити
-                Toast.makeText(this, "Saved", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, resources.getString(R.string.saved), Toast.LENGTH_SHORT).show()
                 finish()
             }
             R.id.cancel_btn_edit -> { // Кнопка Cancel
                 setResult(Activity.RESULT_CANCELED)
-                Toast.makeText(this, "Canceled", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, resources.getString(R.string.canceled), Toast.LENGTH_SHORT).show()
                 finish()
             }
         }

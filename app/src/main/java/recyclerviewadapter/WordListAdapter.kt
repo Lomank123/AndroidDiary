@@ -39,10 +39,9 @@ class WordListAdapter internal constructor(
     inner class WordViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         private val layoutItemView : RelativeLayout = itemView.findViewById(R.id.rellayout)
-
-        // textView1 - вью из файла recyclerview_layout.xml, отвечает за название
+        // textView1 - отвечает за название
         private val wordItemView: TextView = itemView.findViewById(R.id.textView1)
-        // textView - вью из файла recyclerview_layout.xml, отвечает за описание
+        // textView - отвечает за описание
         private val wordDescriptionView: TextView = itemView.findViewById(R.id.textView)
         private val wordDateView: TextView = itemView.findViewById(R.id.date_text)
         private val wordImageView: ImageView = itemView.findViewById(R.id.imageView)
@@ -61,17 +60,23 @@ class WordListAdapter internal constructor(
                 when (word.color)
                 {
                     "pink" ->
-                        layoutItemView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.pink))
+                        layoutItemView.setBackgroundColor(ContextCompat.getColor(mContext,
+                            R.color.pink))
                     "green" ->
-                        layoutItemView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.green))
+                        layoutItemView.setBackgroundColor(ContextCompat.getColor(mContext,
+                            R.color.green))
                     "yellow" ->
-                        layoutItemView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.yellow))
+                        layoutItemView.setBackgroundColor(ContextCompat.getColor(mContext,
+                            R.color.yellow))
                     "blue" ->
-                        layoutItemView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.blue))
+                        layoutItemView.setBackgroundColor(ContextCompat.getColor(mContext,
+                            R.color.blue))
                     "grass" ->
-                        layoutItemView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.grass))
+                        layoutItemView.setBackgroundColor(ContextCompat.getColor(mContext,
+                            R.color.grass))
                     "purple" ->
-                        layoutItemView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.purple))
+                        layoutItemView.setBackgroundColor(ContextCompat.getColor(mContext,
+                            R.color.purple))
                 }
             }
             else
@@ -101,13 +106,19 @@ class WordListAdapter internal constructor(
                         R.id.delete -> {    // удаление дневника
                             // Диалоговое окно
                             val deleteDialog = AlertDialog.Builder(mContext)
-                            deleteDialog.setTitle("Delete")
-                            deleteDialog.setMessage("Do you want to delete this diary?")
-                            deleteDialog.setPositiveButton("Yes"){dialog, id ->
+                            deleteDialog.setTitle(mContext.resources.
+                            getString(R.string.dialog_delete))
+                            deleteDialog.setMessage(mContext.resources.
+                            getString(R.string.dialog_check_delete))
+                            deleteDialog.setPositiveButton(mContext.resources.
+                            getString(R.string.dialog_yes)){ _, _ ->
                                 listenerDeleteWord(word) // вызываем listener
-                                Toast.makeText(mContext, "Deleted", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(mContext, mContext.resources.
+                                getString(R.string.dialog_deleted), Toast.LENGTH_SHORT).show()
                             }
-                            deleteDialog.setNegativeButton("No"){dialog, id ->
+                            deleteDialog.setNegativeButton(mContext.resources.
+                            getString(R.string.dialog_no))
+                            { dialog, _ ->
                                 dialog.dismiss()
                             }
                             deleteDialog.show()
@@ -157,16 +168,16 @@ class WordListAdapter internal constructor(
     // Устанавливает значение для каждого элемента RecyclerView
     override fun onBindViewHolder(holder: WordViewHolder, position: Int) {
         holder.bindView(words[position], listenerOpenWord)
-        //setAnimation(holder.itemView)
     }
 
     // ВАЖНО: setWords вызывается в момент того, когда обсервер заметил изменения в записях
     // и чтобы зафиксировать эти изменения в RecyclerView, нужно передавать новый список сюда
     internal fun setWords(words: List<Word>) {
         this.words = words      // обновляем внутренний список
-        notifyDataSetChanged()  // даем понять адаптеру, что были внесены изменения
+        // notifyDataSetChanged() даст сигнал о том, что данные изменились
+        // и нужно их обновить и в самом RecycleView
+        notifyDataSetChanged()
     }
-
 
     override fun getItemCount() = words.size // сколько эл-тов будет в списке
 }

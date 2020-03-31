@@ -25,7 +25,6 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:layout_marginEnd="148dp"
-        android:layout_marginRight="148dp"
         android:layout_marginBottom="280dp"
         android:src="@drawable/ic_add_black_24dp"
         app:layout_constraintBottom_toBottomOf="parent"
