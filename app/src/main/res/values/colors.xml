@@ -4,15 +4,25 @@
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
     <color name="buttonLabel">#d3d3d3</color>
-    <color name="white">#F8F8FF</color>
+    <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
 
-    <!-- colors for the new theme -->
 
+    <!-- colors for the new theme -->
     <color name="primary_color1">#F0BF5E</color>
     <color name="primary_color_dark1">#BE984B</color>
     <color name="navbar_color1">#26978A</color>
     <color name="accent_color1">#FF7DCB</color>
+
+
+    <!-- colors for diaries and notes -->
+
+    <color name="pink">#FF7369</color>
+    <color name="green">#95FF78</color>
+    <color name="yellow">#F3FF6E</color>
+    <color name="blue">#91C4FF</color>
+    <color name="grass">#D9FFA0</color>
+    <color name="purple">#FCBEFF</color>
 
 
 </resources>

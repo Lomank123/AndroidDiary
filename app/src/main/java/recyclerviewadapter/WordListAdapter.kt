@@ -2,12 +2,14 @@ package recyclerviewadapter
 
 import android.app.AlertDialog
 import android.content.Context
+import android.content.SharedPreferences
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AnimationUtils
 import android.widget.*
+import androidx.core.content.ContextCompat
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.project3.R
 import roomdatabase.Word
@@ -30,10 +32,13 @@ class WordListAdapter internal constructor(
 
     private var words = emptyList<Word>()   // Сюда будут сохраняться дневники
 
+    private val prefs: SharedPreferences? = PreferenceManager.getDefaultSharedPreferences(mContext)
 
     // передаем сюда образец одного элемента списка
     // этот класс ХРАНИТ в себе то самое вью, в котором будут что-то менять
     inner class WordViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
+        private val layoutItemView : RelativeLayout = itemView.findViewById(R.id.rellayout)
 
         // textView1 - вью из файла recyclerview_layout.xml, отвечает за название
         private val wordItemView: TextView = itemView.findViewById(R.id.textView1)
@@ -45,10 +50,32 @@ class WordListAdapter internal constructor(
         // эта функция применяется для каждого члена RecyclerView т.к. вызывается в onBindViewHolder
         fun bindView(word: Word, listener : (Word) -> Unit) {
 
+            //layoutItemView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.primary_color1))
+
             // устанавливаем значения во вью
             wordItemView.text = word.word
             wordDescriptionView.text = word.description // записываем в TextView строку (описание)
             wordDateView.text = word.date // записываем дату
+
+            if (prefs!!.getBoolean("color_check_diary", false)) {
+                when (word.color)
+                {
+                    "pink" ->
+                        layoutItemView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.pink))
+                    "green" ->
+                        layoutItemView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.green))
+                    "yellow" ->
+                        layoutItemView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.yellow))
+                    "blue" ->
+                        layoutItemView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.blue))
+                    "grass" ->
+                        layoutItemView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.grass))
+                    "purple" ->
+                        layoutItemView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.purple))
+                }
+            }
+            else
+                layoutItemView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white))
 
             // установка фото
             if (word.img != null)
@@ -140,12 +167,6 @@ class WordListAdapter internal constructor(
         notifyDataSetChanged()  // даем понять адаптеру, что были внесены изменения
     }
 
-    // сортирует список слов по алфавиту
-    internal fun setNewWords(words: List<Word>)
-    {
-        this.words = words.sortedBy { it.word }
-        notifyDataSetChanged()  // даем понять адаптеру, что были внесены изменения
-    }
 
     override fun getItemCount() = words.size // сколько эл-тов будет в списке
 }

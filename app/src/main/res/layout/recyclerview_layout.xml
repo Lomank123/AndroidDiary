@@ -9,9 +9,11 @@
     app:cardPreventCornerOverlap="false">
 
     <RelativeLayout
+        android:id="@+id/rellayout"
         android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:padding="15dp">
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF"
+        android:padding="15dp">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/imageView"

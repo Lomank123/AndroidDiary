@@ -30,6 +30,7 @@ class NoteActivity : AppCompatActivity() {
     private val editActivityRequestCode = 3
     private lateinit var noteViewModel: NoteViewModel       // добавляем ViewModel
 
+    private val colors: List<String> = listOf("green", "pink", "blue", "grass", "purple", "yellow")
 
     private var isFabOpen : Boolean = false                 // по умолч. меню закрыто
 
@@ -116,6 +117,11 @@ class NoteActivity : AppCompatActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        recyclerview1.adapter!!.notifyDataSetChanged()
+    }
+
     // закрывает выдвиг. меню
     private fun closeFabMenu() {
         isFabOpen = false
@@ -175,20 +181,18 @@ class NoteActivity : AppCompatActivity() {
 
                 val noteImg = data.getStringExtra(NewNoteActivity.EXTRA_IMAGE_NOTE)
 
+                val note = Note(it[0], it[1], intent.getLongExtra("word_id",
+                    -1), currentDate)
                 if(noteImg != null)
                 {
-                    val note = Note(it[0], it[1], intent.getLongExtra("word_id",
-                        -1), currentDate)
                     note.imgNote = noteImg
-                    noteViewModel.insertNote(note)
                 }
                 else
                 {
-                    val note = Note(it[0], it[1], intent.getLongExtra("word_id",
-                        -1), currentDate)
                     note.imgNote = intent.getStringExtra("word_img")
-                    noteViewModel.insertNote(note)
                 }
+                note.colorNote = colors.random()
+                noteViewModel.insertNote(note)
             }
         }
         if ((requestCode == newNoteActivityRequestCode || requestCode == editActivityRequestCode) &&
@@ -234,27 +238,18 @@ class NoteActivity : AppCompatActivity() {
                 val adapter = NoteListAdapter(this@NoteActivity, {
 
                     val intent = Intent(this@NoteActivity, ClickedActivity::class.java)
-
-                    // передаем необходимые данные в ClickedActivity
                     intent.putExtra("noteSerializable", it)
-
-                    // запускает ClickedActivity из MainActivity путем нажатия на элемент RecyclerView
                     startActivityForResult(intent, clickedActivityRequestCode)
                 }, {
-                    // второй listener, нужен для удаления заметки
                     deleteNote(it)
                 }, {
-
                     val intent = Intent(this@NoteActivity, EditActivityNote::class.java)
                     intent.putExtra("noteSerializableEdit", it)
                     startActivityForResult(intent, editActivityRequestCode)
-
                 })
-
                 override fun onQueryTextSubmit(query: String?): Boolean {
                     return true
                 }
-
                 override fun onQueryTextChange(newText: String?): Boolean {
                     recyclerview1.adapter = adapter
                     val wordId = intent.getLongExtra("word_id", -1)

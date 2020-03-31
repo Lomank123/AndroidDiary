@@ -2,15 +2,14 @@ package recyclerviewadapter
 
 import android.app.AlertDialog
 import android.content.Context
+import android.content.SharedPreferences
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AnimationUtils
-import android.widget.ImageView
-import android.widget.PopupMenu
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
+import androidx.core.content.ContextCompat
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.project3.R
 import roomdatabase.Note
@@ -28,6 +27,8 @@ class NoteListAdapter internal constructor(
 
     private val mContext = context // NoteActivity
 
+    private val prefs: SharedPreferences? = PreferenceManager.getDefaultSharedPreferences(mContext)
+
     private var notes = emptyList<Note>()   // Сохраненная копия заметок
     //private var notesMapped = mutableMapOf<Long, List<Note>>()
 
@@ -35,6 +36,7 @@ class NoteListAdapter internal constructor(
     // этот класс ХРАНИТ в себе то самое вью, в котором будут что-то менять
     inner class NoteViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
+        private val layoutItemView : RelativeLayout = itemView.findViewById(R.id.rellayout)
         // textView1 - вью из файла recyclerview_layout.xml, отвечает за название
         private val noteItemView : TextView = itemView.findViewById(R.id.textView1)
         // textView - вью из файла recyclerview_layout.xml, отвечает за описание
@@ -73,6 +75,27 @@ class NoteListAdapter internal constructor(
             else
                 noteImageView.setImageResource(R.mipmap.ic_launcher_round)
 
+            if (prefs!!.getBoolean("color_check_note", false)) {
+                when (note.colorNote)
+                {
+                    "pink" ->
+                        layoutItemView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.pink))
+                    "green" ->
+                        layoutItemView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.green))
+                    "yellow" ->
+                        layoutItemView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.yellow))
+                    "blue" ->
+                        layoutItemView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.blue))
+                    "grass" ->
+                        layoutItemView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.grass))
+                    "purple" ->
+                        layoutItemView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.purple))
+                }
+            }
+            else
+                layoutItemView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white))
+
+
             // Устанавливаем обработчик нажатий на элемент RecyclerView, при нажатии
             // будет вызываться первый listener (listenerOpen), который открывает заметку
             itemView.setOnClickListener {
@@ -93,7 +116,7 @@ class NoteListAdapter internal constructor(
                             val deleteDialog = AlertDialog.Builder(mContext)
                             deleteDialog.setTitle("Delete")
                             deleteDialog.setMessage("Do you want to delete this note?")
-                            deleteDialog.setPositiveButton("Yes"){dialog, id ->
+                            deleteDialog.setPositiveButton("Yes"){ _, _ ->
                                 listenerDelete(note)  // удаление записи
                                 notifyDataSetChanged()
                                 Toast.makeText(mContext, "Deleted", Toast.LENGTH_SHORT).show()

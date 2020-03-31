@@ -18,6 +18,8 @@
     <string name="categoryMainSettings">Main settings</string>
     <string name="font_check">Font style</string>
     <string name="img_check">Allow to show img</string>
+    <string name="color_check_diary">Colorful diaries</string>
+    <string name="color_check_note">Colorful notes</string>
 
     <!-- Menu buttons -->
     <string name="edit_btn">Edit</string>

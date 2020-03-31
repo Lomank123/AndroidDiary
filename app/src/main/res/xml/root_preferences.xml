@@ -7,13 +7,21 @@
             app:key="img_check"
             app:title="@string/img_check" />
 
-    </PreferenceCategory>
-    <ListPreference
-        android:defaultValue="false"
-        android:entries="@array/font_values"
-        android:entryValues="@array/font_values"
-        android:key="list_preference_1"
-        android:title="@string/font_check"
-        app:defaultValue="true" />
+        <SwitchPreferenceCompat
+            app:key="color_check_diary"
+            app:title="@string/color_check_diary" />
 
+        <SwitchPreferenceCompat
+            app:key="color_check_note"
+            app:title="@string/color_check_note" />
+
+        <ListPreference
+            android:defaultValue="false"
+            android:entries="@array/font_values"
+            android:entryValues="@array/font_values"
+            android:key="list_preference_1"
+            android:title="@string/font_check"
+            app:defaultValue="true" />
+
+    </PreferenceCategory>
 </PreferenceScreen>

@@ -20,6 +20,8 @@ data class Word(@ColumnInfo(name = "word") var word: String,                 // 
     @ColumnInfo(name = "img")
     var img : String? = null
 
+    @ColumnInfo(name = "color")
+    var color : String? = null
 }
 
 @Entity(tableName = "note_table")
@@ -35,4 +37,7 @@ data class Note(@ColumnInfo(name = "note_name") var note : String,      // на�
 
     @ColumnInfo(name = "imgNote")
     var imgNote : String? = null
+
+    @ColumnInfo(name = "note_color")
+    var colorNote : String? = null
 }

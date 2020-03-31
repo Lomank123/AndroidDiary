@@ -29,6 +29,8 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var wordViewModel: WordViewModel       // добавляем ViewModel
 
+    private val colors: List<String> = listOf("green", "pink", "blue", "grass", "purple", "yellow")
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -88,6 +90,11 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        recyclerview.adapter!!.notifyDataSetChanged()
+    }
+
     // Удаляет дневник. Вызов происходит через ViewModel
     private fun deleteWord(word : Word)
     {
@@ -111,6 +118,7 @@ class MainActivity : AppCompatActivity() {
                 val word = Word(it[0], it[1], currentDate)
                 if (data.getStringExtra(EXTRA_IMAGE) != "" && data.getStringExtra(EXTRA_IMAGE) != null)
                     word.img = data.getStringExtra(EXTRA_IMAGE)
+                word.color = colors.random()
                 wordViewModel.insertWord(word) // добавляем запись в БД
             }
         }
@@ -144,18 +152,13 @@ class MainActivity : AppCompatActivity() {
 
                 val adapter = WordListAdapter(this@MainActivity,
                     {
-                        // Первый listener, отвечает за удаление дневника
                         deleteWord(it)
                     }, {
-                        // Второй listener
-                        // отсюда будет запускаться новый RecyclerView для отображения списка заметок
                         val intent = Intent(this@MainActivity, NoteActivity::class.java)
-                        intent.putExtra("word_id", it.id) // передаем id дневника
-                        intent.putExtra("word_img", it.img) // передаем картинку
-                        // запускает ClickedActivity из MainActivity путем нажатия на элемент RecyclerView
+                        intent.putExtra("word_id", it.id)
+                        intent.putExtra("word_img", it.img)
                         startActivity(intent)
                     }, {
-
                         val intent = Intent(this@MainActivity, EditActivity::class.java)
                         intent.putExtra("wordSerializableEdit", it)
                         startActivityForResult(intent, editActivityRequestCode)
