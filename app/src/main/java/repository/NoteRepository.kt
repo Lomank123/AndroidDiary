@@ -36,5 +36,7 @@ class NoteRepository (private val wordDao : WordDao) {
     suspend fun updateNote(note : Note){
         wordDao.updateNote(note)
     }
-
+    suspend fun updateWord(word : Word){
+        wordDao.updateWord(word)
+    }
 }

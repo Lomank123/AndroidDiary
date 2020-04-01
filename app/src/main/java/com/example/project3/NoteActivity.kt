@@ -20,6 +20,7 @@ import recyclerviewadapter.NoteListAdapter
 import roomdatabase.Note
 import viewmodel.NoteViewModel
 import viewmodel.TopSpacingItemDecoration
+import viewmodel.WordViewModel
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -208,9 +209,7 @@ class NoteActivity : AppCompatActivity() {
             // получаем с помощью Serializable наш объект класса Note из ClickedActivity
             val note = data?.getSerializableExtra(ClickedActivity.EXTRA_REPLY_EDIT) as? Note
             if (note != null)
-            {
                 noteViewModel.updateNote(note)  // обновляем заметку
-            }
         }
 
         // Результат изменения заметки
@@ -228,7 +227,7 @@ class NoteActivity : AppCompatActivity() {
 
     // создает OptionsMenu
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.actionbar_menu, menu)
+        menuInflater.inflate(R.menu.actionbar_menu_note, menu)
 
         val searchItem = menu!!.findItem(R.id.search_view)
         if (searchItem != null) {
@@ -301,6 +300,16 @@ class NoteActivity : AppCompatActivity() {
                 }
             })
         }
+
+        val wordId = intent.getLongExtra("word_id", -1)
+        for (words in noteViewModel.allNotes.value!!)
+            if (words.word.id == wordId) {
+                if(words.word.isFavorite)
+                    menu.findItem(R.id.favorite_view).setIcon(android.R.drawable.btn_star_big_on)
+                else
+                    menu.findItem(R.id.favorite_view).setIcon(android.R.drawable.btn_star_big_off)
+                break
+            }
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -318,6 +327,20 @@ class NoteActivity : AppCompatActivity() {
                 val aboutIntent = Intent(this, AboutActivity::class.java)
                 startActivity(aboutIntent)
                 return super.onOptionsItemSelected(item)
+            }
+            R.id.favorite_view -> {
+                val wordId = intent.getLongExtra("word_id", -1)
+
+                for (words in noteViewModel.allNotes.value!!)
+                    if (words.word.id == wordId) {
+                        words.word.isFavorite = !words.word.isFavorite
+                        if(words.word.isFavorite)
+                            item.setIcon(android.R.drawable.btn_star_big_on)
+                        else
+                            item.setIcon(android.R.drawable.btn_star_big_off)
+                        noteViewModel.updateWord(words.word)
+                        break
+                    }
             }
         }
         return super.onOptionsItemSelected(item)

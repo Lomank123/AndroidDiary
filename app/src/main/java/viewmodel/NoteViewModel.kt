@@ -8,6 +8,7 @@ import kotlinx.coroutines.launch
 import repository.NoteRepository
 import repository.NotesAndWords
 import roomdatabase.Note
+import roomdatabase.Word
 import roomdatabase.WordRoomDatabase
 
 class NoteViewModel(application: Application) : AndroidViewModel(application) {
@@ -42,5 +43,8 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
     // обновляет запись, вызывая функцию в репозитории
     fun updateNote(note: Note) = viewModelScope.launch{
         repository.updateNote(note)
+    }
+    fun updateWord(word: Word) = viewModelScope.launch{
+        repository.updateWord(word)
     }
 }
