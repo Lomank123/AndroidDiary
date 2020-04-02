@@ -18,6 +18,8 @@
     <string name="change_language">If you want to change language,
         do it in device settings, the app will be translated automatically
     </string>
+    <string name="add_favor">Added to Favorites</string>
+    <string name="del_favor">Removed from Favorites</string>
 
     <!-- Dialog screen -->
     <string name="dialog_yes">Yes</string>

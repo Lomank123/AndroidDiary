@@ -3,17 +3,20 @@ package com.example.project3
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
+import android.os.Handler
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.project3.NewWordActivity.Companion.EXTRA_IMAGE
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.android.synthetic.main.activity_main.*
 import recyclerviewadapter.WordListAdapter
 import roomdatabase.Word
@@ -31,9 +34,14 @@ class MainActivity : AppCompatActivity() {
 
     private val colors: List<String> = listOf("green", "pink", "blue", "grass", "purple", "yellow")
 
+    private var isFabOpen : Boolean = false                 // по умолч. меню закрыто
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        val prefs: SharedPreferences? = PreferenceManager.getDefaultSharedPreferences(this)
+        prefs!!.edit().putBoolean("sorted", false).apply()
 
         // адаптер для RecyclerView
         // то, что в фигурных скобках это и есть аргумент listener : (Word) -> Unit в адаптере
@@ -73,23 +81,84 @@ class MainActivity : AppCompatActivity() {
         // Если какие-либо изменения были, обсервер это заметит и даст сигнал, который задействует
         // setWords и обновит данные в списке внутри адаптера.
         wordViewModel.allWords.observe(this, Observer {
-            adapter.setWords(it)
+
+            if (prefs.getBoolean("sorted", false))
+            {
+                adapter.setFavoriteWords(it)
+            }
+            else
+            {
+                adapter.setWords(it)
+            }
+
         })
 
-        // кнопка для запуска активити для добавления записи
-        val fab = findViewById<FloatingActionButton>(R.id.fab)
         fab.setOnClickListener {
-            val intent = Intent(this, NewWordActivity::class.java)
+            if (!isFabOpen)
+                showFabMenu()
+            else
+                closeFabMenu()
+        }
 
+        // кнопка для запуска активити для добавления записи
+        fab2.setOnClickListener {
+            closeFabMenu()
+            val intent = Intent(this, NewWordActivity::class.java)
             // 2-ой аргумент это requestCode по которому определяется откуда был запрос
             startActivityForResult(intent, newWordActivityRequestCode)
         }
 
+        // кнопка сортировки по избранным
+        fab1.setOnClickListener {
+            closeFabMenu()
+            if(prefs.getBoolean("sorted", false))
+            {
+                prefs.edit().putBoolean("sorted", false).apply()
+                adapter.setWords(wordViewModel.allWords.value!!)
+            }
+            else {
+                prefs.edit().putBoolean("sorted", true).apply()
+                adapter.setFavoriteWords(wordViewModel.allWords.value!!)
+            }
+        }
     }
 
-    override fun onResume() {
+    override fun onResume()
+    {
         super.onResume()
         recyclerview.adapter!!.notifyDataSetChanged()
+    }
+
+    // закрывает меню
+    private fun closeFabMenu() {
+        isFabOpen = false
+
+        // возвращает элементы на исходные позиции
+        fab.animate().rotation(0f)
+        bg_fab_menu.animate().alpha(0f)
+        fab1.animate().translationY(0f).rotation(90f)
+        fab2.animate().translationY(0f).rotation(90f)
+
+        // ставит задержку на исчезновение элементов меню (250 мс)
+        Handler().postDelayed({fab1.visibility = View.GONE }, 250)
+        Handler().postDelayed({fab2.visibility = View.GONE }, 250)
+        Handler().postDelayed({bg_fab_menu.visibility = View.GONE }, 250)
+    }
+
+    // открывает выдвиг. меню
+    private fun showFabMenu() {
+        isFabOpen = true
+
+        // показывает элементы
+        fab1.visibility = View.VISIBLE
+        fab2.visibility = View.VISIBLE
+        bg_fab_menu.visibility = View.VISIBLE
+
+        // "выдвигает" элементы
+        fab.animate().rotation(180f)
+        bg_fab_menu.animate().alpha(1f)
+        fab1.animate().translationY(-350f).rotation(0f)
+        fab2.animate().translationY(-165f).rotation(0f)
     }
 
     // Удаляет дневник. Вызов происходит через ViewModel
@@ -140,26 +209,28 @@ class MainActivity : AppCompatActivity() {
     // создает OptionsMenu
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.actionbar_menu, menu)
+
+        val prefs: SharedPreferences? = PreferenceManager.getDefaultSharedPreferences(this)
+
+        val adapter = WordListAdapter(this@MainActivity,
+            {
+                deleteWord(it)
+            }, {
+                val intent = Intent(this@MainActivity, NoteActivity::class.java)
+                intent.putExtra("word_id", it.id)
+                intent.putExtra("word_img", it.img)
+                startActivity(intent)
+            }, {
+                val intent = Intent(this@MainActivity, EditActivity::class.java)
+                intent.putExtra("wordSerializableEdit", it)
+                startActivityForResult(intent, editActivityRequestCode)
+            })
+
         val searchItem = menu!!.findItem(R.id.search_view)
         if (searchItem != null)
         {
-
             val searchView = searchItem.actionView as SearchView
             searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
-
-                val adapter = WordListAdapter(this@MainActivity,
-                    {
-                        deleteWord(it)
-                    }, {
-                        val intent = Intent(this@MainActivity, NoteActivity::class.java)
-                        intent.putExtra("word_id", it.id)
-                        intent.putExtra("word_img", it.img)
-                        startActivity(intent)
-                    }, {
-                        val intent = Intent(this@MainActivity, EditActivity::class.java)
-                        intent.putExtra("wordSerializableEdit", it)
-                        startActivityForResult(intent, editActivityRequestCode)
-                    })
 
                 override fun onQueryTextSubmit(query: String?): Boolean {
                     return true
@@ -167,6 +238,18 @@ class MainActivity : AppCompatActivity() {
 
                 override fun onQueryTextChange(newText: String?): Boolean {
                     recyclerview.adapter = adapter
+
+                    fab1.setOnClickListener {
+                        closeFabMenu()
+                        if (prefs!!.getBoolean("sorted", false)) {
+                            prefs.edit().putBoolean("sorted", false).apply()
+                            adapter.setWords(wordViewModel.allWords.value!!)
+                        } else {
+                            prefs.edit().putBoolean("sorted", true).apply()
+                            adapter.setFavoriteWords(wordViewModel.allWords.value!!)
+                        }
+                    }
+
                     wordViewModel.allWords.observe(this@MainActivity, Observer {
 
                         if (newText!!.isNotEmpty())
@@ -177,10 +260,18 @@ class MainActivity : AppCompatActivity() {
                                 if(words.word.toLowerCase(Locale.ROOT).contains(search))
                                     wordList1.add(words)
                             }
-                            adapter.setWords(wordList1)
+                            if (prefs!!.getBoolean("sorted", false))
+                                adapter.setFavoriteWords(wordList1)
+                            else
+                                adapter.setWords(wordList1)
                         }
                         else
-                            adapter.setWords(it)
+                        {
+                            if (prefs!!.getBoolean("sorted", false))
+                                adapter.setFavoriteWords(it)
+                            else
+                                adapter.setWords(it)
+                        }
                     })
                     if (newText!!.isNotEmpty())
                     {
@@ -190,10 +281,18 @@ class MainActivity : AppCompatActivity() {
                             if(it.word.toLowerCase(Locale.ROOT).contains(search))
                                 wordList1.add(it)
                         }
-                        adapter.setWords(wordList1)
+                        if (prefs!!.getBoolean("sorted", false))
+                            adapter.setFavoriteWords(wordList1)
+                        else
+                            adapter.setWords(wordList1)
                     }
                     else
-                        adapter.setWords(wordViewModel.allWords.value!!)
+                    {
+                        if (prefs!!.getBoolean("sorted", false))
+                            adapter.setFavoriteWords(wordViewModel.allWords.value!!)
+                        else
+                            adapter.setWords(wordViewModel.allWords.value!!)
+                    }
                     return true
                 }
             })
