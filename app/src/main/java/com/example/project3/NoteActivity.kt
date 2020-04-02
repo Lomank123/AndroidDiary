@@ -14,10 +14,10 @@ import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.android.synthetic.main.activity_note.*
 import recyclerviewadapter.NoteListAdapter
 import roomdatabase.Note
+import roomdatabase.Word
 import viewmodel.NoteViewModel
 import viewmodel.TopSpacingItemDecoration
 import java.text.SimpleDateFormat
@@ -225,8 +225,19 @@ class NoteActivity : AppCompatActivity() {
     // создает OptionsMenu
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.actionbar_menu_note, menu)
+        val wordSelf = intent.getSerializableExtra("wordSelf") as? Word
+        if (wordSelf!!.isFavorite)
+        {
+            menu!!.findItem(R.id.favorite_view)
+                .setIcon(android.R.drawable.btn_star_big_on)
+        }
+        else
+        {
+            menu!!.findItem(R.id.favorite_view)
+                .setIcon(android.R.drawable.btn_star_big_off)
+        }
 
-        val searchItem = menu!!.findItem(R.id.search_view)
+        val searchItem = menu.findItem(R.id.search_view)
         if (searchItem != null) {
 
             val searchView = searchItem.actionView as SearchView
@@ -296,21 +307,6 @@ class NoteActivity : AppCompatActivity() {
                     return true
                 }
             })
-        }
-
-        val wordId = intent.getLongExtra("word_id", -1)
-        if(noteViewModel.allNotes.value != null) {
-            for (words in noteViewModel.allNotes.value!!)
-                if (words.word.id == wordId) {
-                    if (words.word.isFavorite) {
-                        menu.findItem(R.id.favorite_view)
-                            .setIcon(android.R.drawable.btn_star_big_on)
-                    } else {
-                        menu.findItem(R.id.favorite_view)
-                            .setIcon(android.R.drawable.btn_star_big_off)
-                    }
-                    break
-                }
         }
         return super.onCreateOptionsMenu(menu)
     }

@@ -54,6 +54,7 @@ class MainActivity : AppCompatActivity() {
                 // отсюда будет запускаться новый RecyclerView для отображения списка заметок
                 val intent = Intent(this, NoteActivity::class.java)
                 intent.putExtra("word_id", it.id) // передаем id дневника
+                intent.putExtra("wordSelf", it)
                 intent.putExtra("word_img", it.img) // передаем картинку
                 // запускает ClickedActivity из MainActivity путем нажатия на элемент RecyclerView
                 startActivity(intent)
@@ -121,6 +122,10 @@ class MainActivity : AppCompatActivity() {
                 adapter.setFavoriteWords(wordViewModel.allWords.value!!)
             }
         }
+        bg_fab_menu.setOnClickListener {
+            // т.е. если нажать на затемненный фон меню закроется
+            closeFabMenu()
+        }
     }
 
     override fun onResume()
@@ -157,8 +162,8 @@ class MainActivity : AppCompatActivity() {
         // "выдвигает" элементы
         fab.animate().rotation(180f)
         bg_fab_menu.animate().alpha(1f)
-        fab1.animate().translationY(-350f).rotation(0f)
-        fab2.animate().translationY(-165f).rotation(0f)
+        fab1.animate().translationY(-200f).rotation(0f)
+        fab2.animate().translationY(-100f).rotation(0f)
     }
 
     // Удаляет дневник. Вызов происходит через ViewModel
@@ -218,6 +223,7 @@ class MainActivity : AppCompatActivity() {
             }, {
                 val intent = Intent(this@MainActivity, NoteActivity::class.java)
                 intent.putExtra("word_id", it.id)
+                intent.putExtra("wordSelf", it)
                 intent.putExtra("word_img", it.img)
                 startActivity(intent)
             }, {
