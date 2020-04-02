@@ -18,6 +18,8 @@
     <string name="change_language">Если вы хотите изменить язык, измените
         его в настройках вашего устройства, приложение переведется автоматически
     </string>
+    <string name="add_favor">Добавлено в Избранные</string>
+    <string name="del_favor">Удалено из Избранных</string>
 
     <!-- Диалоговое окно -->
     <string name="dialog_yes">Да</string>

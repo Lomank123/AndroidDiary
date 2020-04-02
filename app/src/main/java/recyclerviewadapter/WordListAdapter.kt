@@ -186,6 +186,10 @@ class WordListAdapter internal constructor(
         // и нужно их обновить и в самом RecycleView
         notifyDataSetChanged()
     }
+    internal fun setFavoriteWords(words: List<Word>){
+        this.words = words.sortedBy { !it.isFavorite }
+        notifyDataSetChanged()
+    }
 
     override fun getItemCount() = words.size // сколько эл-тов будет в списке
 }

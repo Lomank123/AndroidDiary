@@ -20,7 +20,6 @@ import recyclerviewadapter.NoteListAdapter
 import roomdatabase.Note
 import viewmodel.NoteViewModel
 import viewmodel.TopSpacingItemDecoration
-import viewmodel.WordViewModel
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -89,7 +88,6 @@ class NoteActivity : AppCompatActivity() {
         })
 
         // обработчик нажатий на кнопку вызова popupMenu
-        val fab = findViewById<FloatingActionButton>(R.id.fab)
         fab.setOnClickListener {
             if (!isFabOpen)
                 showFabMenu()
@@ -97,12 +95,11 @@ class NoteActivity : AppCompatActivity() {
                 closeFabMenu()
         }
 
-        // здесь находится fab1 (floating action button, в целях показа ее убрали)
         // обработчик нажатий на 1-ую кнопку
-        //fab1.setOnClickListener {
-        //    closeFabMenu()
-        //    Toast.makeText(this, "Message", Toast.LENGTH_SHORT).show()
-        //}
+     //   fab1.setOnClickListener {
+     //       closeFabMenu()
+     //       Toast.makeText(this, "Message", Toast.LENGTH_SHORT).show()
+     //   }
 
         // обработчик нажатий на 2-ую кнопку (вызывает NewWordActivity для создания заметки)
         fab2.setOnClickListener {
@@ -149,7 +146,7 @@ class NoteActivity : AppCompatActivity() {
         bg_fab_menu.visibility = VISIBLE
 
         // "выдвигает" элементы
-        fab.animate().rotation(135f)
+        fab.animate().rotation(180f)
         bg_fab_menu.animate().alpha(1f)
         //fab1.animate().translationY(-300f).rotation(0f)
         fab2.animate().translationY(-165f).rotation(0f)
@@ -302,14 +299,19 @@ class NoteActivity : AppCompatActivity() {
         }
 
         val wordId = intent.getLongExtra("word_id", -1)
-        for (words in noteViewModel.allNotes.value!!)
-            if (words.word.id == wordId) {
-                if(words.word.isFavorite)
-                    menu.findItem(R.id.favorite_view).setIcon(android.R.drawable.btn_star_big_on)
-                else
-                    menu.findItem(R.id.favorite_view).setIcon(android.R.drawable.btn_star_big_off)
-                break
-            }
+        if(noteViewModel.allNotes.value != null) {
+            for (words in noteViewModel.allNotes.value!!)
+                if (words.word.id == wordId) {
+                    if (words.word.isFavorite) {
+                        menu.findItem(R.id.favorite_view)
+                            .setIcon(android.R.drawable.btn_star_big_on)
+                    } else {
+                        menu.findItem(R.id.favorite_view)
+                            .setIcon(android.R.drawable.btn_star_big_off)
+                    }
+                    break
+                }
+        }
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -334,10 +336,17 @@ class NoteActivity : AppCompatActivity() {
                 for (words in noteViewModel.allNotes.value!!)
                     if (words.word.id == wordId) {
                         words.word.isFavorite = !words.word.isFavorite
-                        if(words.word.isFavorite)
+                        if(words.word.isFavorite) {
                             item.setIcon(android.R.drawable.btn_star_big_on)
-                        else
+                            Toast.makeText(this, resources.getString(R.string.add_favor),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                        else {
                             item.setIcon(android.R.drawable.btn_star_big_off)
+                            Toast.makeText(this, resources.getString(R.string.del_favor),
+                                Toast.LENGTH_SHORT).show()
+                        }
                         noteViewModel.updateWord(words.word)
                         break
                     }
