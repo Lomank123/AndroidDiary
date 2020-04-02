@@ -22,6 +22,9 @@ data class Word(@ColumnInfo(name = "word") var word: String,                 // 
 
     @ColumnInfo(name = "color")
     var color : String? = null
+
+    @ColumnInfo(name = "isFavorite")
+    var isFavorite : Boolean = false
 }
 
 @Entity(tableName = "note_table")

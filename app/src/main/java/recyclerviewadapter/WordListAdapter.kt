@@ -6,6 +6,8 @@ import android.content.SharedPreferences
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.*
 import androidx.core.content.ContextCompat
@@ -45,6 +47,7 @@ class WordListAdapter internal constructor(
         private val wordDescriptionView: TextView = itemView.findViewById(R.id.textView)
         private val wordDateView: TextView = itemView.findViewById(R.id.date_text)
         private val wordImageView: ImageView = itemView.findViewById(R.id.imageView)
+        private val wordStarView: ImageView = itemView.findViewById(R.id.imageView_star)
 
         // эта функция применяется для каждого члена RecyclerView т.к. вызывается в onBindViewHolder
         fun bindView(word: Word, listener : (Word) -> Unit) {
@@ -90,6 +93,12 @@ class WordListAdapter internal constructor(
             }
             else
                 wordImageView.setImageResource(R.mipmap.ic_launcher_round)
+
+            if(word.isFavorite)
+                wordStarView.visibility = VISIBLE
+            else
+                wordStarView.visibility = GONE
+
 
             // Устанавливаем обработчик нажатий на элемент RecyclerView, при нажатии
             // будет вызываться первый listener, который открывает дневник
@@ -143,7 +152,6 @@ class WordListAdapter internal constructor(
                 // Т.к. в LongClickListener нужно вернуть boolean, возвращаем его
                 return@setOnLongClickListener true
             }
-
         }
     }
 
@@ -176,6 +184,10 @@ class WordListAdapter internal constructor(
         this.words = words      // обновляем внутренний список
         // notifyDataSetChanged() даст сигнал о том, что данные изменились
         // и нужно их обновить и в самом RecycleView
+        notifyDataSetChanged()
+    }
+    internal fun setFavoriteWords(words: List<Word>){
+        this.words = words.sortedBy { !it.isFavorite }
         notifyDataSetChanged()
     }
 

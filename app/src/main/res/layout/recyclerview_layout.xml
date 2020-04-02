@@ -60,5 +60,17 @@
             android:textAlignment="textEnd"
             android:textSize="14sp" />
 
+        <ImageView
+            android:id="@+id/imageView_star"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/imageView"
+            android:layout_marginStart="174dp"
+            android:layout_marginBottom="43dp"
+            android:layout_toEndOf="@+id/imageView"
+            android:contentDescription="@string/sample"
+            android:visibility="gone"
+            app:srcCompat="@android:drawable/btn_star_big_on" />
+
     </RelativeLayout>
 </androidx.cardview.widget.CardView>
