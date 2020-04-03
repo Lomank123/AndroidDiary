@@ -116,6 +116,17 @@ class ClickedActivity : AppCompatActivity() {
                 Toast.makeText(this, resources.getString(R.string.saved), Toast.LENGTH_SHORT).show()
                 finish()
             }
+            R.id.share_btn_edit -> {
+
+                val sendIntent = Intent().apply {
+                    action = Intent.ACTION_SEND
+                    putExtra(Intent.EXTRA_TEXT, editText1.text.toString())
+                    type = "text/plain"
+                }
+                val shareIntent = Intent.createChooser(sendIntent, null)
+                startActivity(shareIntent)
+
+            }
             R.id.cancel_btn_edit -> { // Кнопка Cancel
                 setResult(Activity.RESULT_CANCELED)
                 Toast.makeText(this, resources.getString(R.string.canceled), Toast.LENGTH_SHORT).show()
