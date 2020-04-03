@@ -30,7 +30,7 @@ class NoteActivity : AppCompatActivity() {
     private val editActivityRequestCode = 3
     private lateinit var noteViewModel: NoteViewModel       // добавляем ViewModel
 
-    private val colors: List<String> = listOf("green", "pink", "blue", "grass", "purple", "yellow")
+    private val colors: List<String> = listOf("green", "blue", "grass", "purple", "yellow")
 
     private var isFabOpen : Boolean = false                 // по умолч. меню закрыто
 

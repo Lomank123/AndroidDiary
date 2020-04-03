@@ -27,21 +27,20 @@ import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
-    private val newWordActivityRequestCode = 1  // для NewWordActivity
-    private val editActivityRequestCode = 2
+    private val newWordActivityRequestCode = 1          // для NewWordActivity
+    private val editActivityRequestCode = 2             // для EditActivity
+    private lateinit var wordViewModel: WordViewModel   // добавляем ViewModel
+    private var isFabOpen : Boolean = false             // по умолч. меню закрыто
+    private val colors: List<String> = listOf("green", "blue", "grass", "purple", "yellow")
 
-    private lateinit var wordViewModel: WordViewModel       // добавляем ViewModel
-
-    private val colors: List<String> = listOf("green", "pink", "blue", "grass", "purple", "yellow")
-
-    private var isFabOpen : Boolean = false                 // по умолч. меню закрыто
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         val prefs: SharedPreferences? = PreferenceManager.getDefaultSharedPreferences(this)
-        prefs!!.edit().putBoolean("sorted", false).apply()
+        if (!(prefs!!.contains("sorted")))
+            prefs.edit().putBoolean("sorted", false).apply()
 
         // адаптер для RecyclerView
         // то, что в фигурных скобках это и есть аргумент listener : (Word) -> Unit в адаптере
@@ -59,6 +58,7 @@ class MainActivity : AppCompatActivity() {
                 // запускает ClickedActivity из MainActivity путем нажатия на элемент RecyclerView
                 startActivity(intent)
             }, {
+                // 3-ий listener, отвечает за изменение дневника
                 val intent = Intent(this, EditActivity::class.java)
                 intent.putExtra("wordSerializableEdit", it)
                 startActivityForResult(intent, editActivityRequestCode)
@@ -84,14 +84,9 @@ class MainActivity : AppCompatActivity() {
         wordViewModel.allWords.observe(this, Observer {
 
             if (prefs.getBoolean("sorted", false))
-            {
                 adapter.setFavoriteWords(it)
-            }
             else
-            {
                 adapter.setWords(it)
-            }
-
         })
 
         fab.setOnClickListener {
@@ -134,6 +129,12 @@ class MainActivity : AppCompatActivity() {
         recyclerview.adapter!!.notifyDataSetChanged()
     }
 
+    // Удаляет дневник. Вызов происходит через ViewModel
+    private fun deleteWord(word : Word)
+    {
+        wordViewModel.deleteWord(word)
+    }
+
     // закрывает меню
     private fun closeFabMenu() {
         isFabOpen = false
@@ -162,14 +163,8 @@ class MainActivity : AppCompatActivity() {
         // "выдвигает" элементы
         fab.animate().rotation(180f)
         bg_fab_menu.animate().alpha(1f)
-        fab1.animate().translationY(-200f).rotation(0f)
-        fab2.animate().translationY(-100f).rotation(0f)
-    }
-
-    // Удаляет дневник. Вызов происходит через ViewModel
-    private fun deleteWord(word : Word)
-    {
-        wordViewModel.deleteWord(word)
+        fab1.animate().translationY(-350f).rotation(0f)
+        fab2.animate().translationY(-165f).rotation(0f)
     }
 
     // функция для обработки результата после вызова startActivityForResult()

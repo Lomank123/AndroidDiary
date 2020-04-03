@@ -3,96 +3,110 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <EditText
-        android:importantForAutofill="no"
-        android:id="@+id/edit_word"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="36dp"
-        android:hint="@string/hint_diary"
-        android:inputType="textAutoComplete"
-        android:maxLength="14"
-        android:padding="@dimen/small_padding"
-        android:textSize="18sp"
-        app:fontFamily="sans-serif-light"
-        app:layout_constraintBottom_toTopOf="@+id/edit_descr"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <EditText
-        android:importantForAutofill="no"
-        android:id="@+id/edit_descr"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
-        android:hint="@string/description"
-        android:inputType="textAutoComplete"
-        android:maxLength="12"
-        android:padding="@dimen/small_padding"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@+id/button_save"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"  />
-
-    <Button
-        android:id="@+id/button_save"
-        android:layout_width="128dp"
-        android:layout_height="44dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginBottom="28dp"
-        android:background="@drawable/button_click_effect1"
-        android:text="@string/button_save"
-        android:textColor="@color/white"
-        android:textSize="16sp"
+        android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/button_cancel_word1"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/button_cancel_word1"
-        android:layout_width="128dp"
-        android:layout_height="44dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="28dp"
-        android:background="@drawable/button_click_effect_cancel1"
-        android:text="@string/cancel_btn"
-        android:textColor="@color/white"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <Button
-        android:id="@+id/photo_button"
-        android:layout_width="145dp"
-        android:layout_height="47dp"
-        android:layout_marginBottom="28dp"
-        android:background="@drawable/button_click_effect_photo1"
-        android:text="@string/photo_choose"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toTopOf="@+id/edit_word"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/imageView5"
-        android:layout_width="182dp"
-        android:layout_height="182dp"
-        android:layout_marginBottom="16dp"
-        android:contentDescription="@string/description"
-        android:src="@mipmap/ic_launcher_round"
-        app:civ_border_color="#DD8D15"
-        app:civ_border_width="2dp"
-        app:layout_constraintBottom_toTopOf="@+id/photo_button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintVertical_bias="0.0">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/imageView5"
+                android:layout_width="182dp"
+                android:layout_height="182dp"
+                android:layout_marginTop="16dp"
+                android:contentDescription="@string/description"
+                android:src="@mipmap/ic_launcher_round"
+                app:civ_border_color="#DD8D15"
+                app:civ_border_width="2dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.497"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Button
+                android:id="@+id/photo_button"
+                android:layout_width="145dp"
+                android:layout_height="47dp"
+                android:layout_marginTop="28dp"
+                android:background="@drawable/button_click_effect_photo1"
+                android:text="@string/photo_choose"
+                android:textColor="#352E35"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/imageView5" />
+
+            <Button
+                android:id="@+id/button_save"
+                android:layout_width="128dp"
+                android:layout_height="44dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="60dp"
+                android:layout_marginEnd="123dp"
+                android:background="@drawable/button_click_effect1"
+                android:text="@string/button_save"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/button_cancel_word1"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/edit_descr" />
+
+            <EditText
+                android:id="@+id/edit_descr"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="28dp"
+                android:hint="@string/description"
+                android:importantForAutofill="no"
+                android:inputType="textAutoComplete"
+                android:padding="@dimen/small_padding"
+                android:textSize="18sp"
+                app:layout_constraintTop_toBottomOf="@+id/edit_word"
+                tools:layout_editor_absoluteX="0dp" />
+
+            <EditText
+                android:id="@+id/edit_word"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="28dp"
+                android:hint="@string/hint_diary"
+                android:importantForAutofill="no"
+                android:inputType="textAutoComplete"
+                android:maxLength="14"
+                android:padding="@dimen/small_padding"
+                android:textSize="18sp"
+                app:fontFamily="sans-serif-light"
+                app:layout_constraintTop_toBottomOf="@+id/photo_button"
+                tools:layout_editor_absoluteX="0dp" />
+
+            <Button
+                android:id="@+id/button_cancel_word1"
+                android:layout_width="128dp"
+                android:layout_height="44dp"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/button_click_effect_cancel1"
+                android:text="@string/cancel_btn"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/edit_descr"
+                app:layout_constraintVertical_bias="1.0" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

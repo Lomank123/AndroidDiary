@@ -78,9 +78,6 @@ class NoteListAdapter internal constructor(
             if (prefs!!.getBoolean("color_check_note", false)) {
                 when (note.colorNote)
                 {
-                    "pink" ->
-                        layoutItemView.setBackgroundColor(ContextCompat.getColor(mContext,
-                            R.color.pink))
                     "green" ->
                         layoutItemView.setBackgroundColor(ContextCompat.getColor(mContext,
                             R.color.green))

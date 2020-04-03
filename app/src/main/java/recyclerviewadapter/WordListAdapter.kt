@@ -62,9 +62,6 @@ class WordListAdapter internal constructor(
             if (prefs!!.getBoolean("color_check_diary", false)) {
                 when (word.color)
                 {
-                    "pink" ->
-                        layoutItemView.setBackgroundColor(ContextCompat.getColor(mContext,
-                            R.color.pink))
                     "green" ->
                         layoutItemView.setBackgroundColor(ContextCompat.getColor(mContext,
                             R.color.green))
