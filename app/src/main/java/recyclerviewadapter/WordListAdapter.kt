@@ -96,7 +96,6 @@ class WordListAdapter internal constructor(
             else
                 wordStarView.visibility = GONE
 
-
             // Устанавливаем обработчик нажатий на элемент RecyclerView, при нажатии
             // будет вызываться первый listener, который открывает дневник
             itemView.setOnClickListener {
@@ -149,6 +148,7 @@ class WordListAdapter internal constructor(
                 // Т.к. в LongClickListener нужно вернуть boolean, возвращаем его
                 return@setOnLongClickListener true
             }
+
         }
     }
 
