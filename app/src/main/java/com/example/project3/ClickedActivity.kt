@@ -10,6 +10,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.widget.Toast
 import androidx.preference.PreferenceManager
 import kotlinx.android.synthetic.main.activity_clicked.*
@@ -19,17 +21,75 @@ import java.util.*
 
 class ClickedActivity : AppCompatActivity() {
 
+    private var isVoice = false
+    // TODO: Если не понадобится - убрать isVoiceFile
+    // переключатель виджетов для записи голоса
+    // 0 - голосовая заметка не найдена
+    // 1 - кнопка записи была нажата
+    // 2 - файл найден
+    private var isVoiceFile = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_clicked)
-
-
 
         val note = intent.getSerializableExtra("noteSerializable") as? Note
 
         // получаем экстра данные из NoteActivity
         textView1.text = note!!.note
         editText1.setText(note.text)
+
+        // Если голосовая заметка найдена
+        if (note.voiceNote != null)
+        {
+
+            record_voice_dis.visibility = GONE
+            record_time_dis.visibility = GONE
+
+            end_time_active.visibility = VISIBLE
+            play_btn_active.visibility = VISIBLE
+            seekBar_active.visibility = VISIBLE
+            start_time_active.visibility = VISIBLE
+
+            // TODO: Здесь будет логика воспроизведения голос. заметки
+
+        }
+        // Если голосовой заметки не было
+        else
+        {
+
+            // слушатель на кнопку начала записи голоса
+            record_voice_dis.setOnClickListener {
+
+                record_voice_dis.visibility = GONE
+                stop_recording_voice_dis.visibility = VISIBLE
+
+                // слушатель на кнопку остановки записи голос. заметки
+                stop_recording_voice_dis.setOnClickListener {
+
+                    record_time_dis.visibility = GONE
+                    stop_recording_voice_dis.visibility = GONE
+
+                    end_time_active.visibility = VISIBLE
+                    play_btn_active.visibility = VISIBLE
+                    seekBar_active.visibility = VISIBLE
+                    start_time_active.visibility = VISIBLE
+
+                    // TODO: Здесь должна быть логика остановки записи + получение записи голоса
+                    // TODO: только по нажатии на Save заметка уйдет на сохранение
+                    // TODO: до этого момента ее нужно будет получать после остановки записи
+
+
+
+
+                }
+
+
+            }
+
+
+        }
+
 
     }
 
@@ -131,6 +191,13 @@ class ClickedActivity : AppCompatActivity() {
                 setResult(Activity.RESULT_CANCELED)
                 Toast.makeText(this, resources.getString(R.string.canceled), Toast.LENGTH_SHORT).show()
                 finish()
+            }
+            R.id.voice_btn_edit -> {
+                isVoice = !isVoice
+                if (isVoice)
+                    layout_voice.visibility = VISIBLE
+                else
+                    layout_voice.visibility = GONE
             }
         }
         return super.onOptionsItemSelected(item)

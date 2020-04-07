@@ -60,4 +60,8 @@
     <string name="robert">Роберт Хакимов</string>
     <string name="app_ver">Версия приложения: 1.0</string>
 
+    <!-- Voice -->
+    <string name="start_time">Начало</string>
+    <string name="end_time">Конец</string>
+
 </resources>
