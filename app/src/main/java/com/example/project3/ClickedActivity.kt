@@ -5,17 +5,22 @@ import android.app.Activity
 import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Typeface
+import android.media.MediaPlayer
+import android.media.MediaRecorder
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.Toast
 import androidx.preference.PreferenceManager
 import kotlinx.android.synthetic.main.activity_clicked.*
 import roomdatabase.Note
+import java.io.File
+import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -29,14 +34,20 @@ class ClickedActivity : AppCompatActivity() {
     // 2 - файл найден
     private var isVoiceFile = 0
 
+    private var mediaRecorder : MediaRecorder? = MediaRecorder() // Запись
+    private var mediaPlayer : MediaPlayer? = MediaPlayer()     // Воспроизведение
+    private var fileName : String = ""          // Имя файла
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_clicked)
 
         val note = intent.getSerializableExtra("noteSerializable") as? Note
 
+        fileName = this.getExternalFilesDir(null)!!.absolutePath + "/${note!!.note}_${note.idNote}.3gpp"
+
         // получаем экстра данные из NoteActivity
-        textView1.text = note!!.note
+        textView1.text = note.note
         editText1.setText(note.text)
 
         // Если голосовая заметка найдена
@@ -45,6 +56,7 @@ class ClickedActivity : AppCompatActivity() {
 
             record_voice_dis.visibility = GONE
             record_time_dis.visibility = GONE
+            stop_recording_voice_dis.visibility = GONE
 
             end_time_active.visibility = VISIBLE
             play_btn_active.visibility = VISIBLE
@@ -52,7 +64,9 @@ class ClickedActivity : AppCompatActivity() {
             start_time_active.visibility = VISIBLE
 
             // TODO: Здесь будет логика воспроизведения голос. заметки
-
+            play_btn_active.setOnClickListener{
+                playStart(it)
+            }
         }
         // Если голосовой заметки не было
         else
@@ -64,8 +78,10 @@ class ClickedActivity : AppCompatActivity() {
                 record_voice_dis.visibility = GONE
                 stop_recording_voice_dis.visibility = VISIBLE
 
+                recordStart(it)
+
                 // слушатель на кнопку остановки записи голос. заметки
-                stop_recording_voice_dis.setOnClickListener {
+                stop_recording_voice_dis.setOnClickListener { view ->
 
                     record_time_dis.visibility = GONE
                     stop_recording_voice_dis.visibility = GONE
@@ -75,11 +91,15 @@ class ClickedActivity : AppCompatActivity() {
                     seekBar_active.visibility = VISIBLE
                     start_time_active.visibility = VISIBLE
 
+                    recordStop(view)
+
                     // TODO: Здесь должна быть логика остановки записи + получение записи голоса
                     // TODO: только по нажатии на Save заметка уйдет на сохранение
                     // TODO: до этого момента ее нужно будет получать после остановки записи
 
-
+                    play_btn_active.setOnClickListener{
+                        playStart(view)
+                    }
 
 
                 }
@@ -168,7 +188,7 @@ class ClickedActivity : AppCompatActivity() {
                 val currentDate = simpleDateFormat.format(Date())
 
                 note.dateNote = currentDate
-
+                note.voiceNote = fileName
                 replyIntent.putExtra(EXTRA_REPLY_EDIT, note)
 
                 setResult(Activity.RESULT_OK, replyIntent) // resultCode будет RESULT_OK
@@ -201,6 +221,71 @@ class ClickedActivity : AppCompatActivity() {
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+
+    private fun recordStart(v : View)
+    {
+        try {
+            releaseRecorder()
+
+            val outFile = File(fileName)
+            if (outFile.exists())
+                outFile.delete()
+
+            mediaRecorder = MediaRecorder()
+            mediaRecorder?.setAudioSource(MediaRecorder.AudioSource.MIC)
+            mediaRecorder?.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
+            mediaRecorder?.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
+            mediaRecorder?.setOutputFile(fileName)
+            mediaRecorder?.prepare()
+            mediaRecorder?.start()
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+    private fun recordStop(v : View)
+    {
+        mediaRecorder?.stop()
+    }
+    private fun playStart(v : View)
+    {
+        try {
+            releasePlayer()
+            mediaPlayer = MediaPlayer()
+            mediaPlayer?.setDataSource(fileName)
+            mediaPlayer?.prepare()
+            mediaPlayer?.start()
+        }
+        catch (e : Exception) {
+            e.printStackTrace()
+        }
+    }
+    private fun playStop(v : View)
+    {
+        mediaPlayer?.stop()
+    }
+    private fun releaseRecorder() {
+        if(mediaRecorder != null)
+        {
+            mediaRecorder?.release()
+            mediaRecorder = null
+        }
+    }
+    private fun releasePlayer() {
+        if(mediaPlayer != null)
+        {
+            mediaPlayer?.release()
+            mediaPlayer = null
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        releasePlayer()
+        releaseRecorder()
     }
 
     // тег для распознавания именно этого запроса
