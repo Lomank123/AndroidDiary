@@ -6,6 +6,7 @@ import androidx.room.Relation
 import roomdatabase.Note
 import roomdatabase.Word
 import roomdatabase.WordDao
+import java.io.File
 import java.io.Serializable
 
 // класс, в котором описывается объект, содержащий данные о дневнике
@@ -30,6 +31,10 @@ class NoteRepository (private val wordDao : WordDao) {
     suspend fun deleteNote(note : Note)
     {
         wordDao.deleteOneNote(note.idNote)
+        if(note.voiceNote != null)
+            if (File(note.voiceNote!!).exists())
+                File(note.voiceNote!!).delete()
+
     }
 
     // обновить заметку

@@ -54,7 +54,7 @@
         android:id="@+id/layout_voice"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#FFFFFF"
+        android:background="#9195F1DC"
         android:padding="15dp"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -63,6 +63,68 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView_clicked"
         app:layout_constraintVertical_bias="1.0">
+
+        <ImageButton
+            android:id="@+id/delete_btn_active"
+            android:layout_width="50dp"
+            android:layout_height="45dp"
+            android:background="@drawable/custom_button_cancel1"
+            android:contentDescription="@string/sample"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.525"
+            app:srcCompat="@android:drawable/ic_menu_close_clear_cancel" />
+
+        <ImageButton
+            android:id="@+id/play_btn_active"
+            android:layout_width="50dp"
+            android:layout_height="45dp"
+            android:layout_marginStart="4dp"
+            android:background="@drawable/custom_button_rainbow1"
+            android:contentDescription="@string/sample"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.525"
+            app:srcCompat="@android:drawable/ic_media_play" />
+
+        <SeekBar
+            android:id="@+id/seekBar_active"
+            android:layout_width="233dp"
+            android:layout_height="26dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/delete_btn_active"
+            app:layout_constraintHorizontal_bias="0.492"
+            app:layout_constraintStart_toEndOf="@+id/play_btn_active"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/start_time_active"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="40dp"
+            android:text="@string/start_time"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/play_btn_active"
+            app:layout_constraintTop_toBottomOf="@+id/seekBar_active"
+            app:layout_constraintVertical_bias="0.066" />
+
+        <TextView
+            android:id="@+id/end_time_active"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="40dp"
+            android:text="@string/end_time"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/delete_btn_active"
+            app:layout_constraintTop_toBottomOf="@+id/seekBar_active"
+            app:layout_constraintVertical_bias="0.066" />
 
         <ImageButton
             android:id="@+id/stop_recording_voice_dis"
@@ -77,78 +139,32 @@
             app:layout_constraintVertical_bias="0.466"
             app:srcCompat="@android:drawable/ic_media_pause" />
 
-        <SeekBar
-            android:id="@+id/seekBar_active"
-            android:layout_width="275dp"
-            android:layout_height="19dp"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.029"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.25" />
-
-        <ImageButton
-            android:id="@+id/play_btn_active"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="44dp"
-            android:contentDescription="@string/sample"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toEndOf="@+id/end_time_active"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@android:drawable/ic_media_play" />
-
-        <TextView
-            android:id="@+id/start_time_active"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="@string/start_time"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/seekBar_active"
-            app:layout_constraintVertical_bias="0.684" />
-
-        <TextView
-            android:id="@+id/end_time_active"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/end_time"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.665"
-            app:layout_constraintStart_toEndOf="@+id/start_time_active"
-            app:layout_constraintTop_toBottomOf="@+id/seekBar_active"
-            app:layout_constraintVertical_bias="1.0" />
-
         <ImageButton
             android:id="@+id/record_voice_dis"
             android:layout_width="56dp"
             android:layout_height="41dp"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.008"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="1.0"
-            app:srcCompat="@android:drawable/ic_btn_speak_now" />
+            app:srcCompat="@android:drawable/ic_btn_speak_now"
+            tools:visibility="gone" />
 
         <TextView
             android:id="@+id/record_time_dis"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/sample"
+            android:layout_width="246dp"
+            android:layout_height="21dp"
+            android:layout_marginEnd="36dp"
+            android:text="@string/no_voice_note"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textColor="#000000"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.122"
-            app:layout_constraintStart_toEndOf="@+id/record_voice_dis"
             app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

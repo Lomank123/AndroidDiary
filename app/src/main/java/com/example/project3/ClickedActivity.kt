@@ -10,11 +10,12 @@ import android.media.MediaRecorder
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import android.widget.SeekBar
 import android.widget.Toast
 import androidx.preference.PreferenceManager
 import kotlinx.android.synthetic.main.activity_clicked.*
@@ -27,12 +28,7 @@ import java.util.*
 class ClickedActivity : AppCompatActivity() {
 
     private var isVoice = false
-    // TODO: Если не понадобится - убрать isVoiceFile
-    // переключатель виджетов для записи голоса
-    // 0 - голосовая заметка не найдена
-    // 1 - кнопка записи была нажата
-    // 2 - файл найден
-    private var isVoiceFile = 0
+    private var isVoiceExist = false
 
     private var mediaRecorder : MediaRecorder? = MediaRecorder() // Запись
     private var mediaPlayer : MediaPlayer? = MediaPlayer()     // Воспроизведение
@@ -43,7 +39,6 @@ class ClickedActivity : AppCompatActivity() {
         setContentView(R.layout.activity_clicked)
 
         val note = intent.getSerializableExtra("noteSerializable") as? Note
-
         fileName = this.getExternalFilesDir(null)!!.absolutePath + "/${note!!.note}_${note.idNote}.3gpp"
 
         // получаем экстра данные из NoteActivity
@@ -51,66 +46,106 @@ class ClickedActivity : AppCompatActivity() {
         editText1.setText(note.text)
 
         // Если голосовая заметка найдена
-        if (note.voiceNote != null)
-        {
+            if(File(fileName).exists())
+            {
+                isVoiceExist = true
+                record_voice_dis.visibility = GONE
+                record_time_dis.visibility = GONE
+                stop_recording_voice_dis.visibility = GONE
+
+                play_btn_active.visibility = VISIBLE
+                delete_btn_active.visibility = VISIBLE
+
+                // seekBar
+                seekBar_active.visibility = VISIBLE
+
+                playStart()
+
+                seekBar_active.max = mediaPlayer!!.duration
+
+                seekBar_active.setOnSeekBarChangeListener(
+                    object : SeekBar.OnSeekBarChangeListener {
+                        override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                            if (fromUser) {
+                                mediaPlayer!!.seekTo(progress)
+                            }
+                        }
+                        override fun onStartTrackingTouch(p0: SeekBar?) {
+                        }
+                        override fun onStopTrackingTouch(p0: SeekBar?) {
+                        }
+                    }
+                )
+            }
+
+        play_btn_active.setOnClickListener {
+            if (mediaPlayer!!.isPlaying) {
+                pausePlay()
+                //play_btn_active.setImageResource(android.R.drawable.ic_media_play)
+            } else {
+                resumePlay()
+                //play_btn_active.setImageResource(android.R.drawable.ic_media_pause)
+                progressUpdater()
+            }
+        }
+
+        delete_btn_active.setOnClickListener {
+            recordDelete()
+        }
+
+        // слушатель на кнопку начала записи голоса
+        record_voice_dis.setOnClickListener {
 
             record_voice_dis.visibility = GONE
-            record_time_dis.visibility = GONE
-            stop_recording_voice_dis.visibility = GONE
+            stop_recording_voice_dis.visibility = VISIBLE
 
-            end_time_active.visibility = VISIBLE
-            play_btn_active.visibility = VISIBLE
-            seekBar_active.visibility = VISIBLE
-            start_time_active.visibility = VISIBLE
+            recordStart()
 
-            // TODO: Здесь будет логика воспроизведения голос. заметки
-            play_btn_active.setOnClickListener{
-                playStart(it)
-            }
-        }
-        // Если голосовой заметки не было
-        else
-        {
+            // слушатель на кнопку остановки записи голос. заметки
+            stop_recording_voice_dis.setOnClickListener {
 
-            // слушатель на кнопку начала записи голоса
-            record_voice_dis.setOnClickListener {
+                record_time_dis.visibility = GONE
+                stop_recording_voice_dis.visibility = GONE
 
-                record_voice_dis.visibility = GONE
-                stop_recording_voice_dis.visibility = VISIBLE
+                play_btn_active.visibility = VISIBLE
+                delete_btn_active.visibility = VISIBLE
 
-                recordStart(it)
+                recordStop()
+                isVoiceExist = true
+                playStart()
 
-                // слушатель на кнопку остановки записи голос. заметки
-                stop_recording_voice_dis.setOnClickListener { view ->
-
-                    record_time_dis.visibility = GONE
-                    stop_recording_voice_dis.visibility = GONE
-
-                    end_time_active.visibility = VISIBLE
-                    play_btn_active.visibility = VISIBLE
-                    seekBar_active.visibility = VISIBLE
-                    start_time_active.visibility = VISIBLE
-
-                    recordStop(view)
-
-                    // TODO: Здесь должна быть логика остановки записи + получение записи голоса
-                    // TODO: только по нажатии на Save заметка уйдет на сохранение
-                    // TODO: до этого момента ее нужно будет получать после остановки записи
-
-                    play_btn_active.setOnClickListener{
-                        playStart(view)
+                seekBar_active.visibility = VISIBLE
+                seekBar_active.max = mediaPlayer!!.duration
+                seekBar_active.setOnSeekBarChangeListener(
+                    object : SeekBar.OnSeekBarChangeListener {
+                        override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                            if (fromUser) {
+                                mediaPlayer!!.seekTo(progress)
+                            }
+                        }
+                        override fun onStartTrackingTouch(p0: SeekBar?) {
+                        }
+                        override fun onStopTrackingTouch(p0: SeekBar?) {
+                        }
                     }
-
-
+                )
+                play_btn_active.setOnClickListener{
+                    if(mediaPlayer!!.isPlaying) {
+                        pausePlay()
+                        //play_btn_active.setImageResource(android.R.drawable.ic_media_play)
+                    }
+                    else {
+                        resumePlay()
+                        //play_btn_active.setImageResource(android.R.drawable.ic_media_pause)
+                        progressUpdater()
+                    }
                 }
 
-
+                delete_btn_active.setOnClickListener{
+                    recordDelete()
+                }
             }
-
-
         }
-
-
     }
 
     override fun onResume()
@@ -130,7 +165,6 @@ class ClickedActivity : AppCompatActivity() {
             }
         }
 
-        // стандартный шрифт - roboto_regular.ttf
         when(prefs.getString("list_preference_1", "0"))
         {
             "Default" ->
@@ -188,7 +222,14 @@ class ClickedActivity : AppCompatActivity() {
                 val currentDate = simpleDateFormat.format(Date())
 
                 note.dateNote = currentDate
-                note.voiceNote = fileName
+                if(isVoiceExist)
+                    note.voiceNote = fileName
+                else {
+                    val outFile = File(fileName)
+                    if (outFile.exists())
+                        outFile.delete()
+                    note.voiceNote = null
+                }
                 replyIntent.putExtra(EXTRA_REPLY_EDIT, note)
 
                 setResult(Activity.RESULT_OK, replyIntent) // resultCode будет RESULT_OK
@@ -209,6 +250,7 @@ class ClickedActivity : AppCompatActivity() {
             }
             R.id.cancel_btn_edit -> { // Кнопка Cancel
                 setResult(Activity.RESULT_CANCELED)
+
                 Toast.makeText(this, resources.getString(R.string.canceled), Toast.LENGTH_SHORT).show()
                 finish()
             }
@@ -223,8 +265,37 @@ class ClickedActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
+    private fun progressUpdater()
+    {
+        seekBar_active.progress = mediaPlayer!!.currentPosition
+        if(mediaPlayer!!.isPlaying)
+        {
+            val notif = Runnable {
+                progressUpdater()
+            }
+            Handler().postDelayed(notif, 1000)
+        }
+    }
 
-    private fun recordStart(v : View)
+    private fun recordDelete()
+    {
+        isVoiceExist = false
+        val outFile = File(fileName)
+        if (outFile.exists())
+            outFile.delete()
+        releaseRecorder()
+        releasePlayer()
+
+        record_voice_dis.visibility = VISIBLE
+        record_time_dis.visibility = VISIBLE
+        stop_recording_voice_dis.visibility = GONE
+
+        play_btn_active.visibility = GONE
+        delete_btn_active.visibility = GONE
+        seekBar_active.visibility = GONE
+    }
+
+    private fun recordStart()
     {
         try {
             releaseRecorder()
@@ -246,27 +317,26 @@ class ClickedActivity : AppCompatActivity() {
             e.printStackTrace()
         }
     }
-    private fun recordStop(v : View)
+
+    private fun recordStop()
     {
         mediaRecorder?.stop()
     }
-    private fun playStart(v : View)
+
+    private fun playStart()
     {
         try {
             releasePlayer()
             mediaPlayer = MediaPlayer()
             mediaPlayer?.setDataSource(fileName)
             mediaPlayer?.prepare()
-            mediaPlayer?.start()
+
         }
         catch (e : Exception) {
             e.printStackTrace()
         }
     }
-    private fun playStop(v : View)
-    {
-        mediaPlayer?.stop()
-    }
+
     private fun releaseRecorder() {
         if(mediaRecorder != null)
         {
@@ -274,12 +344,23 @@ class ClickedActivity : AppCompatActivity() {
             mediaRecorder = null
         }
     }
+
     private fun releasePlayer() {
         if(mediaPlayer != null)
         {
             mediaPlayer?.release()
             mediaPlayer = null
         }
+    }
+
+    private fun resumePlay()
+    {
+        mediaPlayer?.start()
+    }
+
+    private fun pausePlay()
+    {
+        mediaPlayer?.pause()
     }
 
     override fun onDestroy() {

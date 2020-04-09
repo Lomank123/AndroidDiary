@@ -62,6 +62,6 @@
     <!-- Voice -->
     <string name="start_time">Start time</string>
     <string name="end_time">End time</string>
-
+    <string name="no_voice_note">There is no voice note</string>
 
 </resources>

@@ -163,8 +163,8 @@ class MainActivity : AppCompatActivity() {
         // "выдвигает" элементы
         fab.animate().rotation(180f)
         bg_fab_menu.animate().alpha(1f)
-        fab1.animate().translationY(-350f).rotation(0f)
-        fab2.animate().translationY(-165f).rotation(0f)
+        fab1.animate().translationY(-200f).rotation(0f)
+        fab2.animate().translationY(-100f).rotation(0f)
     }
 
     // функция для обработки результата после вызова startActivityForResult()
