@@ -33,7 +33,6 @@ class MainActivity : AppCompatActivity() {
     private var isFabOpen : Boolean = false             // по умолч. меню закрыто
     private val colors: List<String> = listOf("green", "blue", "grass", "purple", "yellow")
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -42,27 +41,7 @@ class MainActivity : AppCompatActivity() {
         if (!(prefs!!.contains("sorted")))
             prefs.edit().putBoolean("sorted", false).apply()
 
-        // адаптер для RecyclerView
-        // то, что в фигурных скобках это и есть аргумент listener : (Word) -> Unit в адаптере
-        val adapter = WordListAdapter(this,
-            {
-                // Первый listener, отвечает за удаление дневника
-                deleteWord(it)
-            }, {
-                // Второй listener
-                // отсюда будет запускаться новый RecyclerView для отображения списка заметок
-                val intent = Intent(this, NoteActivity::class.java)
-                intent.putExtra("word_id", it.id) // передаем id дневника
-                intent.putExtra("wordSelf", it)
-                intent.putExtra("word_img", it.img) // передаем картинку
-                // запускает ClickedActivity из MainActivity путем нажатия на элемент RecyclerView
-                startActivity(intent)
-            }, {
-                // 3-ий listener, отвечает за изменение дневника
-                val intent = Intent(this, EditActivity::class.java)
-                intent.putExtra("wordSerializableEdit", it)
-                startActivityForResult(intent, editActivityRequestCode)
-            })
+        val adapter = newAdapter()
 
         // задаем Adapter (одинаково для всех RecyclerView)
         recyclerview.adapter = adapter
@@ -82,7 +61,6 @@ class MainActivity : AppCompatActivity() {
         // Если какие-либо изменения были, обсервер это заметит и даст сигнал, который задействует
         // setWords и обновит данные в списке внутри адаптера.
         wordViewModel.allWords.observe(this, Observer {
-
             if (prefs.getBoolean("sorted", false))
                 adapter.setFavoriteWords(it)
             else
@@ -129,6 +107,31 @@ class MainActivity : AppCompatActivity() {
         recyclerview.adapter!!.notifyDataSetChanged()
     }
 
+    // адаптер для RecyclerView
+    // то, что в фигурных скобках это и есть аргумент listener : (Word) -> Unit в адаптере
+    private fun newAdapter() : WordListAdapter
+    {
+        return WordListAdapter(this,
+            {
+                // Первый listener, отвечает за удаление дневника
+                deleteWord(it)
+            }, {
+                // Второй listener
+                // отсюда будет запускаться новый RecyclerView для отображения списка заметок
+                val intent = Intent(this, NoteActivity::class.java)
+                intent.putExtra("word_id", it.id) // передаем id дневника
+                intent.putExtra("wordSelf", it)
+                intent.putExtra("word_img", it.img) // передаем картинку
+                // запускает ClickedActivity из MainActivity путем нажатия на элемент RecyclerView
+                startActivity(intent)
+            }, {
+                // 3-ий listener, отвечает за изменение дневника
+                val intent = Intent(this, EditActivity::class.java)
+                intent.putExtra("wordSerializableEdit", it)
+                startActivityForResult(intent, editActivityRequestCode)
+            })
+    }
+
     // Удаляет дневник. Вызов происходит через ViewModel
     private fun deleteWord(word : Word)
     {
@@ -163,8 +166,8 @@ class MainActivity : AppCompatActivity() {
         // "выдвигает" элементы
         fab.animate().rotation(180f)
         bg_fab_menu.animate().alpha(1f)
-        fab1.animate().translationY(-200f).rotation(0f)
-        fab2.animate().translationY(-100f).rotation(0f)
+        fab1.animate().translationY(-350f).rotation(0f)
+        fab2.animate().translationY(-165f).rotation(0f)
     }
 
     // функция для обработки результата после вызова startActivityForResult()
@@ -211,23 +214,9 @@ class MainActivity : AppCompatActivity() {
         menuInflater.inflate(R.menu.actionbar_menu, menu)
 
         val prefs: SharedPreferences? = PreferenceManager.getDefaultSharedPreferences(this)
-
-        val adapter = WordListAdapter(this@MainActivity,
-            {
-                deleteWord(it)
-            }, {
-                val intent = Intent(this@MainActivity, NoteActivity::class.java)
-                intent.putExtra("word_id", it.id)
-                intent.putExtra("wordSelf", it)
-                intent.putExtra("word_img", it.img)
-                startActivity(intent)
-            }, {
-                val intent = Intent(this@MainActivity, EditActivity::class.java)
-                intent.putExtra("wordSerializableEdit", it)
-                startActivityForResult(intent, editActivityRequestCode)
-            })
-
+        val adapter = newAdapter()
         val searchItem = menu!!.findItem(R.id.search_view)
+
         if (searchItem != null)
         {
             val searchView = searchItem.actionView as SearchView
@@ -250,17 +239,11 @@ class MainActivity : AppCompatActivity() {
                             adapter.setFavoriteWords(wordViewModel.allWords.value!!)
                         }
                     }
-
+                    // будет обновлять список когда будут добавляться/удаляться записи
                     wordViewModel.allWords.observe(this@MainActivity, Observer {
-
                         if (newText!!.isNotEmpty())
                         {
-                            val wordList1 = mutableListOf<Word>()
-                            val search = newText.toLowerCase(Locale.ROOT)
-                            it.forEach{words ->
-                                if(words.word.toLowerCase(Locale.ROOT).contains(search))
-                                    wordList1.add(words)
-                            }
+                            val wordList1 = getWordForSearch(newText)
                             if (prefs!!.getBoolean("sorted", false))
                                 adapter.setFavoriteWords(wordList1)
                             else
@@ -276,12 +259,7 @@ class MainActivity : AppCompatActivity() {
                     })
                     if (newText!!.isNotEmpty())
                     {
-                        val wordList1 = mutableListOf<Word>()
-                        val search = newText.toLowerCase(Locale.ROOT)
-                        wordViewModel.allWords.value!!.forEach{
-                            if(it.word.toLowerCase(Locale.ROOT).contains(search))
-                                wordList1.add(it)
-                        }
+                        val wordList1 = getWordForSearch(newText)
                         if (prefs!!.getBoolean("sorted", false))
                             adapter.setFavoriteWords(wordList1)
                         else
@@ -299,6 +277,18 @@ class MainActivity : AppCompatActivity() {
             })
         }
         return super.onCreateOptionsMenu(menu)
+    }
+
+    // Возвращает список записей, удовлетворяющих поисковому запросу
+    private fun getWordForSearch(newText : String?) : MutableList<Word>
+    {
+        val wordList1 = mutableListOf<Word>()
+        val search = newText!!.toLowerCase(Locale.ROOT)
+        wordViewModel.allWords.value!!.forEach{
+            if(it.word.toLowerCase(Locale.ROOT).contains(search))
+                wordList1.add(it)
+        }
+        return wordList1
     }
 
     // когда выбираешь элемент меню

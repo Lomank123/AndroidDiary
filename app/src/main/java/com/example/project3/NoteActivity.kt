@@ -257,6 +257,7 @@ class NoteActivity : AppCompatActivity() {
                     intent.putExtra("noteSerializableEdit", it)
                     startActivityForResult(intent, editActivityRequestCode)
                 })
+
                 override fun onQueryTextSubmit(query: String?): Boolean {
                     return true
                 }
