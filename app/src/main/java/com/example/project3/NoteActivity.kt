@@ -3,6 +3,7 @@ package com.example.project3
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
+import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
@@ -13,9 +14,14 @@ import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_note.*
+import kotlinx.android.synthetic.main.activity_note.bg_fab_menu
+import kotlinx.android.synthetic.main.activity_note.fab
+import kotlinx.android.synthetic.main.activity_note.fab2
 import recyclerviewadapter.NoteListAdapter
+import repository.NotesAndWords
 import roomdatabase.Note
 import roomdatabase.Word
 import viewmodel.NoteViewModel
@@ -29,9 +35,7 @@ class NoteActivity : AppCompatActivity() {
     private val clickedActivityRequestCode = 2              // для ClickedActivity (requestCode)
     private val editActivityRequestCode = 3
     private lateinit var noteViewModel: NoteViewModel       // добавляем ViewModel
-
     private val colors: List<String> = listOf("green", "blue", "grass", "purple", "yellow")
-
     private var isFabOpen : Boolean = false                 // по умолч. меню закрыто
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,31 +44,12 @@ class NoteActivity : AppCompatActivity() {
 
         val wordSelf = intent.getSerializableExtra("wordSelf") as? Word
 
-        // адаптер для NoteActivity, при нажатии на элемент будет вызывать ClickedActivity
-        val adapter = NoteListAdapter(this, {
-
-            val intent = Intent(this, ClickedActivity::class.java)
-            // передаем необходимые данные в ClickedActivity
-            intent.putExtra("noteSerializable", it)
-            // запускает ClickedActivity из MainActivity путем нажатия на элемент RecyclerView
-            startActivityForResult(intent, clickedActivityRequestCode)
-        }, {
-            // второй listener, нужен для удаления заметки
-            deleteNote(it)
-        }, {
-            val intent = Intent(this, EditActivityNote::class.java)
-            intent.putExtra("noteSerializableEdit", it)
-            startActivityForResult(intent, editActivityRequestCode)
-        })
-
-        // Аналогично, как и в MainActivity
+        val adapter = newNoteAdapter()
         recyclerview1.adapter = adapter
         recyclerview1.layoutManager = LinearLayoutManager(this)
         noteViewModel = ViewModelProvider(this).get(NoteViewModel::class.java)
-
-        //любимые отступы
-        val topSpacingDecoration = TopSpacingItemDecoration(20)
-        recyclerview1.addItemDecoration(topSpacingDecoration)
+        // Отступы
+        recyclerview1.addItemDecoration(TopSpacingItemDecoration(20))
 
         // полученный список заметок передаем в RecyclerView для отображения
         noteViewModel.allNotes.observe(this, Observer {
@@ -82,20 +67,18 @@ class NoteActivity : AppCompatActivity() {
             adapter.setNotes(getList)   // передаем полученный список в RecyclerView
         })
 
-        // обработчик нажатий на кнопку вызова popupMenu
+        // Кнопка вызова меню
         fab.setOnClickListener {
             if (!isFabOpen)
                 showFabMenu()
             else
                 closeFabMenu()
         }
-
         // обработчик нажатий на 1-ую кнопку
      //   fab1.setOnClickListener {
      //       closeFabMenu()
      //       Toast.makeText(this, "Message", Toast.LENGTH_SHORT).show()
      //   }
-
         // обработчик нажатий на 2-ую кнопку (вызывает NewWordActivity для создания заметки)
         fab2.setOnClickListener {
             closeFabMenu()
@@ -103,7 +86,7 @@ class NoteActivity : AppCompatActivity() {
             // 2-ой аргумент это requestCode по которому определяется откуда был запрос
             startActivityForResult(intent, newNoteActivityRequestCode)
         }
-        // обработчик нажатий на ФОН (когда вызывается popupMenu фон затемняется)
+        // обработчик нажатий на ФОН (когда вызывается фон затемняется)
         bg_fab_menu.setOnClickListener {
             // т.е. если нажать на затемненный фон меню закроется
             closeFabMenu()
@@ -115,36 +98,22 @@ class NoteActivity : AppCompatActivity() {
         recyclerview1.adapter!!.notifyDataSetChanged()
     }
 
-    // закрывает выдвиг. меню
-    private fun closeFabMenu() {
-        isFabOpen = false
-
-        // возвращает элементы на исходные позиции
-        fab.animate().rotation(0f)
-        bg_fab_menu.animate().alpha(0f)
-        //fab1.animate().translationY(0f).rotation(90f)
-        fab2.animate().translationY(0f).rotation(90f)
-
-        // ставит задержку на исчезновение элементов меню (250 мс)
-        //Handler().postDelayed({fab1.visibility = GONE}, 250)
-        Handler().postDelayed({fab2.visibility = GONE}, 250)
-        Handler().postDelayed({bg_fab_menu.visibility = GONE}, 250)
-    }
-
-    // открывает выдвиг. меню
-    private fun showFabMenu() {
-        isFabOpen = true
-
-        // показывает элементы
-        //fab1.visibility = VISIBLE
-        fab2.visibility = VISIBLE
-        bg_fab_menu.visibility = VISIBLE
-
-        // "выдвигает" элементы
-        fab.animate().rotation(180f)
-        bg_fab_menu.animate().alpha(1f)
-        //fab1.animate().translationY(-300f).rotation(0f)
-        fab2.animate().translationY(-165f).rotation(0f)
+    private fun newNoteAdapter() : NoteListAdapter
+    {
+        return NoteListAdapter(this, {
+            val intent = Intent(this, ClickedActivity::class.java)
+            // передаем необходимые данные в ClickedActivity
+            intent.putExtra("noteSerializable", it)
+            // запускает ClickedActivity из MainActivity путем нажатия на элемент RecyclerView
+            startActivityForResult(intent, clickedActivityRequestCode)
+        }, {
+            // второй listener, нужен для удаления заметки
+            deleteNote(it)
+        }, {
+            val intent = Intent(this, EditActivityNote::class.java)
+            intent.putExtra("noteSerializableEdit", it)
+            startActivityForResult(intent, editActivityRequestCode)
+        })
     }
 
     private fun deleteNote(note : Note) // удаление записи
@@ -222,87 +191,31 @@ class NoteActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.actionbar_menu_note, menu)
 
+        val prefs: SharedPreferences? = PreferenceManager.getDefaultSharedPreferences(this)
         val wordSelf = intent.getSerializableExtra("wordSelf") as? Word
 
         if (wordSelf!!.isFavorite)
         {
             menu!!.findItem(R.id.favorite_view)
                 .setIcon(android.R.drawable.btn_star_big_on)
-        }
-        else
-        {
+        } else {
             menu!!.findItem(R.id.favorite_view)
                 .setIcon(android.R.drawable.btn_star_big_off)
         }
-
         val searchItem = menu.findItem(R.id.search_view)
         if (searchItem != null) {
-
             val searchView = searchItem.actionView as SearchView
             searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-
-                val adapter = NoteListAdapter(this@NoteActivity, {
-
-                    val intent = Intent(this@NoteActivity,
-                        ClickedActivity::class.java)
-                    intent.putExtra("noteSerializable", it)
-                    startActivityForResult(intent, clickedActivityRequestCode)
-                }, {
-                    deleteNote(it)
-                }, {
-                    val intent = Intent(this@NoteActivity,
-                        EditActivityNote::class.java)
-                    intent.putExtra("noteSerializableEdit", it)
-                    startActivityForResult(intent, editActivityRequestCode)
-                })
-
                 override fun onQueryTextSubmit(query: String?): Boolean {
                     return true
                 }
                 override fun onQueryTextChange(newText: String?): Boolean {
-                    recyclerview1.adapter = adapter
-                    val wordId = wordSelf.id
                     noteViewModel.allNotes.observe(this@NoteActivity, Observer {
-
-                        var getListNotes = emptyList<Note>()
-                        for (i in it) {
-                            if (i.word.id == wordId) {
-                                getListNotes = i.notes
-                                break
-                            }
-                        }
-                        if (newText!!.isNotEmpty()) {
-                            val noteList = mutableListOf<Note>()
-                            val search = newText.toLowerCase(Locale.ROOT)
-
-                            getListNotes.forEach{notes ->
-                                if(notes.note.toLowerCase(Locale.ROOT).contains(search))
-                                    noteList.add(notes)
-                            }
-                            adapter.setNotes(noteList)
-                        }
-                        else
-                            adapter.setNotes(getListNotes)
+                        setNotesForSearch((recyclerview1.adapter as NoteListAdapter), prefs,
+                            it, newText)
                     })
-                    var getList = emptyList<Note>()
-                    for (i in noteViewModel.allNotes.value!!) {
-                        if (i.word.id == wordId) {
-                            getList = i.notes
-                            break
-                        }
-                    }
-                    if (newText!!.isNotEmpty())
-                    {
-                        val noteList = mutableListOf<Note>()
-                        val search = newText.toLowerCase(Locale.ROOT)
-                        getList.forEach{
-                            if(it.note.toLowerCase(Locale.ROOT).contains(search))
-                                noteList.add(it)
-                        }
-                        adapter.setNotes(noteList)
-                    }
-                    else
-                        adapter.setNotes(getList)
+                    setNotesForSearch((recyclerview1.adapter as NoteListAdapter), prefs,
+                        noteViewModel.allNotes.value!!, newText)
                     return true
                 }
             })
@@ -310,8 +223,53 @@ class NoteActivity : AppCompatActivity() {
         return super.onCreateOptionsMenu(menu)
     }
 
+    // Функция для вывода поискового запроса (используется только в SearchView)
+    private fun setNotesForSearch(adapter : NoteListAdapter, prefs : SharedPreferences?,
+                                  all_objects_list : List<NotesAndWords>, newText : String?)
+    {
+        val wordSelf = intent.getSerializableExtra("wordSelf") as? Word
+
+        var getListNotes = emptyList<Note>()
+        for (i in all_objects_list) {
+            if (i.word.id == wordSelf!!.id) {
+                getListNotes = i.notes
+                break
+            }
+        }
+        if (newText!!.isNotEmpty()) {
+            val noteList = mutableListOf<Note>()
+            val search = newText.toLowerCase(Locale.ROOT)
+
+            getListNotes.forEach{notes ->
+                if(notes.note.toLowerCase(Locale.ROOT).contains(search))
+                    noteList.add(notes)
+            }
+            adapter.setNotes(noteList)
+        }
+        else
+            adapter.setNotes(getListNotes)
+        // Слушатель на кнопку для правильной сортировки
+        //fab1.setOnClickListener {
+        //    closeFabMenu()
+        //    if (prefs!!.getBoolean("sorted", false)) {
+        //        prefs.edit().putBoolean("sorted", false).apply()
+        //        if (newText.isNotEmpty())
+        //            (recyclerview.adapter as WordListAdapter).setWords(wordList1)
+        //        else
+        //            (recyclerview.adapter as WordListAdapter).setWords(all_words_list)
+        //    } else {
+        //        prefs.edit().putBoolean("sorted", true).apply()
+        //        if (newText.isNotEmpty())
+        //            (recyclerview.adapter as WordListAdapter).setFavoriteWords(wordList1)
+        //        else
+        //            (recyclerview.adapter as WordListAdapter).setFavoriteWords(all_words_list)
+        //    }
+        //}
+    }
+
     // когда выбираешь элемент меню
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
         val wordSelf = intent.getSerializableExtra("wordSelf") as? Word
 
         when(item.itemId){
@@ -328,10 +286,8 @@ class NoteActivity : AppCompatActivity() {
                 return super.onOptionsItemSelected(item)
             }
             R.id.favorite_view -> {
-                val wordId = wordSelf!!.id
-
                 for (words in noteViewModel.allNotes.value!!)
-                    if (words.word.id == wordId) {
+                    if (words.word.id == wordSelf!!.id) {
                         words.word.isFavorite = !words.word.isFavorite
                         if(words.word.isFavorite) {
                             item.setIcon(android.R.drawable.btn_star_big_on)
@@ -350,5 +306,35 @@ class NoteActivity : AppCompatActivity() {
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    // закрывает выдвиг. меню
+    private fun closeFabMenu() {
+        isFabOpen = false
+        // возвращает элементы на исходные позиции
+        fab.animate().rotation(0f)
+        bg_fab_menu.animate().alpha(0f)
+        //fab1.animate().translationY(0f).rotation(90f)
+        fab2.animate().translationY(0f).rotation(90f)
+
+        // ставит задержку на исчезновение элементов меню (250 мс)
+        //Handler().postDelayed({fab1.visibility = GONE}, 250)
+        Handler().postDelayed({fab2.visibility = GONE}, 250)
+        Handler().postDelayed({bg_fab_menu.visibility = GONE}, 250)
+    }
+
+    // открывает выдвиг. меню
+    private fun showFabMenu() {
+        isFabOpen = true
+        // показывает элементы
+        //fab1.visibility = VISIBLE
+        fab2.visibility = VISIBLE
+        bg_fab_menu.visibility = VISIBLE
+
+        // "выдвигает" элементы
+        fab.animate().rotation(180f)
+        bg_fab_menu.animate().alpha(1f)
+        //fab1.animate().translationY(-300f).rotation(0f)
+        fab2.animate().translationY(-165f).rotation(0f)
     }
 }

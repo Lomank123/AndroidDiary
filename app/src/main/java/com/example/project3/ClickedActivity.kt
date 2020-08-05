@@ -214,7 +214,7 @@ class ClickedActivity : AppCompatActivity() {
 
                 // обновляем введенный текст
                 note!!.text = editText1.text.toString()
-
+                // TODO: Реализовать создание в NoteActivity
                 // обновляем дату изменения заметки
                 val pattern = "\t\t\tHH:mm\n\ndd.MM.yyyy"
                 val simpleDateFormat =
