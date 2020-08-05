@@ -23,7 +23,8 @@ class WordListAdapter internal constructor(
     context: Context,
     private val listenerDeleteWord : (Word) -> Unit,
     private val listenerOpenWord : (Word) -> Unit,
-    private val listenerEditWord : (Word) -> Unit
+    private val listenerEditWord : (Word) -> Unit,
+    private val listenerBookmark : (Word) -> Unit
 ) : RecyclerView.Adapter<WordListAdapter.WordViewHolder>() {
 
     // По сути переменная inflater используется как метка на родительский XML,
@@ -90,8 +91,8 @@ class WordListAdapter internal constructor(
             }
             else
                 wordImageView.setImageResource(R.mipmap.ic_launcher_round)
-
-            if(word.isFavorite)
+            // иконка со звездочкой (избранное)
+            if (word.isFavorite)
                 wordStarView.visibility = VISIBLE
             else
                 wordStarView.visibility = GONE
@@ -105,6 +106,16 @@ class WordListAdapter internal constructor(
             itemView.setOnLongClickListener{
                 // Устанавливаем контекстное меню
                 val popupMenu = PopupMenu(mContext, it)
+                popupMenu.inflate(R.menu.menu_notes)
+                // если избранное - меняется текст кнопки добавить/удалить из избранных
+                if(word.isFavorite) {
+                    popupMenu.menu.findItem(R.id.bookmark).title = mContext.resources.
+                    getString(R.string.remove_bookmark)
+                }
+                else {
+                    popupMenu.menu.findItem(R.id.bookmark).title = mContext.resources.
+                    getString(R.string.bookmark)
+                }
                 // Устанавливаем обработчик нажатий на пункты контекстного меню
                 popupMenu.setOnMenuItemClickListener { item ->
                     when(item.itemId) {     // сколько пунктов меню - столько и вариантов в when()
@@ -138,12 +149,20 @@ class WordListAdapter internal constructor(
                             listenerEditWord(word)
                             true
                         }
+                        R.id.bookmark -> {
+                            listenerBookmark(word)
+                            notifyDataSetChanged()
+                            if(word.isFavorite)
+                                wordStarView.visibility = VISIBLE
+                            else
+                                wordStarView.visibility = GONE
+                            true
+                        }
                         // Иначе вернем false (если when не сработал ни разу)
                         else -> false
                     }
                 }
-                // Связываем XML-файл menu_notes и показываем меню
-                popupMenu.inflate(R.menu.menu_notes)
+                // показываем меню
                 popupMenu.show()
                 // Т.к. в LongClickListener нужно вернуть boolean, возвращаем его
                 return@setOnLongClickListener true

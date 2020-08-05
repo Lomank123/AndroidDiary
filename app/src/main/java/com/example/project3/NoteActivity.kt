@@ -38,28 +38,23 @@ class NoteActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_note)
 
-        // id дневника
-        val wordId = intent.getLongExtra("word_id", -1)
+        val wordSelf = intent.getSerializableExtra("wordSelf") as? Word
 
         // адаптер для NoteActivity, при нажатии на элемент будет вызывать ClickedActivity
         val adapter = NoteListAdapter(this, {
 
             val intent = Intent(this, ClickedActivity::class.java)
-
             // передаем необходимые данные в ClickedActivity
             intent.putExtra("noteSerializable", it)
-
             // запускает ClickedActivity из MainActivity путем нажатия на элемент RecyclerView
             startActivityForResult(intent, clickedActivityRequestCode)
         }, {
             // второй listener, нужен для удаления заметки
             deleteNote(it)
-        } , {
-
+        }, {
             val intent = Intent(this, EditActivityNote::class.java)
             intent.putExtra("noteSerializableEdit", it)
             startActivityForResult(intent, editActivityRequestCode)
-
         })
 
         // Аналогично, как и в MainActivity
@@ -78,7 +73,7 @@ class NoteActivity : AppCompatActivity() {
             // перебираем весь список объектов NotesAndWords
             for(i in it)
             {
-                if(i.word.id == wordId) // находим запись с нужным нам id дневника
+                if(i.word.id == wordSelf!!.id) // находим запись с нужным нам id дневника
                 {
                     getList = i.notes   // получаем список заметок этого дневника
                     break
@@ -162,6 +157,8 @@ class NoteActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
+        val wordSelf = intent.getSerializableExtra("wordSelf") as? Word
+
         // Результат для добавления заметки
         if (requestCode == newNoteActivityRequestCode && resultCode == Activity.RESULT_OK)
         {
@@ -179,15 +176,14 @@ class NoteActivity : AppCompatActivity() {
 
                 val noteImg = data.getStringExtra(NewNoteActivity.EXTRA_IMAGE_NOTE)
 
-                val note = Note(it[0], it[1], intent.getLongExtra("word_id",
-                    -1), currentDate)
+                val note = Note(it[0], it[1], wordSelf!!.id, currentDate)
                 if(noteImg != null)
                 {
                     note.imgNote = noteImg
                 }
                 else
                 {
-                    note.imgNote = intent.getStringExtra("word_img")
+                    note.imgNote = wordSelf.img
                 }
                 note.colorNote = colors.random()
                 noteViewModel.insertNote(note)
@@ -225,7 +221,9 @@ class NoteActivity : AppCompatActivity() {
     // создает OptionsMenu
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.actionbar_menu_note, menu)
+
         val wordSelf = intent.getSerializableExtra("wordSelf") as? Word
+
         if (wordSelf!!.isFavorite)
         {
             menu!!.findItem(R.id.favorite_view)
@@ -263,7 +261,7 @@ class NoteActivity : AppCompatActivity() {
                 }
                 override fun onQueryTextChange(newText: String?): Boolean {
                     recyclerview1.adapter = adapter
-                    val wordId = intent.getLongExtra("word_id", -1)
+                    val wordId = wordSelf.id
                     noteViewModel.allNotes.observe(this@NoteActivity, Observer {
 
                         var getListNotes = emptyList<Note>()
@@ -314,6 +312,8 @@ class NoteActivity : AppCompatActivity() {
 
     // когда выбираешь элемент меню
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val wordSelf = intent.getSerializableExtra("wordSelf") as? Word
+
         when(item.itemId){
             R.id.settings -> {
                 // открытие окна "Настройки"
@@ -328,7 +328,7 @@ class NoteActivity : AppCompatActivity() {
                 return super.onOptionsItemSelected(item)
             }
             R.id.favorite_view -> {
-                val wordId = intent.getLongExtra("word_id", -1)
+                val wordId = wordSelf!!.id
 
                 for (words in noteViewModel.allNotes.value!!)
                     if (words.word.id == wordId) {

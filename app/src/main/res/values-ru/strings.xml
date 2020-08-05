@@ -52,6 +52,8 @@
     <string name="edit_note">Изменение заметки</string>
     <string name="edit_diary">Изменение дневника</string>
     <string name="clicked_note">Заметка</string>
+    <string name="bookmark">В избранное</string>
+    <string name="remove_bookmark">Убрать звезду</string>
 
     <!-- Создатели -->
     <string name="creators">Создатели</string>

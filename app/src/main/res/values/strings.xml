@@ -51,6 +51,8 @@
     <string name="edit_note">Edit note</string>
     <string name="edit_diary">Edit diary</string>
     <string name="clicked_note">Your note</string>
+    <string name="bookmark">Add star</string>
+    <string name="remove_bookmark">Remove star</string>
 
     <!-- Creators -->
     <string name="creators">Creators</string>

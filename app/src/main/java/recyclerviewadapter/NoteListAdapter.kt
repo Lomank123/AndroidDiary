@@ -109,7 +109,8 @@ class NoteListAdapter internal constructor(
 
                 // Устанавливаем контекстное меню
                 val popupMenu = PopupMenu(mContext, it)
-
+                // TODO: Изменить menu_notes.xml
+                // TODO: Либо "спрятать" кнопку "Add star" во всплывающем меню
                 // Устанавливаем обработчик нажатий на пункты контекстного меню
                 popupMenu.setOnMenuItemClickListener { item ->
                     when(item.itemId) {     // сколько пунктов меню - столько и вариантов в when()
