@@ -9,8 +9,6 @@ import android.os.Bundle
 import android.text.TextUtils
 import kotlinx.android.synthetic.main.activity_new_note.*
 import roomdatabase.Note
-import java.text.SimpleDateFormat
-import java.util.*
 
 class EditActivityNote : AppCompatActivity() {
 

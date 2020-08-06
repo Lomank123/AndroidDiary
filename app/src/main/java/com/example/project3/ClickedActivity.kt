@@ -27,15 +27,16 @@ class ClickedActivity : AppCompatActivity() {
     private var isVoice = false
     private var isVoiceExist = false
 
-    private var mediaRecorder : MediaRecorder? = MediaRecorder() // Запись
-    private var mediaPlayer : MediaPlayer? = MediaPlayer()     // Воспроизведение
-    private var fileName : String = ""          // Имя файла
+    private var mediaRecorder : MediaRecorder? = MediaRecorder()    // Запись
+    private var mediaPlayer : MediaPlayer? = MediaPlayer()          // Воспроизведение
+    private var fileName : String = ""                              // Имя файла
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_clicked)
 
         val note = intent.getSerializableExtra("noteSerializable") as? Note
+
         fileName = this.getExternalFilesDir(null)!!.absolutePath + "/${note!!.note}_${note.idNote}.3gpp"
 
         // получаем экстра данные из NoteActivity
@@ -190,6 +191,9 @@ class ClickedActivity : AppCompatActivity() {
                 editText1.typeface = Typeface.MONOSPACE
             }
         }
+
+        seekBar_active.progress = 0
+        playStart()
     }
 
     // создает OptionsMenu
@@ -208,13 +212,11 @@ class ClickedActivity : AppCompatActivity() {
                 // обновляем введенный текст
                 note!!.text = editText1.text.toString()
                 // обновляем файл голосовой заметки
-                if(isVoiceExist)
-                    note.voiceNote = fileName
-                else {
+                if(!isVoiceExist)
+                {
                     val outFile = File(fileName)
                     if (outFile.exists())
                         outFile.delete()
-                    note.voiceNote = null
                 }
                 replyIntent.putExtra(EXTRA_REPLY_EDIT, note)
                 setResult(Activity.RESULT_OK, replyIntent) // resultCode будет RESULT_OK
@@ -249,24 +251,26 @@ class ClickedActivity : AppCompatActivity() {
 
     private fun progressUpdater()
     {
-        seekBar_active.progress = mediaPlayer!!.currentPosition
-        if(mediaPlayer!!.isPlaying)
-        {
-            val notif = Runnable {
-                progressUpdater()
+        if (mediaPlayer != null) {
+            seekBar_active.progress = mediaPlayer!!.currentPosition
+
+            if (mediaPlayer!!.isPlaying) {
+                val notif = Runnable {
+                    progressUpdater()
+                }
+                Handler().postDelayed(notif, 500)
             }
-            Handler().postDelayed(notif, 1000)
         }
     }
 
     private fun recordDelete()
     {
+        releaseRecorder()
+        releasePlayer()
         isVoiceExist = false
         val outFile = File(fileName)
         if (outFile.exists())
             outFile.delete()
-        releaseRecorder()
-        releasePlayer()
 
         record_voice_dis.visibility = VISIBLE
         record_time_dis.visibility = VISIBLE
@@ -281,7 +285,6 @@ class ClickedActivity : AppCompatActivity() {
     {
         try {
             releaseRecorder()
-
             val outFile = File(fileName)
             if (outFile.exists())
                 outFile.delete()
@@ -312,7 +315,6 @@ class ClickedActivity : AppCompatActivity() {
             mediaPlayer = MediaPlayer()
             mediaPlayer?.setDataSource(fileName)
             mediaPlayer?.prepare()
-
         }
         catch (e : Exception) {
             e.printStackTrace()
@@ -347,6 +349,20 @@ class ClickedActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+        releasePlayer()
+        releaseRecorder()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        pausePlay()
+        releasePlayer()
+        releaseRecorder()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        pausePlay()
         releasePlayer()
         releaseRecorder()
     }

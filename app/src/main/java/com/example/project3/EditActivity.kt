@@ -9,8 +9,6 @@ import android.os.Bundle
 import android.text.TextUtils
 import kotlinx.android.synthetic.main.activity_new_word.*
 import roomdatabase.Word
-import java.text.SimpleDateFormat
-import java.util.*
 
 class EditActivity : AppCompatActivity() {
 

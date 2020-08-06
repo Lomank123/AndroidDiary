@@ -24,8 +24,9 @@ import recyclerviewadapter.NoteListAdapter
 import repository.NotesAndWords
 import roomdatabase.Note
 import roomdatabase.Word
-import viewmodel.NoteViewModel
+import viewmodel.MainViewModel
 import viewmodel.TopSpacingItemDecoration
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -34,7 +35,7 @@ class NoteActivity : AppCompatActivity() {
     private val newNoteActivityRequestCode = 1              // для NewWordActivity (requestCode)
     private val clickedActivityRequestCode = 2              // для ClickedActivity (requestCode)
     private val editActivityRequestCode = 3
-    private lateinit var noteViewModel: NoteViewModel       // добавляем ViewModel
+    private lateinit var mainViewModel: MainViewModel       // добавляем ViewModel
     private val colors: List<String> = listOf("green", "blue", "grass", "purple", "yellow")
     private var isFabOpen : Boolean = false                 // по умолч. меню закрыто
 
@@ -47,12 +48,12 @@ class NoteActivity : AppCompatActivity() {
         val adapter = newNoteAdapter()
         recyclerview1.adapter = adapter
         recyclerview1.layoutManager = LinearLayoutManager(this)
-        noteViewModel = ViewModelProvider(this).get(NoteViewModel::class.java)
+        mainViewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         // Отступы
         recyclerview1.addItemDecoration(TopSpacingItemDecoration(20))
 
         // полученный список заметок передаем в RecyclerView для отображения
-        noteViewModel.allNotes.observe(this, Observer {
+        mainViewModel.allNotesWords.observe(this, Observer {
             var getList = emptyList<Note>()
             // перебираем весь список объектов NotesAndWords
             for(i in it)
@@ -118,7 +119,10 @@ class NoteActivity : AppCompatActivity() {
     // Удаление записи
     private fun deleteNote(note : Note)
     {
-        noteViewModel.deleteNote(note)
+        val fileName = this.getExternalFilesDir(null)!!.absolutePath + "/${note.note}_${note.idNote}.3gpp"
+        if (File(fileName).exists())
+            File(fileName).delete()
+        mainViewModel.deleteNote(note)
     }
 
     // Возвращает текущую дату
@@ -157,7 +161,7 @@ class NoteActivity : AppCompatActivity() {
                 // получаем из экстра данных массив с названием и текстом
                 val newNote = createNote(it[0], it[1], wordSelf!!.id, currentDate(),
                     imgNote = imgNote, colorNote = colors.random())
-                noteViewModel.insertNote(newNote)
+                mainViewModel.insertNote(newNote)
             }
         }
         if ((requestCode == newNoteActivityRequestCode || requestCode == editActivityRequestCode) &&
@@ -173,7 +177,7 @@ class NoteActivity : AppCompatActivity() {
             val note = data?.getSerializableExtra(ClickedActivity.EXTRA_REPLY_EDIT) as? Note
             if (note != null) {
                 note.dateNote = currentDate()   // обновляем дату
-                noteViewModel.updateNote(note)  // обновляем заметку
+                mainViewModel.updateNote(note)  // обновляем заметку
             }
         }
 
@@ -188,7 +192,7 @@ class NoteActivity : AppCompatActivity() {
                 noteEdit.dateNote = currentDate()
                 if (imgNoteEdit != null && imgNoteEdit != "")
                     noteEdit.imgNote = imgNoteEdit
-                noteViewModel.updateNote(noteEdit)
+                mainViewModel.updateNote(noteEdit)
             }
         }
     }
@@ -216,12 +220,12 @@ class NoteActivity : AppCompatActivity() {
                     return true
                 }
                 override fun onQueryTextChange(newText: String?): Boolean {
-                    noteViewModel.allNotes.observe(this@NoteActivity, Observer {
+                    mainViewModel.allNotesWords.observe(this@NoteActivity, Observer {
                         setNotesForSearch((recyclerview1.adapter as NoteListAdapter), prefs,
                             it, newText)
                     })
                     setNotesForSearch((recyclerview1.adapter as NoteListAdapter), prefs,
-                        noteViewModel.allNotes.value!!, newText)
+                        mainViewModel.allNotesWords.value!!, newText)
                     return true
                 }
             })
@@ -292,7 +296,7 @@ class NoteActivity : AppCompatActivity() {
                 return super.onOptionsItemSelected(item)
             }
             R.id.favorite_view -> {
-                for (words in noteViewModel.allNotes.value!!)
+                for (words in mainViewModel.allNotesWords.value!!)
                     if (words.word.id == wordSelf!!.id) {
                         words.word.isFavorite = !words.word.isFavorite
                         if(words.word.isFavorite) {
@@ -306,7 +310,7 @@ class NoteActivity : AppCompatActivity() {
                             Toast.makeText(this, resources.getString(R.string.del_favor),
                                 Toast.LENGTH_SHORT).show()
                         }
-                        noteViewModel.updateWord(words.word)
+                        mainViewModel.updateWord(words.word)
                         break
                     }
             }
