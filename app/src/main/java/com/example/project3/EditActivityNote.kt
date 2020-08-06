@@ -38,18 +38,10 @@ class EditActivityNote : AppCompatActivity() {
                 // устанавливаем результат как RESULT_CANCELED (отменен)
                 setResult(Activity.RESULT_CANCELED, replyIntent)
             } else {
-                val pattern = "\t\t\tHH:mm\n\ndd.MM.yyyy"
-                val simpleDateFormat =
-                    SimpleDateFormat(pattern)
-                val currentDate = simpleDateFormat.format(Date())
-
-
                 note.note = edit_note.text.toString()
                 note.text = edit_text_note.text.toString()
-                note.dateNote = currentDate
 
                 replyIntent.putExtra(EXTRA_EDIT_NOTE, note)
-
                 setResult(Activity.RESULT_OK, replyIntent)
             }
             finish()

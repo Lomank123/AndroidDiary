@@ -54,7 +54,6 @@ class NoteActivity : AppCompatActivity() {
         // полученный список заметок передаем в RecyclerView для отображения
         noteViewModel.allNotes.observe(this, Observer {
             var getList = emptyList<Note>()
-
             // перебираем весь список объектов NotesAndWords
             for(i in it)
             {
@@ -66,7 +65,7 @@ class NoteActivity : AppCompatActivity() {
             }
             adapter.setNotes(getList)   // передаем полученный список в RecyclerView
         })
-
+        // Кнопки
         // Кнопка вызова меню
         fab.setOnClickListener {
             if (!isFabOpen)
@@ -116,13 +115,32 @@ class NoteActivity : AppCompatActivity() {
         })
     }
 
-    private fun deleteNote(note : Note) // удаление записи
+    // Удаление записи
+    private fun deleteNote(note : Note)
     {
         noteViewModel.deleteNote(note)
     }
 
-    // функция для обработки результата после вызова startActivityForResult()
+    // Возвращает текущую дату
     @SuppressLint("SimpleDateFormat")
+    private fun currentDate() : String
+    {
+        val pattern = "\t\t\tHH:mm\n\ndd.MM.yyyy"
+        val simpleDateFormat = SimpleDateFormat(pattern)
+        return simpleDateFormat.format(Date())
+    }
+
+    // Создает объект Note
+    private fun createNote(name : String, text : String, diaryId : Long, date : String,
+    imgNote : String?=null, colorNote : String?=null) : Note
+    {
+        val note = Note(name, text, diaryId, date)
+        note.imgNote = imgNote
+        note.colorNote = colorNote
+        return note
+    }
+
+    // функция для обработки результата после вызова startActivityForResult()
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -132,30 +150,14 @@ class NoteActivity : AppCompatActivity() {
         if (requestCode == newNoteActivityRequestCode && resultCode == Activity.RESULT_OK)
         {
             data?.getStringArrayListExtra(NewNoteActivity.EXTRA_REPLY_NOTE)?.let {
-
+                // Из data достаем информацию о картинке, была ли она
+                // Если картинку не выбрали, установится та, что была на "обложке" дневника
+                val imgNote = data.getStringExtra(NewNoteActivity.EXTRA_IMAGE_NOTE) ?: wordSelf!!.img
+                // С помощью ф-ии создаем объект заметки
                 // получаем из экстра данных массив с названием и текстом
-                // и создаем объект Note с этими данными, причем устанавливаем diaryId такой же
-                // как и id у дневника, из которого происходил вызов
-
-                // получаем текущую дату и вставляем в объект дневника
-                val pattern = "\t\t\tHH:mm\n\ndd.MM.yyyy"
-                val simpleDateFormat =
-                    SimpleDateFormat(pattern)
-                val currentDate = simpleDateFormat.format(Date())
-
-                val noteImg = data.getStringExtra(NewNoteActivity.EXTRA_IMAGE_NOTE)
-
-                val note = Note(it[0], it[1], wordSelf!!.id, currentDate)
-                if(noteImg != null)
-                {
-                    note.imgNote = noteImg
-                }
-                else
-                {
-                    note.imgNote = wordSelf.img
-                }
-                note.colorNote = colors.random()
-                noteViewModel.insertNote(note)
+                val newNote = createNote(it[0], it[1], wordSelf!!.id, currentDate(),
+                    imgNote = imgNote, colorNote = colors.random())
+                noteViewModel.insertNote(newNote)
             }
         }
         if ((requestCode == newNoteActivityRequestCode || requestCode == editActivityRequestCode) &&
@@ -164,26 +166,30 @@ class NoteActivity : AppCompatActivity() {
             Toast.makeText(this, resources.getString(R.string.empty_not_saved_note),
                 Toast.LENGTH_SHORT).show()
         }
-
         // Результат для обновления заметки
         if (requestCode == clickedActivityRequestCode && resultCode == Activity.RESULT_OK)
         {
             // получаем с помощью Serializable наш объект класса Note из ClickedActivity
             val note = data?.getSerializableExtra(ClickedActivity.EXTRA_REPLY_EDIT) as? Note
-            if (note != null)
+            if (note != null) {
+                note.dateNote = currentDate()   // обновляем дату
                 noteViewModel.updateNote(note)  // обновляем заметку
+            }
         }
 
         // Результат изменения заметки
         if (requestCode == editActivityRequestCode && resultCode == Activity.RESULT_OK)
         {
-            val noteEdit = data?.getSerializableExtra(EditActivityNote.EXTRA_EDIT_NOTE)
-                    as? Note
+            val noteEdit = data?.getSerializableExtra(EditActivityNote.EXTRA_EDIT_NOTE) as? Note
             val imgNoteEdit = data?.getStringExtra(EditActivityNote.EXTRA_IMAGE_EDIT_NOTE)
-            if (imgNoteEdit != null && imgNoteEdit != "")
-                noteEdit!!.imgNote = imgNoteEdit
             if (noteEdit != null)
+            {
+                // Обновляем дату
+                noteEdit.dateNote = currentDate()
+                if (imgNoteEdit != null && imgNoteEdit != "")
+                    noteEdit.imgNote = imgNoteEdit
                 noteViewModel.updateNote(noteEdit)
+            }
         }
     }
 

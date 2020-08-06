@@ -6,7 +6,6 @@ import android.content.SharedPreferences
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
 import android.view.ViewGroup
 import android.widget.*
 import androidx.core.content.ContextCompat

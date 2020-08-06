@@ -1,6 +1,5 @@
 package com.example.project3
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.SharedPreferences
@@ -22,8 +21,6 @@ import kotlinx.android.synthetic.main.activity_clicked.*
 import roomdatabase.Note
 import java.io.File
 import java.lang.Exception
-import java.text.SimpleDateFormat
-import java.util.*
 
 class ClickedActivity : AppCompatActivity() {
 
@@ -202,26 +199,15 @@ class ClickedActivity : AppCompatActivity() {
     }
 
     // когда выбираешь элемент меню
-    @SuppressLint("SimpleDateFormat")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-
-        val note = intent.getSerializableExtra("noteSerializable") as? Note
-
         when(item.itemId){
 
             R.id.save_btn_edit -> { // Кнопка Save
+                val note = intent.getSerializableExtra("noteSerializable") as? Note
                 val replyIntent = Intent()
-
                 // обновляем введенный текст
                 note!!.text = editText1.text.toString()
-                // TODO: Реализовать создание в NoteActivity
-                // обновляем дату изменения заметки
-                val pattern = "\t\t\tHH:mm\n\ndd.MM.yyyy"
-                val simpleDateFormat =
-                    SimpleDateFormat(pattern)
-                val currentDate = simpleDateFormat.format(Date())
-
-                note.dateNote = currentDate
+                // обновляем файл голосовой заметки
                 if(isVoiceExist)
                     note.voiceNote = fileName
                 else {
@@ -231,14 +217,12 @@ class ClickedActivity : AppCompatActivity() {
                     note.voiceNote = null
                 }
                 replyIntent.putExtra(EXTRA_REPLY_EDIT, note)
-
                 setResult(Activity.RESULT_OK, replyIntent) // resultCode будет RESULT_OK
                 // Завершаем работу с активити
                 Toast.makeText(this, resources.getString(R.string.saved), Toast.LENGTH_SHORT).show()
                 finish()
             }
             R.id.share_btn_edit -> {
-
                 val sendIntent = Intent().apply {
                     action = Intent.ACTION_SEND
                     putExtra(Intent.EXTRA_TEXT, editText1.text.toString())
@@ -246,11 +230,9 @@ class ClickedActivity : AppCompatActivity() {
                 }
                 val shareIntent = Intent.createChooser(sendIntent, null)
                 startActivity(shareIntent)
-
             }
             R.id.cancel_btn_edit -> { // Кнопка Cancel
                 setResult(Activity.RESULT_CANCELED)
-
                 Toast.makeText(this, resources.getString(R.string.canceled), Toast.LENGTH_SHORT).show()
                 finish()
             }

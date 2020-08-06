@@ -101,6 +101,21 @@ class MainActivity : AppCompatActivity() {
         recyclerview.adapter!!.notifyDataSetChanged()
     }
 
+    // Возвращает текущую дату
+    @SuppressLint("SimpleDateFormat")
+    private fun currentDate() : String
+    {
+        val pattern = "\t\t\tHH:mm\n\ndd.MM.yyyy"
+        val simpleDateFormat = SimpleDateFormat(pattern)
+        return simpleDateFormat.format(Date())
+    }
+
+    // Удаляет дневник. Вызов происходит через ViewModel
+    private fun deleteWord(word : Word)
+    {
+        wordViewModel.deleteWord(word)
+    }
+
     // адаптер для RecyclerView
     // то, что в фигурных скобках это и есть аргумент listener : (Word) -> Unit в адаптере
     private fun newAdapter() : WordListAdapter
@@ -133,12 +148,6 @@ class MainActivity : AppCompatActivity() {
             })
     }
 
-    // Удаляет дневник. Вызов происходит через ViewModel
-    private fun deleteWord(word : Word)
-    {
-        wordViewModel.deleteWord(word)
-    }
-
     // функция для обработки результата после вызова startActivityForResult()
     @SuppressLint("SimpleDateFormat")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -146,30 +155,25 @@ class MainActivity : AppCompatActivity() {
 
         if (requestCode == newWordActivityRequestCode && resultCode == Activity.RESULT_OK) {
             data?.getStringArrayListExtra(NewWordActivity.EXTRA_REPLY)?.let {
-                // получаем текущую дату и вставляем в объект дневника
-                // TODO: Вынести получение даты в отдельную функцию
-                val pattern = "\t\t\tHH:mm\n\ndd.MM.yyyy"
-                val simpleDateFormat =
-                    SimpleDateFormat(pattern)
-                val currentDate = simpleDateFormat.format(Date())
                 // получаем из экстра данных нашу строку и создаем объект Word с той же строкой
-                val word = Word(it[0], it[1], currentDate)
+                val word = Word(it[0], it[1], currentDate())
                 if (data.getStringExtra(EXTRA_IMAGE) != "" && data.getStringExtra(EXTRA_IMAGE) != null)
                     word.img = data.getStringExtra(EXTRA_IMAGE)
                 word.color = colors.random()
                 wordViewModel.insertWord(word) // добавляем запись в БД
             }
         }
-
         if (requestCode == editActivityRequestCode && resultCode == Activity.RESULT_OK) {
             val wordEdit = data?.getSerializableExtra(EditActivity.EXTRA_EDIT_WORD) as? Word
             val imgWordEdit = data?.getStringExtra(EditActivity.EXTRA_IMAGE_EDIT_WORD)
-            if (imgWordEdit != null && imgWordEdit != "")
-                wordEdit!!.img = imgWordEdit
             if (wordEdit != null)
-                wordViewModel.updateWord(wordEdit)
+            {
+                if (imgWordEdit != null && imgWordEdit != "")
+                    wordEdit.img = imgWordEdit
+                wordEdit.date = currentDate()
+                wordViewModel.updateWord(wordEdit) // обновляем запись в БД
+            }
         }
-
         if ((requestCode == newWordActivityRequestCode || requestCode == editActivityRequestCode) &&
             resultCode == Activity.RESULT_CANCELED)
         {
