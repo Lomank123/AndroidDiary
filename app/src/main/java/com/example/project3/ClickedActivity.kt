@@ -53,6 +53,8 @@ class ClickedActivity : AppCompatActivity() {
 
                 play_btn_active.visibility = VISIBLE
                 delete_btn_active.visibility = VISIBLE
+                end_time_active.visibility = VISIBLE
+                start_time_active.visibility = VISIBLE
 
                 // seekBar
                 seekBar_active.visibility = VISIBLE
@@ -66,6 +68,11 @@ class ClickedActivity : AppCompatActivity() {
                         override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                             if (fromUser) {
                                 mediaPlayer!!.seekTo(progress)
+
+                                val elapsedTime = createTimeLabel(progress)
+                                start_time_active.text = elapsedTime
+                                val remainingTime = createTimeLabel(mediaPlayer!!.duration - progress)
+                                end_time_active.text = remainingTime
                             }
                         }
                         override fun onStartTrackingTouch(p0: SeekBar?) {
@@ -79,10 +86,10 @@ class ClickedActivity : AppCompatActivity() {
         play_btn_active.setOnClickListener {
             if (mediaPlayer!!.isPlaying) {
                 pausePlay()
-                //play_btn_active.setImageResource(android.R.drawable.ic_media_play)
+                play_btn_active.setImageResource(android.R.drawable.ic_media_play)
             } else {
                 resumePlay()
-                //play_btn_active.setImageResource(android.R.drawable.ic_media_pause)
+                play_btn_active.setImageResource(android.R.drawable.ic_media_pause)
                 progressUpdater()
             }
         }
@@ -107,6 +114,8 @@ class ClickedActivity : AppCompatActivity() {
 
                 play_btn_active.visibility = VISIBLE
                 delete_btn_active.visibility = VISIBLE
+                start_time_active.visibility = VISIBLE
+                end_time_active.visibility = VISIBLE
 
                 recordStop()
                 isVoiceExist = true
@@ -114,11 +123,24 @@ class ClickedActivity : AppCompatActivity() {
 
                 seekBar_active.visibility = VISIBLE
                 seekBar_active.max = mediaPlayer!!.duration
+                seekBar_active.progress = 0
+
+                // Устанавливаем время начала и конца
+                val elapsedTime1 = createTimeLabel(0)
+                start_time_active.text = elapsedTime1
+                val remainingTime1 = createTimeLabel(mediaPlayer!!.duration)
+                end_time_active.text = remainingTime1
+
                 seekBar_active.setOnSeekBarChangeListener(
                     object : SeekBar.OnSeekBarChangeListener {
                         override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                             if (fromUser) {
                                 mediaPlayer!!.seekTo(progress)
+
+                                val elapsedTime = createTimeLabel(progress)
+                                start_time_active.text = elapsedTime
+                                val remainingTime = createTimeLabel(mediaPlayer!!.duration - progress)
+                                end_time_active.text = remainingTime
                             }
                         }
                         override fun onStartTrackingTouch(p0: SeekBar?) {
@@ -130,11 +152,11 @@ class ClickedActivity : AppCompatActivity() {
                 play_btn_active.setOnClickListener{
                     if(mediaPlayer!!.isPlaying) {
                         pausePlay()
-                        //play_btn_active.setImageResource(android.R.drawable.ic_media_play)
+                        play_btn_active.setImageResource(android.R.drawable.ic_media_play)
                     }
                     else {
                         resumePlay()
-                        //play_btn_active.setImageResource(android.R.drawable.ic_media_pause)
+                        play_btn_active.setImageResource(android.R.drawable.ic_media_pause)
                         progressUpdater()
                     }
                 }
@@ -193,6 +215,10 @@ class ClickedActivity : AppCompatActivity() {
         }
 
         seekBar_active.progress = 0
+        start_time_active.text = this.resources.getString(R.string.start_time)
+        end_time_active.text = createTimeLabel(seekBar_active.max)
+        play_btn_active.setImageResource(android.R.drawable.ic_media_play)
+
         playStart()
     }
 
@@ -249,18 +275,43 @@ class ClickedActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
+    // Благодаря этой функции ползунок постепено двигается и меняется время
     private fun progressUpdater()
     {
         if (mediaPlayer != null) {
             seekBar_active.progress = mediaPlayer!!.currentPosition
 
+            val elapsedTime = createTimeLabel(mediaPlayer!!.currentPosition)
+            start_time_active.text = elapsedTime
+
+            val remainingTime = createTimeLabel(mediaPlayer!!.duration - mediaPlayer!!.currentPosition)
+            end_time_active.text = remainingTime
+
             if (mediaPlayer!!.isPlaying) {
-                val notif = Runnable {
+                val notify = Runnable {
                     progressUpdater()
                 }
-                Handler().postDelayed(notif, 500)
+                Handler().postDelayed(notify, 200)
+            }
+            else {
+                play_btn_active.setImageResource(android.R.drawable.ic_media_play)
             }
         }
+    }
+
+    // Переводит значение Int в формат (min:sec)
+    private fun createTimeLabel(time : Int) : String
+    {
+        var timeLabel: String
+        val min = time / 1000 / 60
+        val sec = time / 1000 % 60
+
+        timeLabel = "${min}:"
+        if (sec < 10)
+            timeLabel += "0"
+        timeLabel += sec
+
+        return timeLabel
     }
 
     private fun recordDelete()
@@ -278,6 +329,8 @@ class ClickedActivity : AppCompatActivity() {
 
         play_btn_active.visibility = GONE
         delete_btn_active.visibility = GONE
+        start_time_active.visibility = GONE
+        end_time_active.visibility = GONE
         seekBar_active.visibility = GONE
     }
 
@@ -349,6 +402,7 @@ class ClickedActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+
         releasePlayer()
         releaseRecorder()
     }

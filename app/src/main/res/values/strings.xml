@@ -62,8 +62,8 @@
     <string name="app_ver">App version: 1.0</string>
 
     <!-- Voice -->
-    <string name="start_time">Start time</string>
-    <string name="end_time">End time</string>
+    <string name="start_time">0:00</string>
+    <string name="end_time">-1:11</string>
     <string name="no_voice_note">There is no voice note</string>
 
 </resources>

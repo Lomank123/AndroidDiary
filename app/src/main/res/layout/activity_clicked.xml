@@ -93,8 +93,8 @@
 
         <SeekBar
             android:id="@+id/seekBar_active"
-            android:layout_width="233dp"
-            android:layout_height="26dp"
+            android:layout_width="235dp"
+            android:layout_height="31dp"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/delete_btn_active"
@@ -106,7 +106,7 @@
             android:id="@+id/start_time_active"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="40dp"
+            android:layout_marginStart="20dp"
             android:text="@string/start_time"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -118,7 +118,7 @@
             android:id="@+id/end_time_active"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="40dp"
+            android:layout_marginEnd="20dp"
             android:text="@string/end_time"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -128,8 +128,8 @@
 
         <ImageButton
             android:id="@+id/stop_recording_voice_dis"
-            android:layout_width="56dp"
-            android:layout_height="41dp"
+            android:layout_width="59dp"
+            android:layout_height="58dp"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -141,8 +141,8 @@
 
         <ImageButton
             android:id="@+id/record_voice_dis"
-            android:layout_width="56dp"
-            android:layout_height="41dp"
+            android:layout_width="59dp"
+            android:layout_height="58dp"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
