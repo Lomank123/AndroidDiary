@@ -1,36 +1,171 @@
 package com.example.project3
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Typeface
+import android.media.MediaPlayer
+import android.media.MediaRecorder
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View.GONE
+import android.view.View.VISIBLE
+import android.widget.SeekBar
 import android.widget.Toast
 import androidx.preference.PreferenceManager
 import kotlinx.android.synthetic.main.activity_clicked.*
 import roomdatabase.Note
-import java.text.SimpleDateFormat
-import java.util.*
+import java.io.File
+import java.lang.Exception
 
 class ClickedActivity : AppCompatActivity() {
+
+    private var isVoice = false
+    private var isVoiceExist = false
+
+    private var mediaRecorder : MediaRecorder? = MediaRecorder()    // Запись
+    private var mediaPlayer : MediaPlayer? = MediaPlayer()          // Воспроизведение
+    private var fileName : String = ""                              // Имя файла
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_clicked)
 
-
-
         val note = intent.getSerializableExtra("noteSerializable") as? Note
 
+        fileName = this.getExternalFilesDir(null)!!.absolutePath + "/${note!!.note}_${note.idNote}.3gpp"
+
         // получаем экстра данные из NoteActivity
-        textView1.text = note!!.note
+        textView1.text = note.note
         editText1.setText(note.text)
 
+        // Если голосовая заметка найдена
+            if(File(fileName).exists())
+            {
+                isVoiceExist = true
+                record_voice_dis.visibility = GONE
+                record_time_dis.visibility = GONE
+                stop_recording_voice_dis.visibility = GONE
+
+                play_btn_active.visibility = VISIBLE
+                delete_btn_active.visibility = VISIBLE
+                end_time_active.visibility = VISIBLE
+                start_time_active.visibility = VISIBLE
+
+                // seekBar
+                seekBar_active.visibility = VISIBLE
+
+                playStart()
+
+                seekBar_active.max = mediaPlayer!!.duration
+
+                seekBar_active.setOnSeekBarChangeListener(
+                    object : SeekBar.OnSeekBarChangeListener {
+                        override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                            if (fromUser) {
+                                mediaPlayer!!.seekTo(progress)
+
+                                val elapsedTime = createTimeLabel(progress)
+                                start_time_active.text = elapsedTime
+                                val remainingTime = createTimeLabel(mediaPlayer!!.duration - progress)
+                                end_time_active.text = remainingTime
+                            }
+                        }
+                        override fun onStartTrackingTouch(p0: SeekBar?) {
+                        }
+                        override fun onStopTrackingTouch(p0: SeekBar?) {
+                        }
+                    }
+                )
+            }
+
+        play_btn_active.setOnClickListener {
+            if (mediaPlayer!!.isPlaying) {
+                pausePlay()
+                play_btn_active.setImageResource(android.R.drawable.ic_media_play)
+            } else {
+                resumePlay()
+                play_btn_active.setImageResource(android.R.drawable.ic_media_pause)
+                progressUpdater()
+            }
+        }
+
+        delete_btn_active.setOnClickListener {
+            recordDelete()
+        }
+
+        // слушатель на кнопку начала записи голоса
+        record_voice_dis.setOnClickListener {
+
+            record_voice_dis.visibility = GONE
+            stop_recording_voice_dis.visibility = VISIBLE
+
+            recordStart()
+
+            // слушатель на кнопку остановки записи голос. заметки
+            stop_recording_voice_dis.setOnClickListener {
+
+                record_time_dis.visibility = GONE
+                stop_recording_voice_dis.visibility = GONE
+
+                play_btn_active.visibility = VISIBLE
+                delete_btn_active.visibility = VISIBLE
+                start_time_active.visibility = VISIBLE
+                end_time_active.visibility = VISIBLE
+
+                recordStop()
+                isVoiceExist = true
+                playStart()
+
+                seekBar_active.visibility = VISIBLE
+                seekBar_active.max = mediaPlayer!!.duration
+                seekBar_active.progress = 0
+
+                // Устанавливаем время начала и конца
+                val elapsedTime1 = createTimeLabel(0)
+                start_time_active.text = elapsedTime1
+                val remainingTime1 = createTimeLabel(mediaPlayer!!.duration)
+                end_time_active.text = remainingTime1
+
+                seekBar_active.setOnSeekBarChangeListener(
+                    object : SeekBar.OnSeekBarChangeListener {
+                        override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                            if (fromUser) {
+                                mediaPlayer!!.seekTo(progress)
+
+                                val elapsedTime = createTimeLabel(progress)
+                                start_time_active.text = elapsedTime
+                                val remainingTime = createTimeLabel(mediaPlayer!!.duration - progress)
+                                end_time_active.text = remainingTime
+                            }
+                        }
+                        override fun onStartTrackingTouch(p0: SeekBar?) {
+                        }
+                        override fun onStopTrackingTouch(p0: SeekBar?) {
+                        }
+                    }
+                )
+                play_btn_active.setOnClickListener{
+                    if(mediaPlayer!!.isPlaying) {
+                        pausePlay()
+                        play_btn_active.setImageResource(android.R.drawable.ic_media_play)
+                    }
+                    else {
+                        resumePlay()
+                        play_btn_active.setImageResource(android.R.drawable.ic_media_pause)
+                        progressUpdater()
+                    }
+                }
+
+                delete_btn_active.setOnClickListener{
+                    recordDelete()
+                }
+            }
+        }
     }
 
     override fun onResume()
@@ -50,7 +185,6 @@ class ClickedActivity : AppCompatActivity() {
             }
         }
 
-        // стандартный шрифт - roboto_regular.ttf
         when(prefs.getString("list_preference_1", "0"))
         {
             "Default" ->
@@ -79,6 +213,13 @@ class ClickedActivity : AppCompatActivity() {
                 editText1.typeface = Typeface.MONOSPACE
             }
         }
+
+        seekBar_active.progress = 0
+        start_time_active.text = this.resources.getString(R.string.start_time)
+        end_time_active.text = createTimeLabel(seekBar_active.max)
+        play_btn_active.setImageResource(android.R.drawable.ic_media_play)
+
+        playStart()
     }
 
     // создает OptionsMenu
@@ -88,36 +229,28 @@ class ClickedActivity : AppCompatActivity() {
     }
 
     // когда выбираешь элемент меню
-    @SuppressLint("SimpleDateFormat")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-
-        val note = intent.getSerializableExtra("noteSerializable") as? Note
-
         when(item.itemId){
 
             R.id.save_btn_edit -> { // Кнопка Save
+                val note = intent.getSerializableExtra("noteSerializable") as? Note
                 val replyIntent = Intent()
-
                 // обновляем введенный текст
                 note!!.text = editText1.text.toString()
-
-                // обновляем дату изменения заметки
-                val pattern = "\t\t\tHH:mm\n\ndd.MM.yyyy"
-                val simpleDateFormat =
-                    SimpleDateFormat(pattern)
-                val currentDate = simpleDateFormat.format(Date())
-
-                note.dateNote = currentDate
-
+                // обновляем файл голосовой заметки
+                if(!isVoiceExist)
+                {
+                    val outFile = File(fileName)
+                    if (outFile.exists())
+                        outFile.delete()
+                }
                 replyIntent.putExtra(EXTRA_REPLY_EDIT, note)
-
                 setResult(Activity.RESULT_OK, replyIntent) // resultCode будет RESULT_OK
                 // Завершаем работу с активити
                 Toast.makeText(this, resources.getString(R.string.saved), Toast.LENGTH_SHORT).show()
                 finish()
             }
             R.id.share_btn_edit -> {
-
                 val sendIntent = Intent().apply {
                     action = Intent.ACTION_SEND
                     putExtra(Intent.EXTRA_TEXT, editText1.text.toString())
@@ -125,15 +258,167 @@ class ClickedActivity : AppCompatActivity() {
                 }
                 val shareIntent = Intent.createChooser(sendIntent, null)
                 startActivity(shareIntent)
-
             }
             R.id.cancel_btn_edit -> { // Кнопка Cancel
                 setResult(Activity.RESULT_CANCELED)
                 Toast.makeText(this, resources.getString(R.string.canceled), Toast.LENGTH_SHORT).show()
                 finish()
             }
+            R.id.voice_btn_edit -> {
+                isVoice = !isVoice
+                if (isVoice)
+                    layout_voice.visibility = VISIBLE
+                else
+                    layout_voice.visibility = GONE
+            }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    // Благодаря этой функции ползунок постепено двигается и меняется время
+    private fun progressUpdater()
+    {
+        if (mediaPlayer != null) {
+            seekBar_active.progress = mediaPlayer!!.currentPosition
+
+            val elapsedTime = createTimeLabel(mediaPlayer!!.currentPosition)
+            start_time_active.text = elapsedTime
+
+            val remainingTime = createTimeLabel(mediaPlayer!!.duration - mediaPlayer!!.currentPosition)
+            end_time_active.text = remainingTime
+
+            if (mediaPlayer!!.isPlaying) {
+                val notify = Runnable {
+                    progressUpdater()
+                }
+                Handler().postDelayed(notify, 200)
+            }
+            else {
+                play_btn_active.setImageResource(android.R.drawable.ic_media_play)
+            }
+        }
+    }
+
+    // Переводит значение Int в формат (min:sec)
+    private fun createTimeLabel(time : Int) : String
+    {
+        var timeLabel: String
+        val min = time / 1000 / 60
+        val sec = time / 1000 % 60
+
+        timeLabel = "${min}:"
+        if (sec < 10)
+            timeLabel += "0"
+        timeLabel += sec
+
+        return timeLabel
+    }
+
+    private fun recordDelete()
+    {
+        releaseRecorder()
+        releasePlayer()
+        isVoiceExist = false
+        val outFile = File(fileName)
+        if (outFile.exists())
+            outFile.delete()
+
+        record_voice_dis.visibility = VISIBLE
+        record_time_dis.visibility = VISIBLE
+        stop_recording_voice_dis.visibility = GONE
+
+        play_btn_active.visibility = GONE
+        delete_btn_active.visibility = GONE
+        start_time_active.visibility = GONE
+        end_time_active.visibility = GONE
+        seekBar_active.visibility = GONE
+    }
+
+    private fun recordStart()
+    {
+        try {
+            releaseRecorder()
+            val outFile = File(fileName)
+            if (outFile.exists())
+                outFile.delete()
+
+            mediaRecorder = MediaRecorder()
+            mediaRecorder?.setAudioSource(MediaRecorder.AudioSource.MIC)
+            mediaRecorder?.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
+            mediaRecorder?.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
+            mediaRecorder?.setOutputFile(fileName)
+            mediaRecorder?.prepare()
+            mediaRecorder?.start()
+        }
+        catch (e : Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+
+    private fun recordStop()
+    {
+        mediaRecorder?.stop()
+    }
+
+    private fun playStart()
+    {
+        try {
+            releasePlayer()
+            mediaPlayer = MediaPlayer()
+            mediaPlayer?.setDataSource(fileName)
+            mediaPlayer?.prepare()
+        }
+        catch (e : Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun releaseRecorder() {
+        if(mediaRecorder != null)
+        {
+            mediaRecorder?.release()
+            mediaRecorder = null
+        }
+    }
+
+    private fun releasePlayer() {
+        if(mediaPlayer != null)
+        {
+            mediaPlayer?.release()
+            mediaPlayer = null
+        }
+    }
+
+    private fun resumePlay()
+    {
+        mediaPlayer?.start()
+    }
+
+    private fun pausePlay()
+    {
+        mediaPlayer?.pause()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        releasePlayer()
+        releaseRecorder()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        pausePlay()
+        releasePlayer()
+        releaseRecorder()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        pausePlay()
+        releasePlayer()
+        releaseRecorder()
     }
 
     // тег для распознавания именно этого запроса

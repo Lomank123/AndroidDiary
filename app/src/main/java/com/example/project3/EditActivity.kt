@@ -9,8 +9,6 @@ import android.os.Bundle
 import android.text.TextUtils
 import kotlinx.android.synthetic.main.activity_new_word.*
 import roomdatabase.Word
-import java.text.SimpleDateFormat
-import java.util.*
 
 class EditActivity : AppCompatActivity() {
 
@@ -40,17 +38,9 @@ class EditActivity : AppCompatActivity() {
             }
             else
             {
-                val pattern = "\t\t\tHH:mm\n\ndd.MM.yyyy"
-                val simpleDateFormat =
-                    SimpleDateFormat(pattern)
-                val currentDate = simpleDateFormat.format(Date())
-
                 word.word = edit_word.text.toString()
                 word.description = edit_descr.text.toString()
-                word.date = currentDate
-
                 replyIntent.putExtra(EXTRA_EDIT_WORD, word)
-
                 setResult(Activity.RESULT_OK, replyIntent)
             }
             // завершаем работу с активити
@@ -72,7 +62,6 @@ class EditActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
         if (requestCode == choosePhotoRequestCode && resultCode == Activity.RESULT_OK)
         {
             imageView5.setImageURI(data?.data)

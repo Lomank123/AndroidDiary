@@ -48,10 +48,8 @@ class NoteListAdapter internal constructor(
 
         // эта функция применяется для каждого члена RecyclerView т.к. вызывается в onBindViewHolder
         fun bindView(note: Note, listener : (Note) -> Unit) {
-
             // устанавливаем значения во вью
             noteItemView.text = note.note // название заметки
-
             // Лимит на кол-во символов в тексте заметки для отображения: 12
             var count = 0
             var str = ""
@@ -66,7 +64,6 @@ class NoteListAdapter internal constructor(
             // в RecyclerView будут видны первые 16 символов текста заметки
             noteDescriptionView.text = str // текст заметки
             noteDateView.text = note.dateNote // дата
-
             if (note.imgNote != null)
             {
                 val uriImage = Uri.parse(note.imgNote)
@@ -74,7 +71,6 @@ class NoteListAdapter internal constructor(
             }
             else
                 noteImageView.setImageResource(R.mipmap.ic_launcher_round)
-
             if (prefs!!.getBoolean("color_check_note", false)) {
                 when (note.colorNote)
                 {
@@ -103,14 +99,13 @@ class NoteListAdapter internal constructor(
             itemView.setOnClickListener {
                 listener(note)
             }
-
             // обработчик долгих нажатий для вызова контекстного меню
             itemView.setOnLongClickListener{
-
                 // Устанавливаем контекстное меню
                 val popupMenu = PopupMenu(mContext, it)
-
-                // Устанавливаем обработчик нажатий на пункты контекстного меню
+                popupMenu.inflate(R.menu.menu_notes)
+                // Делает кнопку избранного невидимой
+                popupMenu.menu.findItem(R.id.bookmark).isVisible = false
                 popupMenu.setOnMenuItemClickListener { item ->
                     when(item.itemId) {     // сколько пунктов меню - столько и вариантов в when()
                         R.id.delete -> {
@@ -150,8 +145,7 @@ class NoteListAdapter internal constructor(
                         else -> false
                     }
                 }
-                // Связываем XML-файл menu_notes и показываем меню
-                popupMenu.inflate(R.menu.menu_notes)
+                // показываем меню
                 popupMenu.show()
                 // Т.к. в LongClickListener нужно вернуть boolean, возвращаем его
                 return@setOnLongClickListener true
@@ -169,7 +163,6 @@ class NoteListAdapter internal constructor(
     //    }
     //}
 
-    // создание ViewHolder (одинаково для всех RecyclerView)
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoteViewHolder {
         // добавляет контент(XML) из 1-го аргумента, и помещает во второй (родительский)
         val itemView = inflater.inflate(R.layout.recyclerview_layout, parent,

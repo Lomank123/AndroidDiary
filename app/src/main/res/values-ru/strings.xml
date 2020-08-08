@@ -52,6 +52,8 @@
     <string name="edit_note">Изменение заметки</string>
     <string name="edit_diary">Изменение дневника</string>
     <string name="clicked_note">Заметка</string>
+    <string name="bookmark">В избранное</string>
+    <string name="remove_bookmark">Убрать звезду</string>
 
     <!-- Создатели -->
     <string name="creators">Создатели</string>
@@ -59,5 +61,10 @@
     <string name="jenya">Евгений Тайчинов</string>
     <string name="robert">Роберт Хакимов</string>
     <string name="app_ver">Версия приложения: 1.0</string>
+
+    <!-- Voice -->
+    <string name="start_time">0:00</string>
+    <string name="end_time">-1:11</string>
+    <string name="no_voice_note">Нажмите для записи</string>
 
 </resources>

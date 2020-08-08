@@ -43,4 +43,5 @@ data class Note(@ColumnInfo(name = "note_name") var note : String,      // на�
 
     @ColumnInfo(name = "note_color")
     var colorNote : String? = null
+
 }

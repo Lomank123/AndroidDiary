@@ -19,20 +19,15 @@ class NewNoteActivity : AppCompatActivity() {
 
         // обработчик нажатий на кнопку Save
         button_save_note.setOnClickListener {
-
             // если поле пустое устанавливаем отриц. результат
             if (TextUtils.isEmpty(edit_note.text)) {
                 // устанавливаем результат как RESULT_CANCELED (отменен)
                 setResult(Activity.RESULT_CANCELED, replyIntent)
-            }
-            else
-            {
+            } else {
                 // создаем массив с названием и описанием дневника
-                val note = arrayListOf(edit_note.text.toString(),
+                val noteContext = arrayListOf(edit_note.text.toString(),
                     edit_text_note.text.toString())
-
-                replyIntent.putExtra(EXTRA_REPLY_NOTE, note)
-
+                replyIntent.putExtra(EXTRA_REPLY_NOTE, noteContext)
                 setResult(Activity.RESULT_OK, replyIntent) // resultCode будет RESULT_OK
             }
             // завершаем работу с активити
@@ -43,7 +38,6 @@ class NewNoteActivity : AppCompatActivity() {
             setResult(Activity.RESULT_CANCELED)
             finish()
         }
-
         photo_button_note.setOnClickListener{
             // Выбираем фото из галереи
             val choosePhotoIntent = Intent(Intent.ACTION_PICK)
@@ -60,7 +54,6 @@ class NewNoteActivity : AppCompatActivity() {
             imageView_note.setImageURI(data?.data)
             replyIntent.putExtra(EXTRA_IMAGE_NOTE, data?.data.toString())
         }
-
     }
 
 

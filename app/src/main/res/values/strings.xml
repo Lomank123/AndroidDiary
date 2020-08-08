@@ -51,6 +51,8 @@
     <string name="edit_note">Edit note</string>
     <string name="edit_diary">Edit diary</string>
     <string name="clicked_note">Your note</string>
+    <string name="bookmark">Add star</string>
+    <string name="remove_bookmark">Remove star</string>
 
     <!-- Creators -->
     <string name="creators">Creators</string>
@@ -58,5 +60,10 @@
     <string name="jenya">Eugene Taychinov</string>
     <string name="robert">Robert Khakimov</string>
     <string name="app_ver">App version: 1.0</string>
+
+    <!-- Voice -->
+    <string name="start_time">0:00</string>
+    <string name="end_time">-1:11</string>
+    <string name="no_voice_note">Tap to start recording</string>
 
 </resources>
