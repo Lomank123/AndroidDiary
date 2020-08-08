@@ -22,7 +22,6 @@ import recyclerviewadapter.WordListAdapter
 import repository.NotesAndWords
 import roomdatabase.Word
 import viewmodel.MainViewModel
-import viewmodel.TopSpacingItemDecoration
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -52,7 +51,11 @@ class MainActivity : AppCompatActivity() {
         // задаем LinearLayoutManager (одинаково для всех RecyclerView)
         recyclerview.layoutManager = LinearLayoutManager(this)
         // добавляет в декорацию элемента дневника и заметки этот отступ
-        recyclerview.addItemDecoration(TopSpacingItemDecoration(20))
+        recyclerview.addItemDecoration(
+            TopSpacingItemDecoration(
+                20
+            )
+        )
 
         // Следит за изменением списка записей(дневников) и обновляет данные в RecyclerView
         mainViewModel.allNotesWords.observe(this, Observer {
@@ -116,12 +119,14 @@ class MainActivity : AppCompatActivity() {
     // Удаляет дневник. Вызов происходит через ViewModel
     private fun deleteWord(diary : NotesAndWords)
     {
+        // Удаляем все файлы с голосовыми заметками из дневника
         for(note in diary.notes)
         {
             val fileName = this.getExternalFilesDir(null)!!.absolutePath + "/${note.note}_${note.idNote}.3gpp"
             if(File(fileName).exists())
                 File(fileName).delete()
         }
+        // Затем удаляем сам дневник
         mainViewModel.deleteWord(diary.word)
     }
 

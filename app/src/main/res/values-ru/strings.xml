@@ -65,6 +65,6 @@
     <!-- Voice -->
     <string name="start_time">0:00</string>
     <string name="end_time">-1:11</string>
-    <string name="no_voice_note">Отсутствует голосовая заметка</string>
+    <string name="no_voice_note">Нажмите для записи</string>
 
 </resources>

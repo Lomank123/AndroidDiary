@@ -25,7 +25,6 @@ import repository.NotesAndWords
 import roomdatabase.Note
 import roomdatabase.Word
 import viewmodel.MainViewModel
-import viewmodel.TopSpacingItemDecoration
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -50,7 +49,11 @@ class NoteActivity : AppCompatActivity() {
         recyclerview1.layoutManager = LinearLayoutManager(this)
         mainViewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         // Отступы
-        recyclerview1.addItemDecoration(TopSpacingItemDecoration(20))
+        recyclerview1.addItemDecoration(
+            TopSpacingItemDecoration(
+                20
+            )
+        )
 
         // полученный список заметок передаем в RecyclerView для отображения
         mainViewModel.allNotesWords.observe(this, Observer {

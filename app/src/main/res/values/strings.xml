@@ -64,6 +64,6 @@
     <!-- Voice -->
     <string name="start_time">0:00</string>
     <string name="end_time">-1:11</string>
-    <string name="no_voice_note">There is no voice note</string>
+    <string name="no_voice_note">Tap to start recording</string>
 
 </resources>
