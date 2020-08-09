@@ -1,6 +1,5 @@
 package com.example.project3
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
@@ -8,26 +7,25 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.TextUtils
 import kotlinx.android.synthetic.main.activity_new_word.*
-import roomdatabase.Word
+import roomdatabase.Diary
 
-class EditActivity : AppCompatActivity() {
+class EditDiaryActivity : AppCompatActivity() {
 
     private val choosePhotoRequestCode = 1
 
     private val replyIntent = Intent()
 
-    @SuppressLint("SimpleDateFormat")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_new_word)
 
-        val word = intent.getSerializableExtra("wordSerializableEdit") as? Word
+        val diary = intent.getSerializableExtra("diarySerializableEdit") as? Diary
 
-        edit_word.setText(word!!.word)
-        edit_descr.setText(word.description)
+        edit_word.setText(diary!!.diary_name)
+        edit_descr.setText(diary.diary_content)
 
-        if (word.img != null && word.img != "") {
-            val uriImage = Uri.parse(word.img)
+        if (diary.diaryImg != null && diary.diaryImg != "") {
+            val uriImage = Uri.parse(diary.diaryImg)
             imageView5.setImageURI(uriImage)
         }
         button_save.setOnClickListener {
@@ -35,12 +33,10 @@ class EditActivity : AppCompatActivity() {
             if (TextUtils.isEmpty(edit_word.text)) {
                 // устанавливаем результат как RESULT_CANCELED (отменен)
                 setResult(Activity.RESULT_CANCELED, replyIntent)
-            }
-            else
-            {
-                word.word = edit_word.text.toString()
-                word.description = edit_descr.text.toString()
-                replyIntent.putExtra(EXTRA_EDIT_WORD, word)
+            } else {
+                diary.diary_name = edit_word.text.toString()
+                diary.diary_content = edit_descr.text.toString()
+                replyIntent.putExtra(EXTRA_EDIT_WORD, diary)
                 setResult(Activity.RESULT_OK, replyIntent)
             }
             // завершаем работу с активити
@@ -72,7 +68,7 @@ class EditActivity : AppCompatActivity() {
 
     // тег для распознавания именно этого запроса
     companion object {
-        const val EXTRA_EDIT_WORD = "WordReplyEdit"
-        const val EXTRA_IMAGE_EDIT_WORD = "ImgWordReplyEdit"
+        const val EXTRA_EDIT_WORD = "DiaryReplyEdit"
+        const val EXTRA_IMAGE_EDIT_WORD = "ImgDiaryReplyEdit"
     }
 }

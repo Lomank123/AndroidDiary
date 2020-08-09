@@ -14,18 +14,18 @@ import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.project3.R
-import repository.NotesAndWords
+import roomdatabase.ExtendedDiary
 
 // internal constructor means, that a constructor of an internal class is only
 // visible within the same module, module means this full project
 
-class WordListAdapter internal constructor(
+class DiaryListAdapter internal constructor(
     context: Context,
-    private val listenerDeleteWord : (NotesAndWords) -> Unit,
-    private val listenerOpenWord : (NotesAndWords) -> Unit,
-    private val listenerEditWord : (NotesAndWords) -> Unit,
-    private val listenerBookmark : (NotesAndWords) -> Unit
-) : RecyclerView.Adapter<WordListAdapter.WordViewHolder>() {
+    private val listenerDeleteDiary : (ExtendedDiary) -> Unit,
+    private val listenerOpenDiary : (ExtendedDiary) -> Unit,
+    private val listenerEditDiary : (ExtendedDiary) -> Unit,
+    private val listenerBookmarkDiary : (ExtendedDiary) -> Unit
+) : RecyclerView.Adapter<DiaryListAdapter.DiaryViewHolder>() {
 
     // По сути переменная inflater используется как метка на родительский XML,
     // которая используется в onCreateViewHolder
@@ -33,31 +33,31 @@ class WordListAdapter internal constructor(
 
     private val mContext = context // откуда было запущено активити
 
-    private var words = emptyList<NotesAndWords>()   // Сюда будут сохраняться дневники
+    private var diaries = emptyList<ExtendedDiary>()   // Сюда будут сохраняться дневники
 
     private val prefs: SharedPreferences? = PreferenceManager.getDefaultSharedPreferences(mContext)
 
     // передаем сюда образец одного элемента списка
     // этот класс ХРАНИТ в себе то самое вью, в котором будут что-то менять
-    inner class WordViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class DiaryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         private val layoutItemView : RelativeLayout = itemView.findViewById(R.id.rellayout)
         // textView1 - отвечает за название
-        private val wordItemView: TextView = itemView.findViewById(R.id.textView1)
+        private val diaryItemView: TextView = itemView.findViewById(R.id.textView1)
         // textView - отвечает за описание
-        private val wordDescriptionView: TextView = itemView.findViewById(R.id.textView)
-        private val wordDateView: TextView = itemView.findViewById(R.id.date_text)
-        private val wordImageView: ImageView = itemView.findViewById(R.id.imageView)
-        private val wordStarView: ImageView = itemView.findViewById(R.id.imageView_star)
+        private val diaryDescriptionView: TextView = itemView.findViewById(R.id.textView)
+        private val diaryDateView: TextView = itemView.findViewById(R.id.date_text)
+        private val diaryImageView: ImageView = itemView.findViewById(R.id.imageView)
+        private val diaryStarView: ImageView = itemView.findViewById(R.id.imageView_star)
 
         // эта функция применяется для каждого члена RecyclerView т.к. вызывается в onBindViewHolder
-        fun bindView(diary: NotesAndWords) {
+        fun bindView(extDiary: ExtendedDiary) {
             //layoutItemView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.primary_color1))
             // устанавливаем значения во вью
-            wordItemView.text = diary.word.word
+            diaryItemView.text = extDiary.diary.diary_name
             var count = 0
             var str = ""
-            for(i in diary.word.description) { // записываем в строку первые 12 символов
+            for(i in extDiary.diary.diary_content) { // записываем в строку первые 12 символов
                 if (count == 12) {
                     str += ".." // если их > 12, добавляем многоточие и завершаем цикл
                     break
@@ -66,11 +66,11 @@ class WordListAdapter internal constructor(
                 count++
             }
             // в RecyclerView будут видны первые 16 символов текста заметки
-            wordDescriptionView.text = str // текст заметки
-            wordDateView.text = diary.word.date // записываем дату
+            diaryDescriptionView.text = str // текст заметки
+            diaryDateView.text = extDiary.diary.diary_date // записываем дату
 
             if (prefs!!.getBoolean("color_check_diary", false)) {
-                when (diary.word.color)
+                when (extDiary.diary.color)
                 {
                     "green" ->
                         layoutItemView.setBackgroundColor(ContextCompat.getColor(mContext,
@@ -93,23 +93,23 @@ class WordListAdapter internal constructor(
                 layoutItemView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white))
 
             // установка фото
-            if (diary.word.img != null)
+            if (extDiary.diary.diaryImg != null)
             {
-                val uriImage = Uri.parse(diary.word.img)
-                wordImageView.setImageURI(uriImage)
+                val uriImage = Uri.parse(extDiary.diary.diaryImg)
+                diaryImageView.setImageURI(uriImage)
             }
             else
-                wordImageView.setImageResource(R.mipmap.ic_launcher_round)
+                diaryImageView.setImageResource(R.mipmap.ic_launcher_round)
             // иконка со звездочкой (избранное)
-            if (diary.word.isFavorite)
-                wordStarView.visibility = VISIBLE
+            if (extDiary.diary.favorite)
+                diaryStarView.visibility = VISIBLE
             else
-                wordStarView.visibility = GONE
+                diaryStarView.visibility = GONE
 
             // Устанавливаем обработчик нажатий на элемент RecyclerView, при нажатии
             // будет вызываться первый listener, который открывает дневник
             itemView.setOnClickListener {
-                listenerOpenWord(diary)
+                listenerOpenDiary(extDiary)
             }
             // обработчик долгих нажатий для вызова контекстного меню
             itemView.setOnLongClickListener{
@@ -117,7 +117,7 @@ class WordListAdapter internal constructor(
                 val popupMenu = PopupMenu(mContext, it)
                 popupMenu.inflate(R.menu.menu_notes)
                 // если избранное - меняется текст кнопки добавить/удалить из избранных
-                if(diary.word.isFavorite) {
+                if(extDiary.diary.favorite) {
                     popupMenu.menu.findItem(R.id.bookmark).title = mContext.resources.
                     getString(R.string.remove_bookmark)
                 }
@@ -137,7 +137,7 @@ class WordListAdapter internal constructor(
                             getString(R.string.dialog_check_delete))
                             deleteDialog.setPositiveButton(mContext.resources.
                             getString(R.string.dialog_yes)){ _, _ ->
-                                listenerDeleteWord(diary) // вызываем listener
+                                listenerDeleteDiary(extDiary) // вызываем listener
                                 Toast.makeText(mContext, mContext.resources.
                                 getString(R.string.dialog_deleted), Toast.LENGTH_SHORT).show()
                             }
@@ -150,21 +150,21 @@ class WordListAdapter internal constructor(
                             true
                         }
                         R.id.open -> { // открытие дневника
-                            listenerOpenWord(diary) // listener, описанный в NoteActivity
+                            listenerOpenDiary(extDiary) // listener, описанный в NoteActivity
                             // Т.к. в этом обработчике нужно вернуть boolean, возвращаем true
                             true
                         }
                         R.id.edit -> {
-                            listenerEditWord(diary)
+                            listenerEditDiary(extDiary)
                             true
                         }
                         R.id.bookmark -> {
-                            listenerBookmark(diary)
+                            listenerBookmarkDiary(extDiary)
                             notifyDataSetChanged()
-                            if(diary.word.isFavorite)
-                                wordStarView.visibility = VISIBLE
+                            if(extDiary.diary.favorite)
+                                diaryStarView.visibility = VISIBLE
                             else
-                                wordStarView.visibility = GONE
+                                diaryStarView.visibility = GONE
                             true
                         }
                         // Иначе вернем false (если when не сработал ни разу)
@@ -191,30 +191,30 @@ class WordListAdapter internal constructor(
     //}
 
     // создание ViewHolder (одинаково для всех RecyclerView)
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WordViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DiaryViewHolder {
         // добавляет контент(XML) из 1-го аргумента, и помещает во второй (родительский)
         val itemView = inflater.inflate(R.layout.recyclerview_layout, parent,
             false)
-        return WordViewHolder(itemView)
+        return DiaryViewHolder(itemView)
     }
 
     // Устанавливает значение для каждого элемента RecyclerView
-    override fun onBindViewHolder(holder: WordViewHolder, position: Int) {
-        holder.bindView(words[position])
+    override fun onBindViewHolder(holder: DiaryViewHolder, position: Int) {
+        holder.bindView(diaries[position])
     }
 
     // ВАЖНО: setWords вызывается в момент того, когда обсервер заметил изменения в записях
     // и чтобы зафиксировать эти изменения в RecyclerView, нужно передавать новый список сюда
-    internal fun setWords(words: List<NotesAndWords>) {
-        this.words = words      // обновляем внутренний список
+    internal fun setDiaries(diaries: List<ExtendedDiary>) {
+        this.diaries = diaries      // обновляем внутренний список
         // notifyDataSetChanged() даст сигнал о том, что данные изменились
         // и нужно их обновить и в самом RecycleView
         notifyDataSetChanged()
     }
-    internal fun setFavoriteWords(words: List<NotesAndWords>){
-        this.words = words.sortedBy { !it.word.isFavorite }
+    internal fun setFavoriteDiaries(diaries: List<ExtendedDiary>){
+        this.diaries = diaries.sortedBy { !it.diary.favorite }
         notifyDataSetChanged()
     }
 
-    override fun getItemCount() = words.size // сколько эл-тов будет в списке
+    override fun getItemCount() = diaries.size // сколько эл-тов будет в списке
 }

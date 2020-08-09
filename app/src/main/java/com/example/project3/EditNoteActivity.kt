@@ -1,6 +1,5 @@
 package com.example.project3
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
@@ -10,25 +9,23 @@ import android.text.TextUtils
 import kotlinx.android.synthetic.main.activity_new_note.*
 import roomdatabase.Note
 
-class EditActivityNote : AppCompatActivity() {
+class EditNoteActivity : AppCompatActivity() {
 
     private val choosePhotoRequestCode = 1
 
     private val replyIntent = Intent()
 
-    @SuppressLint("SimpleDateFormat")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_new_note)
 
-
         val note = intent.getSerializableExtra("noteSerializableEdit") as? Note
 
-        edit_note.setText(note!!.note)
-        edit_text_note.setText(note.text)
+        edit_note.setText(note!!.note_name)
+        edit_text_note.setText(note.note_content)
 
-        if (note.imgNote != null && note.imgNote != "") {
-            val uriImage = Uri.parse(note.imgNote)
+        if (note.noteImg != null && note.noteImg != "") {
+            val uriImage = Uri.parse(note.noteImg)
             imageView_note.setImageURI(uriImage)
         }
         button_save_note.setOnClickListener {
@@ -36,9 +33,8 @@ class EditActivityNote : AppCompatActivity() {
                 // устанавливаем результат как RESULT_CANCELED (отменен)
                 setResult(Activity.RESULT_CANCELED, replyIntent)
             } else {
-                note.note = edit_note.text.toString()
-                note.text = edit_text_note.text.toString()
-
+                note.note_name = edit_note.text.toString()
+                note.note_content = edit_text_note.text.toString()
                 replyIntent.putExtra(EXTRA_EDIT_NOTE, note)
                 setResult(Activity.RESULT_OK, replyIntent)
             }

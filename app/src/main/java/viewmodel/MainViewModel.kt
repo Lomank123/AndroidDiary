@@ -6,28 +6,45 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import repository.MainRepository
-import repository.NotesAndWords
+import roomdatabase.DiaryRoomDatabase
 import roomdatabase.Note
-import roomdatabase.Word
-import roomdatabase.WordRoomDatabase
+import roomdatabase.ExtendedDiary
+import roomdatabase.Diary
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
 
-    // ViewModel поддерживает ссылку на репозиторий для получения данных.
+    // ViewModel поддерживает ссылку на репозиторий для получения данных
     private val repository: MainRepository
-    // LiveData дают нам обновленные слова, когда они меняются.
-    val allNotesWords: LiveData<List<NotesAndWords>>
+    // LiveData дают нам обновленные слова, когда они меняются
+    val allExtendedDiaries: LiveData<List<ExtendedDiary>>
 
     init {
         // Gets reference to WordDao from WordRoomDatabase to construct
-        // the correct NoteRepository.
+        // the correct MainRepository.
 
         // получаем данные из БД
-        val wordsDao = WordRoomDatabase.getDatabase(application, viewModelScope).wordDao()
+        val diaryDao = DiaryRoomDatabase.getDatabase(application, viewModelScope).diaryDao()
         // связываем репозиторий с этой переменной
-        repository = MainRepository(wordsDao)
-        // передаем данные из репозитория сюда (во ViewModel)
-        allNotesWords = repository.allNotesWords
+        repository = MainRepository(diaryDao)
+        // передаем данные из репозитория во ViewModel
+        allExtendedDiaries = repository.allExtendedDiaries
+    }
+
+    // Diaries:
+
+    // Добавляет запись в БД посредством вызова внутренних ф-ий (см. MainRepository)
+    fun insertDiary(diary: Diary) = viewModelScope.launch {
+        repository.insertDiary(diary)
+    }
+
+    // Удаляет дневник и записи в нем, вызывая ф-ию в WordRepository
+    fun deleteDiary(diary: Diary) = viewModelScope.launch {
+        repository.deleteDiary(diary)
+    }
+
+    // обновляет запись, вызывая функцию в репозитории
+    fun updateDiary(diary : Diary) = viewModelScope.launch{
+        repository.updateDiary(diary)
     }
 
     // Notes:
@@ -45,23 +62,5 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     // обновляет запись, вызывая функцию в репозитории
     fun updateNote(note: Note) = viewModelScope.launch{
         repository.updateNote(note)
-    }
-
-
-    // Words:
-
-    // Добавляет запись в БД посредством вызова внутренних ф-ий (см. WordRepository)
-    fun insertWord(word: Word) = viewModelScope.launch {
-        repository.insertWord(word)
-    }
-
-    // Удаляет дневник и записи в нем, вызывая ф-ию в WordRepository
-    fun deleteWord(word: Word) = viewModelScope.launch {
-        repository.deleteWord(word)
-    }
-
-    // обновляет запись, вызывая функцию в репозитории
-    fun updateWord(word : Word) = viewModelScope.launch{
-        repository.updateWord(word)
     }
 }

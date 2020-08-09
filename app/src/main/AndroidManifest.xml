@@ -15,10 +15,10 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".EditActivityNote"
+            android:name=".EditNoteActivity"
             android:label="@string/edit_note" />
         <activity
-            android:name=".EditActivity"
+            android:name=".EditDiaryActivity"
             android:label="@string/edit_diary" />
         <activity
             android:name=".SettingsHolderActivity"
@@ -36,7 +36,7 @@
             android:name=".ClickedActivity"
             android:label="@string/clicked_note" />
         <activity
-            android:name=".NewWordActivity"
+            android:name=".NewDiaryActivity"
             android:label="@string/new_diary" />
         <activity
             android:name=".MainActivity"

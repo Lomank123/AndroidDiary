@@ -30,7 +30,6 @@ class NoteListAdapter internal constructor(
     private val prefs: SharedPreferences? = PreferenceManager.getDefaultSharedPreferences(mContext)
 
     private var notes = emptyList<Note>()   // Сохраненная копия заметок
-    //private var notesMapped = mutableMapOf<Long, List<Note>>()
 
     // передаем сюда образец одного элемента списка
     // этот класс ХРАНИТ в себе то самое вью, в котором будут что-то менять
@@ -49,11 +48,11 @@ class NoteListAdapter internal constructor(
         // эта функция применяется для каждого члена RecyclerView т.к. вызывается в onBindViewHolder
         fun bindView(note: Note, listener : (Note) -> Unit) {
             // устанавливаем значения во вью
-            noteItemView.text = note.note // название заметки
+            noteItemView.text = note.note_name // название заметки
             // Лимит на кол-во символов в тексте заметки для отображения: 12
             var count = 0
             var str = ""
-            for(i in note.text) { // записываем в строку первые 12 символов
+            for(i in note.note_content) { // записываем в строку первые 12 символов
                 if (count == 12) {
                     str += ".." // если их > 12, добавляем многоточие и завершаем цикл
                     break
@@ -63,16 +62,16 @@ class NoteListAdapter internal constructor(
             }
             // в RecyclerView будут видны первые 16 символов текста заметки
             noteDescriptionView.text = str // текст заметки
-            noteDateView.text = note.dateNote // дата
-            if (note.imgNote != null)
+            noteDateView.text = note.note_date // дата
+            if (note.noteImg != null)
             {
-                val uriImage = Uri.parse(note.imgNote)
+                val uriImage = Uri.parse(note.noteImg)
                 noteImageView.setImageURI(uriImage)
             }
             else
                 noteImageView.setImageResource(R.mipmap.ic_launcher_round)
             if (prefs!!.getBoolean("color_check_note", false)) {
-                when (note.colorNote)
+                when (note.color)
                 {
                     "green" ->
                         layoutItemView.setBackgroundColor(ContextCompat.getColor(mContext,

@@ -16,11 +16,11 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.project3.NewWordActivity.Companion.EXTRA_IMAGE
+import com.example.project3.NewDiaryActivity.Companion.EXTRA_IMAGE
 import kotlinx.android.synthetic.main.activity_main.*
-import recyclerviewadapter.WordListAdapter
-import repository.NotesAndWords
-import roomdatabase.Word
+import recyclerviewadapter.DiaryListAdapter
+import roomdatabase.ExtendedDiary
+import roomdatabase.Diary
 import viewmodel.MainViewModel
 import java.io.File
 import java.text.SimpleDateFormat
@@ -28,8 +28,8 @@ import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
-    private val newWordActivityRequestCode = 1          // для NewWordActivity
-    private val editActivityRequestCode = 2             // для EditActivity
+    private val newDiaryActivityRequestCode = 1          // для NewWordActivity
+    private val editDiaryActivityRequestCode = 2             // для EditActivity
     private lateinit var mainViewModel: MainViewModel   // добавляем ViewModel
     private var isFabOpen : Boolean = false             // по умолч. меню закрыто
     private val colors: List<String> = listOf("green", "blue", "grass", "purple", "yellow")
@@ -51,18 +51,14 @@ class MainActivity : AppCompatActivity() {
         // задаем LinearLayoutManager (одинаково для всех RecyclerView)
         recyclerview.layoutManager = LinearLayoutManager(this)
         // добавляет в декорацию элемента дневника и заметки этот отступ
-        recyclerview.addItemDecoration(
-            TopSpacingItemDecoration(
-                20
-            )
-        )
+        recyclerview.addItemDecoration(TopSpacingItemDecoration(20))
 
         // Следит за изменением списка записей(дневников) и обновляет данные в RecyclerView
-        mainViewModel.allNotesWords.observe(this, Observer {
+        mainViewModel.allExtendedDiaries.observe(this, Observer {
             if (prefs.getBoolean("sorted", false))
-                adapter.setFavoriteWords(it)
+                adapter.setFavoriteDiaries(it)
             else
-                adapter.setWords(it)
+                adapter.setDiaries(it)
         })
         // Кнопки
         // Кнопка вызова выдвиг. меню
@@ -75,9 +71,9 @@ class MainActivity : AppCompatActivity() {
         // Кнопка для добавления записи
         fab2.setOnClickListener {
             closeFabMenu()
-            val intent = Intent(this, NewWordActivity::class.java)
+            val intent = Intent(this, NewDiaryActivity::class.java)
             // 2-ой аргумент это requestCode по которому определяется откуда был запрос
-            startActivityForResult(intent, newWordActivityRequestCode)
+            startActivityForResult(intent, newDiaryActivityRequestCode)
         }
         // Кнопка сортировки по избранным
         fab1.setOnClickListener {
@@ -85,11 +81,11 @@ class MainActivity : AppCompatActivity() {
             if(prefs.getBoolean("sorted", false))
             {
                 prefs.edit().putBoolean("sorted", false).apply()
-                adapter.setWords(mainViewModel.allNotesWords.value!!)
+                adapter.setDiaries(mainViewModel.allExtendedDiaries.value!!)
             }
             else {
                 prefs.edit().putBoolean("sorted", true).apply()
-                adapter.setFavoriteWords(mainViewModel.allNotesWords.value!!)
+                adapter.setFavoriteDiaries(mainViewModel.allExtendedDiaries.value!!)
             }
         }
         // Темный фон во время открытого меню
@@ -117,48 +113,48 @@ class MainActivity : AppCompatActivity() {
     }
 
     // Удаляет дневник. Вызов происходит через ViewModel
-    private fun deleteWord(diary : NotesAndWords)
+    private fun deleteDiary(extDiary : ExtendedDiary)
     {
         // Удаляем все файлы с голосовыми заметками из дневника
-        for(note in diary.notes)
+        for(note in extDiary.notes)
         {
-            val fileName = this.getExternalFilesDir(null)!!.absolutePath + "/${note.note}_${note.idNote}.3gpp"
+            val fileName = this.getExternalFilesDir(null)!!.absolutePath + "/${note.note_name}_${note.idNote}.3gpp"
             if(File(fileName).exists())
                 File(fileName).delete()
         }
         // Затем удаляем сам дневник
-        mainViewModel.deleteWord(diary.word)
+        mainViewModel.deleteDiary(extDiary.diary)
     }
 
     // адаптер для RecyclerView
     // то, что в фигурных скобках это и есть аргумент listener : (Word) -> Unit в адаптере
-    private fun newAdapter() : WordListAdapter
+    private fun newAdapter() : DiaryListAdapter
     {
-        return WordListAdapter(this,
+        return DiaryListAdapter(this,
             {
                 // Первый listener, отвечает за удаление дневника
-                deleteWord(it)
+                deleteDiary(it)
             }, {
                 // Второй listener. Открывает список заметок (NoteActivity)
                 val intent = Intent(this, NoteActivity::class.java)
-                intent.putExtra("wordSelf", it.word) // Передаем объект Word (дневник)
+                intent.putExtra("diarySelf", it.diary) // Передаем объект Word (дневник)
                 startActivity(intent)
             }, {
                 // 3-ий listener, отвечает за изменение дневника
-                val intent = Intent(this, EditActivity::class.java)
-                intent.putExtra("wordSerializableEdit", it.word)
-                startActivityForResult(intent, editActivityRequestCode)
+                val intent = Intent(this, EditDiaryActivity::class.java)
+                intent.putExtra("diarySerializableEdit", it.diary)
+                startActivityForResult(intent, editDiaryActivityRequestCode)
             }, {
                // 4-ый listener. Добавление в избранные
-                it.word.isFavorite = !it.word.isFavorite
-                if(it.word.isFavorite) {
+                it.diary.favorite = !it.diary.favorite
+                if(it.diary.favorite) {
                     Toast.makeText(this, resources.getString(R.string.add_favor),
                         Toast.LENGTH_SHORT).show()
                 } else {
                     Toast.makeText(this, resources.getString(R.string.del_favor),
                         Toast.LENGTH_SHORT).show()
                 }
-                mainViewModel.updateWord(it.word)
+                mainViewModel.updateDiary(it.diary)
             })
     }
 
@@ -167,28 +163,28 @@ class MainActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (requestCode == newWordActivityRequestCode && resultCode == Activity.RESULT_OK) {
-            data?.getStringArrayListExtra(NewWordActivity.EXTRA_REPLY)?.let {
+        if (requestCode == newDiaryActivityRequestCode && resultCode == Activity.RESULT_OK) {
+            data?.getStringArrayListExtra(NewDiaryActivity.EXTRA_REPLY)?.let {
                 // получаем из экстра данных нашу строку и создаем объект Word с той же строкой
-                val word = Word(it[0], it[1], currentDate())
+                val diary = Diary(it[0], it[1], currentDate())
                 if (data.getStringExtra(EXTRA_IMAGE) != "" && data.getStringExtra(EXTRA_IMAGE) != null)
-                    word.img = data.getStringExtra(EXTRA_IMAGE)
-                word.color = colors.random()
-                mainViewModel.insertWord(word) // добавляем запись в БД
+                    diary.diaryImg = data.getStringExtra(EXTRA_IMAGE)
+                diary.color = colors.random()
+                mainViewModel.insertDiary(diary) // добавляем запись в БД
             }
         }
-        if (requestCode == editActivityRequestCode && resultCode == Activity.RESULT_OK) {
-            val wordEdit = data?.getSerializableExtra(EditActivity.EXTRA_EDIT_WORD) as? Word
-            val imgWordEdit = data?.getStringExtra(EditActivity.EXTRA_IMAGE_EDIT_WORD)
-            if (wordEdit != null)
+        if (requestCode == editDiaryActivityRequestCode && resultCode == Activity.RESULT_OK) {
+            val diaryEdit = data?.getSerializableExtra(EditDiaryActivity.EXTRA_EDIT_WORD) as? Diary
+            val imgdiaryEdit = data?.getStringExtra(EditDiaryActivity.EXTRA_IMAGE_EDIT_WORD)
+            if (diaryEdit != null)
             {
-                if (imgWordEdit != null && imgWordEdit != "")
-                    wordEdit.img = imgWordEdit
-                wordEdit.date = currentDate()
-                mainViewModel.updateWord(wordEdit) // обновляем запись в БД
+                if (imgdiaryEdit != null && imgdiaryEdit != "")
+                    diaryEdit.diaryImg = imgdiaryEdit
+                diaryEdit.diary_date = currentDate()
+                mainViewModel.updateDiary(diaryEdit) // обновляем запись в БД
             }
         }
-        if ((requestCode == newWordActivityRequestCode || requestCode == editActivityRequestCode) &&
+        if ((requestCode == newDiaryActivityRequestCode || requestCode == editDiaryActivityRequestCode) &&
             resultCode == Activity.RESULT_CANCELED)
         {
             Toast.makeText(this, resources.getString(R.string.empty_not_saved),
@@ -212,12 +208,12 @@ class MainActivity : AppCompatActivity() {
                 }
                 override fun onQueryTextChange(newText: String?): Boolean {
                     // будет обновлять список когда будут добавляться/удаляться записи
-                    mainViewModel.allNotesWords.observe(this@MainActivity, Observer {
-                        setWordsForSearch(recyclerview.adapter as WordListAdapter, prefs, it,
+                    mainViewModel.allExtendedDiaries.observe(this@MainActivity, Observer {
+                        setDiariesForSearch(recyclerview.adapter as DiaryListAdapter, prefs, it,
                             newText)
                     })
-                    setWordsForSearch(recyclerview.adapter as WordListAdapter, prefs,
-                        mainViewModel.allNotesWords.value!!, newText)
+                    setDiariesForSearch(recyclerview.adapter as DiaryListAdapter, prefs,
+                        mainViewModel.allExtendedDiaries.value!!, newText)
                     return true
                 }
             })
@@ -226,29 +222,29 @@ class MainActivity : AppCompatActivity() {
     }
 
     // Функция для вывода поискового запроса (используется только в SearchView)
-    private fun setWordsForSearch(adapter : WordListAdapter, prefs : SharedPreferences?,
-                                  all_words_list : List<NotesAndWords>, newText : String?)
+    private fun setDiariesForSearch(adapter : DiaryListAdapter, prefs : SharedPreferences?,
+                                  allDiariesList : List<ExtendedDiary>, newText : String?)
     {
         // wordList1 - список записей, удовлетворяющих поисковому запросу
-        val wordList1 = mutableListOf<NotesAndWords>()
+        val diariesSearchList = mutableListOf<ExtendedDiary>()
         if (newText!!.isNotEmpty())
         {
             val search = newText.toLowerCase(Locale.ROOT)
-            mainViewModel.allNotesWords.value!!.forEach{
-                if(it.word.word.toLowerCase(Locale.ROOT).contains(search))
-                    wordList1.add(it)
+            mainViewModel.allExtendedDiaries.value!!.forEach{
+                if(it.diary.diary_name.toLowerCase(Locale.ROOT).contains(search))
+                    diariesSearchList.add(it)
             }
             if (prefs!!.getBoolean("sorted", false))
-                adapter.setFavoriteWords(wordList1)
+                adapter.setFavoriteDiaries(diariesSearchList)
             else
-                adapter.setWords(wordList1)
+                adapter.setDiaries(diariesSearchList)
         }
         else // Если строка поиска пуста
         {
             if (prefs!!.getBoolean("sorted", false))
-                adapter.setFavoriteWords(all_words_list)
+                adapter.setFavoriteDiaries(allDiariesList)
             else
-                adapter.setWords(all_words_list)
+                adapter.setDiaries(allDiariesList)
         }
         // Слушатель на кнопку для правильной сортировки
         fab1.setOnClickListener {
@@ -256,15 +252,15 @@ class MainActivity : AppCompatActivity() {
             if (prefs.getBoolean("sorted", false)) {
                 prefs.edit().putBoolean("sorted", false).apply()
                 if (newText.isNotEmpty())
-                    (recyclerview.adapter as WordListAdapter).setWords(wordList1)
+                    (recyclerview.adapter as DiaryListAdapter).setDiaries(diariesSearchList)
                 else
-                    (recyclerview.adapter as WordListAdapter).setWords(all_words_list)
+                    (recyclerview.adapter as DiaryListAdapter).setDiaries(allDiariesList)
             } else {
                 prefs.edit().putBoolean("sorted", true).apply()
                 if (newText.isNotEmpty())
-                    (recyclerview.adapter as WordListAdapter).setFavoriteWords(wordList1)
+                    (recyclerview.adapter as DiaryListAdapter).setFavoriteDiaries(diariesSearchList)
                 else
-                    (recyclerview.adapter as WordListAdapter).setFavoriteWords(all_words_list)
+                    (recyclerview.adapter as DiaryListAdapter).setFavoriteDiaries(allDiariesList)
             }
         }
     }
