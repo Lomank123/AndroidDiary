@@ -19,13 +19,13 @@ class EditDiaryActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_new_word)
 
-        val diary = intent.getSerializableExtra("diarySerializableEdit") as? Diary
+        val diary = intent.getSerializableExtra("diaryEdit") as? Diary
 
-        edit_word.setText(diary!!.diary_name)
-        edit_descr.setText(diary.diary_content)
+        edit_word.setText(diary!!.name)
+        edit_descr.setText(diary.content)
 
-        if (diary.diaryImg != null && diary.diaryImg != "") {
-            val uriImage = Uri.parse(diary.diaryImg)
+        if (diary.img != null && diary.img != "") {
+            val uriImage = Uri.parse(diary.img)
             imageView5.setImageURI(uriImage)
         }
         button_save.setOnClickListener {
@@ -34,9 +34,9 @@ class EditDiaryActivity : AppCompatActivity() {
                 // устанавливаем результат как RESULT_CANCELED (отменен)
                 setResult(Activity.RESULT_CANCELED, replyIntent)
             } else {
-                diary.diary_name = edit_word.text.toString()
-                diary.diary_content = edit_descr.text.toString()
-                replyIntent.putExtra(EXTRA_EDIT_WORD, diary)
+                diary.name = edit_word.text.toString()
+                diary.content = edit_descr.text.toString()
+                replyIntent.putExtra(EXTRA_EDIT_DIARY, diary)
                 setResult(Activity.RESULT_OK, replyIntent)
             }
             // завершаем работу с активити
@@ -61,14 +61,14 @@ class EditDiaryActivity : AppCompatActivity() {
         if (requestCode == choosePhotoRequestCode && resultCode == Activity.RESULT_OK)
         {
             imageView5.setImageURI(data?.data)
-            replyIntent.putExtra(EXTRA_IMAGE_EDIT_WORD, data?.data.toString())
+            replyIntent.putExtra(EXTRA_EDIT_DIARY_IMAGE, data?.data.toString())
         }
 
     }
 
     // тег для распознавания именно этого запроса
     companion object {
-        const val EXTRA_EDIT_WORD = "DiaryReplyEdit"
-        const val EXTRA_IMAGE_EDIT_WORD = "ImgDiaryReplyEdit"
+        const val EXTRA_EDIT_DIARY = "EXTRA_EDIT_DIARY"
+        const val EXTRA_EDIT_DIARY_IMAGE = "EXTRA_EDIT_DIARY_IMAGE"
     }
 }

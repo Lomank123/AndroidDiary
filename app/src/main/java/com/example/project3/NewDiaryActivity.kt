@@ -32,7 +32,7 @@ class NewDiaryActivity : AppCompatActivity() {
                 val diaryContext = arrayListOf(edit_word.text.toString(),
                     edit_descr.text.toString())
                 // кладем то, что написано в editText в word и передаем по тегу EXTRA_REPLY (ниже)
-                replyIntent.putExtra(EXTRA_REPLY, diaryContext)
+                replyIntent.putExtra(EXTRA_NEW_DIARY, diaryContext)
                 setResult(Activity.RESULT_OK, replyIntent) // resultCode будет RESULT_OK
             }
             // завершаем работу с активити
@@ -62,14 +62,14 @@ class NewDiaryActivity : AppCompatActivity() {
         if (requestCode == choosePhotoRequestCode && resultCode == Activity.RESULT_OK)
         {
             imageView5.setImageURI(data?.data)
-            replyIntent.putExtra(EXTRA_IMAGE, data?.data.toString())
+            replyIntent.putExtra(EXTRA_NEW_DIARY_IMAGE, data?.data.toString())
         }
 
     }
 
     // тег для распознавания именно этого запроса
     companion object {
-        const val EXTRA_REPLY = "extra_reply_diary"
-        const val EXTRA_IMAGE = "imgDiary"
+        const val EXTRA_NEW_DIARY = "EXTRA_NEW_DIARY"
+        const val EXTRA_NEW_DIARY_IMAGE = "EXTRA_NEW_DIARY_IMAGE"
     }
 }

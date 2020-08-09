@@ -12,6 +12,7 @@ class MainRepository (private val diaryDao : DiaryDao) {
     // получаем записи по запросу
     var allExtendedDiaries : LiveData<List<ExtendedDiary>> = diaryDao.getExtendedDiaries()
 
+
     // ВАЖНО: LiveData объекты постоянно активны и при изменениях в БД они сразу
     // же получают эту информацию,
     // т.е. нет необходимости перепроверять все вручную
@@ -46,7 +47,7 @@ class MainRepository (private val diaryDao : DiaryDao) {
     // удалить заметку
     suspend fun deleteNote(note : Note)
     {
-        diaryDao.deleteOneNote(note.idNote)
+        diaryDao.deleteOneNote(note.id)
     }
 
     // обновить заметку

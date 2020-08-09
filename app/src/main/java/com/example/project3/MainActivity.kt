@@ -16,7 +16,6 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.project3.NewDiaryActivity.Companion.EXTRA_IMAGE
 import kotlinx.android.synthetic.main.activity_main.*
 import recyclerviewadapter.DiaryListAdapter
 import roomdatabase.ExtendedDiary
@@ -28,10 +27,10 @@ import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
-    private val newDiaryActivityRequestCode = 1          // для NewWordActivity
+    private val newDiaryActivityRequestCode = 1              // для NewWordActivity
     private val editDiaryActivityRequestCode = 2             // для EditActivity
-    private lateinit var mainViewModel: MainViewModel   // добавляем ViewModel
-    private var isFabOpen : Boolean = false             // по умолч. меню закрыто
+    private lateinit var mainViewModel: MainViewModel        // добавляем ViewModel
+    private var isFabOpen : Boolean = false                  // по умолч. меню закрыто
     private val colors: List<String> = listOf("green", "blue", "grass", "purple", "yellow")
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,7 +44,7 @@ class MainActivity : AppCompatActivity() {
         // Создаем провайдер, связывая с соотв. классом ViewModel (одинаково для всех ViewModel)
         mainViewModel = ViewModelProvider(this).get(MainViewModel::class.java)
 
-        val adapter = newAdapter()
+        val adapter = newDiaryAdapter()
         // задаем Adapter (одинаково для всех RecyclerView)
         recyclerview.adapter = adapter
         // задаем LinearLayoutManager (одинаково для всех RecyclerView)
@@ -118,7 +117,7 @@ class MainActivity : AppCompatActivity() {
         // Удаляем все файлы с голосовыми заметками из дневника
         for(note in extDiary.notes)
         {
-            val fileName = this.getExternalFilesDir(null)!!.absolutePath + "/${note.note_name}_${note.idNote}.3gpp"
+            val fileName = this.getExternalFilesDir(null)!!.absolutePath + "/${note.name}_${note.id}.3gpp"
             if(File(fileName).exists())
                 File(fileName).delete()
         }
@@ -127,8 +126,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     // адаптер для RecyclerView
-    // то, что в фигурных скобках это и есть аргумент listener : (Word) -> Unit в адаптере
-    private fun newAdapter() : DiaryListAdapter
+    // то, что в фигурных скобках это и есть аргумент listener : (ExtendedDiary) -> Unit в адаптере
+    private fun newDiaryAdapter() : DiaryListAdapter
     {
         return DiaryListAdapter(this,
             {
@@ -137,12 +136,12 @@ class MainActivity : AppCompatActivity() {
             }, {
                 // Второй listener. Открывает список заметок (NoteActivity)
                 val intent = Intent(this, NoteActivity::class.java)
-                intent.putExtra("diarySelf", it.diary) // Передаем объект Word (дневник)
+                intent.putExtra("extDiaryParent", it) // Передаем ExtendedDiary
                 startActivity(intent)
             }, {
                 // 3-ий listener, отвечает за изменение дневника
                 val intent = Intent(this, EditDiaryActivity::class.java)
-                intent.putExtra("diarySerializableEdit", it.diary)
+                intent.putExtra("diaryEdit", it.diary)
                 startActivityForResult(intent, editDiaryActivityRequestCode)
             }, {
                // 4-ый listener. Добавление в избранные
@@ -164,23 +163,23 @@ class MainActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (requestCode == newDiaryActivityRequestCode && resultCode == Activity.RESULT_OK) {
-            data?.getStringArrayListExtra(NewDiaryActivity.EXTRA_REPLY)?.let {
+            data?.getStringArrayListExtra(NewDiaryActivity.EXTRA_NEW_DIARY)?.let {
                 // получаем из экстра данных нашу строку и создаем объект Word с той же строкой
                 val diary = Diary(it[0], it[1], currentDate())
-                if (data.getStringExtra(EXTRA_IMAGE) != "" && data.getStringExtra(EXTRA_IMAGE) != null)
-                    diary.diaryImg = data.getStringExtra(EXTRA_IMAGE)
+                if (data.getStringExtra(NewDiaryActivity.EXTRA_NEW_DIARY_IMAGE) != "" && data.getStringExtra(NewDiaryActivity.EXTRA_NEW_DIARY_IMAGE) != null)
+                    diary.img = data.getStringExtra(NewDiaryActivity.EXTRA_NEW_DIARY_IMAGE)
                 diary.color = colors.random()
                 mainViewModel.insertDiary(diary) // добавляем запись в БД
             }
         }
         if (requestCode == editDiaryActivityRequestCode && resultCode == Activity.RESULT_OK) {
-            val diaryEdit = data?.getSerializableExtra(EditDiaryActivity.EXTRA_EDIT_WORD) as? Diary
-            val imgdiaryEdit = data?.getStringExtra(EditDiaryActivity.EXTRA_IMAGE_EDIT_WORD)
+            val diaryEdit = data?.getSerializableExtra(EditDiaryActivity.EXTRA_EDIT_DIARY) as? Diary
+            val imgDiaryEdit = data?.getStringExtra(EditDiaryActivity.EXTRA_EDIT_DIARY_IMAGE)
             if (diaryEdit != null)
             {
-                if (imgdiaryEdit != null && imgdiaryEdit != "")
-                    diaryEdit.diaryImg = imgdiaryEdit
-                diaryEdit.diary_date = currentDate()
+                if (imgDiaryEdit != null && imgDiaryEdit != "")
+                    diaryEdit.img = imgDiaryEdit
+                diaryEdit.date = currentDate()
                 mainViewModel.updateDiary(diaryEdit) // обновляем запись в БД
             }
         }
@@ -225,13 +224,14 @@ class MainActivity : AppCompatActivity() {
     private fun setDiariesForSearch(adapter : DiaryListAdapter, prefs : SharedPreferences?,
                                   allDiariesList : List<ExtendedDiary>, newText : String?)
     {
-        // wordList1 - список записей, удовлетворяющих поисковому запросу
+        // diariesSearchList - список записей, удовлетворяющих поисковому запросу
         val diariesSearchList = mutableListOf<ExtendedDiary>()
+
         if (newText!!.isNotEmpty())
         {
             val search = newText.toLowerCase(Locale.ROOT)
             mainViewModel.allExtendedDiaries.value!!.forEach{
-                if(it.diary.diary_name.toLowerCase(Locale.ROOT).contains(search))
+                if(it.diary.name.toLowerCase(Locale.ROOT).contains(search))
                     diariesSearchList.add(it)
             }
             if (prefs!!.getBoolean("sorted", false))

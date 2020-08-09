@@ -37,11 +37,11 @@ class ClickedActivity : AppCompatActivity() {
 
         val note = intent.getSerializableExtra("noteSerializable") as? Note
 
-        fileName = this.getExternalFilesDir(null)!!.absolutePath + "/${note!!.note_name}_${note.idNote}.3gpp"
+        fileName = this.getExternalFilesDir(null)!!.absolutePath + "/${note!!.name}_${note.id}.3gpp"
 
         // получаем экстра данные из NoteActivity
-        textView1.text = note.note_name
-        editText1.setText(note.note_content)
+        textView1.text = note.name
+        editText1.setText(note.content)
 
         // Если голосовая заметка найдена
             if(File(fileName).exists())
@@ -178,9 +178,9 @@ class ClickedActivity : AppCompatActivity() {
 
         if (prefs!!.getBoolean("img_check", false))
         {
-            if (note!!.noteImg != null)
+            if (note!!.img != null)
             {
-                val uriImage = Uri.parse(note.noteImg)
+                val uriImage = Uri.parse(note.img)
                 imageView_clicked.setImageURI(uriImage)
             }
         }
@@ -236,7 +236,7 @@ class ClickedActivity : AppCompatActivity() {
                 val note = intent.getSerializableExtra("noteSerializable") as? Note
                 val replyIntent = Intent()
                 // обновляем введенный текст
-                note!!.note_content = editText1.text.toString()
+                note!!.content = editText1.text.toString()
                 // обновляем файл голосовой заметки
                 if(!isVoiceExist)
                 {

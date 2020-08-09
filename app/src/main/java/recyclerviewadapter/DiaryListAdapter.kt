@@ -54,10 +54,10 @@ class DiaryListAdapter internal constructor(
         fun bindView(extDiary: ExtendedDiary) {
             //layoutItemView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.primary_color1))
             // устанавливаем значения во вью
-            diaryItemView.text = extDiary.diary.diary_name
+            diaryItemView.text = extDiary.diary.name
             var count = 0
             var str = ""
-            for(i in extDiary.diary.diary_content) { // записываем в строку первые 12 символов
+            for(i in extDiary.diary.content) { // записываем в строку первые 12 символов
                 if (count == 12) {
                     str += ".." // если их > 12, добавляем многоточие и завершаем цикл
                     break
@@ -67,7 +67,7 @@ class DiaryListAdapter internal constructor(
             }
             // в RecyclerView будут видны первые 16 символов текста заметки
             diaryDescriptionView.text = str // текст заметки
-            diaryDateView.text = extDiary.diary.diary_date // записываем дату
+            diaryDateView.text = extDiary.diary.date // записываем дату
 
             if (prefs!!.getBoolean("color_check_diary", false)) {
                 when (extDiary.diary.color)
@@ -93,9 +93,9 @@ class DiaryListAdapter internal constructor(
                 layoutItemView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white))
 
             // установка фото
-            if (extDiary.diary.diaryImg != null)
+            if (extDiary.diary.img != null)
             {
-                val uriImage = Uri.parse(extDiary.diary.diaryImg)
+                val uriImage = Uri.parse(extDiary.diary.img)
                 diaryImageView.setImageURI(uriImage)
             }
             else

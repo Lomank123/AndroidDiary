@@ -21,11 +21,11 @@ class EditNoteActivity : AppCompatActivity() {
 
         val note = intent.getSerializableExtra("noteSerializableEdit") as? Note
 
-        edit_note.setText(note!!.note_name)
-        edit_text_note.setText(note.note_content)
+        edit_note.setText(note!!.name)
+        edit_text_note.setText(note.content)
 
-        if (note.noteImg != null && note.noteImg != "") {
-            val uriImage = Uri.parse(note.noteImg)
+        if (note.img != null && note.img != "") {
+            val uriImage = Uri.parse(note.img)
             imageView_note.setImageURI(uriImage)
         }
         button_save_note.setOnClickListener {
@@ -33,8 +33,8 @@ class EditNoteActivity : AppCompatActivity() {
                 // устанавливаем результат как RESULT_CANCELED (отменен)
                 setResult(Activity.RESULT_CANCELED, replyIntent)
             } else {
-                note.note_name = edit_note.text.toString()
-                note.note_content = edit_text_note.text.toString()
+                note.name = edit_note.text.toString()
+                note.content = edit_text_note.text.toString()
                 replyIntent.putExtra(EXTRA_EDIT_NOTE, note)
                 setResult(Activity.RESULT_OK, replyIntent)
             }
@@ -64,8 +64,8 @@ class EditNoteActivity : AppCompatActivity() {
 
     // тег для распознавания именно этого запроса
     companion object {
-        const val EXTRA_EDIT_NOTE = "EditNoteReply"
-        const val EXTRA_IMAGE_EDIT_NOTE = "ImgNoteReply"
+        const val EXTRA_EDIT_NOTE = "EXTRA_EDIT_NOTE"
+        const val EXTRA_IMAGE_EDIT_NOTE = "EXTRA_IMAGE_EDIT_NOTE"
     }
 
 

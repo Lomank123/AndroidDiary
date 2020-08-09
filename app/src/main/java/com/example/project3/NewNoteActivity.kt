@@ -27,7 +27,7 @@ class NewNoteActivity : AppCompatActivity() {
                 // создаем массив с названием и описанием дневника
                 val noteContext = arrayListOf(edit_note.text.toString(),
                     edit_text_note.text.toString())
-                replyIntent.putExtra(EXTRA_REPLY_NOTE, noteContext)
+                replyIntent.putExtra(EXTRA_NEW_NOTE, noteContext)
                 setResult(Activity.RESULT_OK, replyIntent) // resultCode будет RESULT_OK
             }
             // завершаем работу с активити
@@ -52,14 +52,14 @@ class NewNoteActivity : AppCompatActivity() {
         if (requestCode == choosePhotoRequestCode && resultCode == Activity.RESULT_OK)
         {
             imageView_note.setImageURI(data?.data)
-            replyIntent.putExtra(EXTRA_IMAGE_NOTE, data?.data.toString())
+            replyIntent.putExtra(EXTRA_NEW_NOTE_IMAGE, data?.data.toString())
         }
     }
 
 
     // тег для распознавания именно этого запроса
     companion object {
-        const val EXTRA_REPLY_NOTE = "NewNoteReply"
-        const val EXTRA_IMAGE_NOTE = "imgNote"
+        const val EXTRA_NEW_NOTE = "EXTRA_NEW_NOTE"
+        const val EXTRA_NEW_NOTE_IMAGE = "EXTRA_NEW_NOTE_IMAGE"
     }
 }

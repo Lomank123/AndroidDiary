@@ -11,12 +11,12 @@ interface DiaryDao {
     // Diary queries
 
     // Выдает все записи в алфавитном порядке
-    @Query("SELECT * from diary_table ORDER BY diary_name ASC")
-    fun getAlphabetizedDiaries(): LiveData<List<Diary>>
+    //@Query("SELECT * from diary_table ORDER BY diary_name ASC")
+    //fun getAlphabetizedDiaries(): LiveData<List<Diary>>
     //
     // Выдает все записи
-    @Query("SELECT * from diary_table")
-    fun getDiaries(): LiveData<List<Diary>>
+    //@Query("SELECT * from diary_table")
+    //fun getDiaries(): LiveData<List<Diary>>
 
     // Добавить запись, onConflict - аргумент, отвечающий за одинаковые записи,
     // IGNORE позволяет одинаковые записи
@@ -30,8 +30,8 @@ interface DiaryDao {
     // удаляет 1 дневник (в MainRepository при удалении также используется deleteNotes для заметок)
     // таким образом удаляется дневник + все заметки, связанные с этим дневником
     @Transaction
-    @Query("DELETE FROM diary_table WHERE id = :diary_id")
-    suspend fun deleteDiary(diary_id : Long)
+    @Query("DELETE FROM diary_table WHERE id = :diaryId")
+    suspend fun deleteDiary(diaryId : Long)
 
     // Удалить ВСЕ записи
     @Query("DELETE FROM diary_table")
@@ -40,8 +40,12 @@ interface DiaryDao {
     // Note queries
 
     // Выдает заметки
-    @Query("SELECT * from note_table")
-    fun getNotes(): LiveData<List<Note>>
+    //@Query("SELECT * from note_table")
+    //fun getNotes(): LiveData<List<Note>>
+    //
+    // Выдает записи, относящиеся к конкретному дневнику
+    //@Query("SELECT * from note_table WHERE note_parent_id = :diaryId")
+    //fun getNotesFromDiary(diaryId : Long): List<Note>
 
     // Добавляет заметку
     @Insert(onConflict = OnConflictStrategy.IGNORE)
@@ -54,13 +58,13 @@ interface DiaryDao {
     // См. выше (функция deleteDiary)
     // удаляет все заметки, с note_parent_id таким же как и у дневника
     @Transaction
-    @Query("DELETE FROM note_table WHERE note_parent_id = :diary_id")
-    suspend fun deleteNotesFromDiary(diary_id : Long)
+    @Query("DELETE FROM note_table WHERE note_parent_id = :diaryId")
+    suspend fun deleteNotesFromDiary(diaryId : Long)
 
     // Удаляет заметку с выбранным note_id
     @Transaction
-    @Query("DELETE FROM note_table WHERE idNote = :note_id")
-    suspend fun deleteOneNote(note_id : Long)
+    @Query("DELETE FROM note_table WHERE id = :noteId")
+    suspend fun deleteOneNote(noteId : Long)
 
     // удаляет ВСЕ заметки из ВСЕХ дневников
     @Query("DELETE FROM note_table")
@@ -70,7 +74,7 @@ interface DiaryDao {
 
     // Выдает все записи для дата-класса ExtendedDiary
     @Transaction
-    @Query("SELECT * from diary_table ")
+    @Query("SELECT * from diary_table")
     fun getExtendedDiaries() : LiveData<List<ExtendedDiary>>
 
 }

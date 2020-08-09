@@ -22,7 +22,6 @@ import kotlinx.android.synthetic.main.activity_note.fab
 import kotlinx.android.synthetic.main.activity_note.fab2
 import recyclerviewadapter.NoteListAdapter
 import roomdatabase.ExtendedDiary
-import roomdatabase.Diary
 import roomdatabase.Note
 import viewmodel.MainViewModel
 import java.io.File
@@ -37,38 +36,33 @@ class NoteActivity : AppCompatActivity() {
     private lateinit var mainViewModel: MainViewModel       // добавляем ViewModel
     private val colors: List<String> = listOf("green", "blue", "grass", "purple", "yellow")
     private var isFabOpen : Boolean = false                 // по умолч. меню закрыто
-    //TODO: Попробовать получить данные до вызова onCreate
-    //val diarySelf = intent.getSerializableExtra("diarySelf") as? Diary
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_note)
 
-        val diarySelf = intent.getSerializableExtra("diarySelf") as? Diary
+        val extDiaryParent = intent.getSerializableExtra("extDiaryParent") as? ExtendedDiary
 
         val adapter = newNoteAdapter()
         recyclerview1.adapter = adapter
         recyclerview1.layoutManager = LinearLayoutManager(this)
+        recyclerview1.addItemDecoration(TopSpacingItemDecoration(20))       // Отступы
+
         mainViewModel = ViewModelProvider(this).get(MainViewModel::class.java)
-        // Отступы
-        recyclerview1.addItemDecoration(TopSpacingItemDecoration(20))
-
-
-        // полученный список заметок передаем в RecyclerView для отображения
         mainViewModel.allExtendedDiaries.observe(this, Observer {
             var getList = emptyList<Note>()
-            // перебираем весь список объектов NotesAndWords
-            // TODO: Сделать получение заметок через запрос к БД
-            for(i in it)
+            for(extDiary in it)
             {
-                if(i.diary.id == diarySelf!!.id) // находим запись с нужным нам id дневника
+                if(extDiary.diary.id == extDiaryParent!!.diary.id) // находим запись с нужным нам id дневника
                 {
-                    getList = i.notes   // получаем список заметок этого дневника
+                    getList = extDiary.notes   // получаем список заметок этого дневника
                     break
                 }
             }
             adapter.setNotes(getList)   // передаем полученный список в RecyclerView
         })
+
         // Кнопки
         // Кнопка вызова меню
         fab.setOnClickListener {
@@ -82,7 +76,7 @@ class NoteActivity : AppCompatActivity() {
      //       closeFabMenu()
      //       Toast.makeText(this, "Message", Toast.LENGTH_SHORT).show()
      //   }
-        // обработчик нажатий на 2-ую кнопку (вызывает NewWordActivity для создания заметки)
+        // обработчик нажатий на 2-ую кнопку (вызывает NewNoteActivity для создания заметки)
         fab2.setOnClickListener {
             closeFabMenu()
             val intent = Intent(this, NewNoteActivity::class.java)
@@ -122,7 +116,7 @@ class NoteActivity : AppCompatActivity() {
     // Удаление записи
     private fun deleteNote(note : Note)
     {
-        val fileName = this.getExternalFilesDir(null)!!.absolutePath + "/${note.note_name}_${note.idNote}.3gpp"
+        val fileName = this.getExternalFilesDir(null)!!.absolutePath + "/${note.name}_${note.id}.3gpp"
         if (File(fileName).exists())
             File(fileName).delete()
         mainViewModel.deleteNote(note)
@@ -142,7 +136,7 @@ class NoteActivity : AppCompatActivity() {
     img : String?=null, color : String?=null) : Note
     {
         val note = Note(name, content, parent_id, date)
-        note.noteImg = img
+        note.img = img
         note.color = color
         return note
     }
@@ -151,18 +145,18 @@ class NoteActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        val diarySelf = intent.getSerializableExtra("diarySelf") as? Diary
+        val extDiaryParent = intent.getSerializableExtra("extDiaryParent") as? ExtendedDiary
 
         // Результат для добавления заметки
         if (requestCode == newNoteActivityRequestCode && resultCode == Activity.RESULT_OK)
         {
-            data?.getStringArrayListExtra(NewNoteActivity.EXTRA_REPLY_NOTE)?.let {
+            data?.getStringArrayListExtra(NewNoteActivity.EXTRA_NEW_NOTE)?.let {
                 // Из data достаем информацию о картинке, была ли она
                 // Если картинку не выбрали, установится та, что была на "обложке" дневника
-                val imgNote = data.getStringExtra(NewNoteActivity.EXTRA_IMAGE_NOTE) ?: diarySelf!!.diaryImg
+                val imgNote = data.getStringExtra(NewNoteActivity.EXTRA_NEW_NOTE_IMAGE) ?: extDiaryParent!!.diary.img
                 // С помощью ф-ии создаем объект заметки
                 // получаем из экстра данных массив с названием и текстом
-                val newNote = createNote(it[0], it[1], diarySelf!!.id, currentDate(),
+                val newNote = createNote(it[0], it[1], extDiaryParent!!.diary.id, currentDate(),
                     img = imgNote, color = colors.random())
                 mainViewModel.insertNote(newNote)
             }
@@ -179,7 +173,7 @@ class NoteActivity : AppCompatActivity() {
             // получаем с помощью Serializable наш объект класса Note из ClickedActivity
             val note = data?.getSerializableExtra(ClickedActivity.EXTRA_REPLY_EDIT) as? Note
             if (note != null) {
-                note.note_date = currentDate()   // обновляем дату
+                note.date = currentDate()   // обновляем дату
                 mainViewModel.updateNote(note)  // обновляем заметку
             }
         }
@@ -192,9 +186,9 @@ class NoteActivity : AppCompatActivity() {
             if (noteEdit != null)
             {
                 // Обновляем дату
-                noteEdit.note_date = currentDate()
+                noteEdit.date = currentDate()
                 if (imgNoteEdit != null && imgNoteEdit != "")
-                    noteEdit.noteImg = imgNoteEdit
+                    noteEdit.img = imgNoteEdit
                 mainViewModel.updateNote(noteEdit)
             }
         }
@@ -205,9 +199,9 @@ class NoteActivity : AppCompatActivity() {
         menuInflater.inflate(R.menu.actionbar_menu_note, menu)
 
         val prefs: SharedPreferences? = PreferenceManager.getDefaultSharedPreferences(this)
-        val diarySelf = intent.getSerializableExtra("diarySelf") as? Diary
+        val extDiaryParent = intent.getSerializableExtra("extDiaryParent") as? ExtendedDiary
 
-        if (diarySelf!!.favorite)
+        if (extDiaryParent!!.diary.favorite)
         {
             menu!!.findItem(R.id.favorite_view)
                 .setIcon(android.R.drawable.btn_star_big_on)
@@ -240,12 +234,11 @@ class NoteActivity : AppCompatActivity() {
     private fun setNotesForSearch(adapter : NoteListAdapter, prefs : SharedPreferences?,
                                   all_objects_list : List<ExtendedDiary>, newText : String?)
     {
-        val diarySelf = intent.getSerializableExtra("diarySelf") as? Diary
+        val extDiaryParent = intent.getSerializableExtra("extDiaryParent") as? ExtendedDiary
 
-        // TODO: Сделать через запрос к БД
         var getListNotes = emptyList<Note>()
         for (i in all_objects_list) {
-            if (i.diary.id == diarySelf!!.id) {
+            if (i.diary.id == extDiaryParent!!.diary.id) {
                 getListNotes = i.notes
                 break
             }
@@ -255,7 +248,7 @@ class NoteActivity : AppCompatActivity() {
             val search = newText.toLowerCase(Locale.ROOT)
 
             getListNotes.forEach{notes ->
-                if(notes.note_name.toLowerCase(Locale.ROOT).contains(search))
+                if(notes.name.toLowerCase(Locale.ROOT).contains(search))
                     noteList.add(notes)
             }
             adapter.setNotes(noteList)
@@ -284,7 +277,7 @@ class NoteActivity : AppCompatActivity() {
     // когда выбираешь элемент меню
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
-        val diarySelf = intent.getSerializableExtra("diarySelf") as? Diary
+        val extDiaryParent = intent.getSerializableExtra("extDiaryParent") as? ExtendedDiary
 
         when(item.itemId){
             R.id.settings -> {
@@ -301,7 +294,7 @@ class NoteActivity : AppCompatActivity() {
             }
             R.id.favorite_view -> {
                 for (extDiary in mainViewModel.allExtendedDiaries.value!!)
-                    if (extDiary.diary.id == diarySelf!!.id) {
+                    if (extDiary.diary.id == extDiaryParent!!.diary.id) {
                         extDiary.diary.favorite = !extDiary.diary.favorite
                         if(extDiary.diary.favorite) {
                             item.setIcon(android.R.drawable.btn_star_big_on)
