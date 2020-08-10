@@ -6,20 +6,18 @@ import android.content.Intent
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Handler
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View.*
 import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_note.*
 import kotlinx.android.synthetic.main.activity_note.bg_fab_menu
-import kotlinx.android.synthetic.main.activity_note.fab
-import kotlinx.android.synthetic.main.activity_note.fab2
 import recyclerviewadapter.NoteListAdapter
 import roomdatabase.ExtendedDiary
 import roomdatabase.Note
@@ -34,9 +32,11 @@ class NoteActivity : AppCompatActivity() {
     private val clickedActivityRequestCode = 2              // для ClickedActivity (requestCode)
     private val editNoteActivityRequestCode = 3
     private lateinit var mainViewModel: MainViewModel       // добавляем ViewModel
-    private val colors: List<String> = listOf("green", "blue", "grass", "purple", "yellow")
-    private var isFabOpen : Boolean = false                 // по умолч. меню закрыто
 
+    private var isFabOpen : Boolean = false                 // по умолч. меню закрыто
+    private val translationY = 100f
+
+    private val colors: List<String> = listOf("green", "blue", "grass", "purple", "yellow")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,11 +49,13 @@ class NoteActivity : AppCompatActivity() {
         recyclerview1.layoutManager = LinearLayoutManager(this)
         recyclerview1.addItemDecoration(TopSpacingItemDecoration(20))       // Отступы
 
+        //val itemTouchHelper = ItemTouchHelper(itemTouchHelperCallback)
+        //itemTouchHelper.attachToRecyclerView(recyclerview1)
+
         mainViewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         mainViewModel.allExtendedDiaries.observe(this, Observer {
             var getList = emptyList<Note>()
-            for(extDiary in it)
-            {
+            for(extDiary in it) {
                 if(extDiary.diary.id == extDiaryParent!!.diary.id) // находим запись с нужным нам id дневника
                 {
                     getList = extDiary.notes   // получаем список заметок этого дневника
@@ -64,20 +66,24 @@ class NoteActivity : AppCompatActivity() {
         })
 
         // Кнопки
+        fab_new_note.alpha = 0f
+        fab_favourite_note.alpha = 0f
+        fab_new_note.translationY = translationY
+        fab_favourite_note.translationY = translationY
         // Кнопка вызова меню
-        fab.setOnClickListener {
+        fab_menu_note.setOnClickListener {
             if (!isFabOpen)
                 showFabMenu()
             else
                 closeFabMenu()
         }
         // обработчик нажатий на 1-ую кнопку
-     //   fab1.setOnClickListener {
-     //       closeFabMenu()
-     //       Toast.makeText(this, "Message", Toast.LENGTH_SHORT).show()
-     //   }
+        fab_favourite_note.setOnClickListener {
+            closeFabMenu()
+            Toast.makeText(this, "Message", Toast.LENGTH_SHORT).show()
+        }
         // обработчик нажатий на 2-ую кнопку (вызывает NewNoteActivity для создания заметки)
-        fab2.setOnClickListener {
+        fab_new_note.setOnClickListener {
             closeFabMenu()
             val intent = Intent(this, NewNoteActivity::class.java)
             // 2-ой аргумент это requestCode по которому определяется откуда был запрос
@@ -89,6 +95,37 @@ class NoteActivity : AppCompatActivity() {
             closeFabMenu()
         }
     }
+
+    // Поскольку передается позиция в списке адаптера, невозможно удалить нужный нам объект,
+    // т.к. позиции при поиске не совпадают с позициями в главном списке
+    //private val itemTouchHelperCallback=
+    //    object :
+    //        ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT){
+    //        override fun onMove(
+    //            recyclerView: RecyclerView,
+    //            viewHolder: RecyclerView.ViewHolder,
+    //            target: RecyclerView.ViewHolder
+    //        ): Boolean {
+    //            return false
+    //        }
+    //
+    //        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+    //            val extDiaryParent = intent.getSerializableExtra("extDiaryParent") as? ExtendedDiary
+    //            var getList = emptyList<Note>()
+    //            for(extDiary in mainViewModel.allExtendedDiaries.value!!)
+    //            {
+    //                if(extDiary.diary.id == extDiaryParent!!.diary.id) // находим запись с нужным нам id дневника
+    //                {
+    //                    getList = extDiary.notes   // получаем список заметок этого дневника
+    //                    break
+    //                }
+    //            }
+    //            val note = getList[viewHolder.adapterPosition]
+    //            deleteNote(note)
+    //            recyclerview1.adapter!!.notifyDataSetChanged()
+    //        }
+    //
+    //    }
 
     override fun onResume() {
         super.onResume()
@@ -116,7 +153,7 @@ class NoteActivity : AppCompatActivity() {
     // Удаление записи
     private fun deleteNote(note : Note)
     {
-        val fileName = this.getExternalFilesDir(null)!!.absolutePath + "/${note.name}_${note.id}.3gpp"
+        val fileName = this@NoteActivity.getExternalFilesDir(null)!!.absolutePath + "/${note.name}_${note.id}.3gpp"
         if (File(fileName).exists())
             File(fileName).delete()
         mainViewModel.deleteNote(note)
@@ -317,31 +354,21 @@ class NoteActivity : AppCompatActivity() {
 
     // закрывает выдвиг. меню
     private fun closeFabMenu() {
-        isFabOpen = false
-        // возвращает элементы на исходные позиции
-        fab.animate().rotation(0f)
-        bg_fab_menu.animate().alpha(0f)
-        //fab1.animate().translationY(0f).rotation(90f)
-        fab2.animate().translationY(0f).rotation(90f)
+        isFabOpen = !isFabOpen
 
-        // ставит задержку на исчезновение элементов меню (250 мс)
-        //Handler().postDelayed({fab1.visibility = GONE}, 250)
-        Handler().postDelayed({fab2.visibility = GONE}, 250)
-        Handler().postDelayed({bg_fab_menu.visibility = GONE}, 250)
+        fab_menu_note.animate().rotation(0f).setDuration(300).start()
+
+        fab_favourite_note.animate().translationY(translationY).alpha(0f).setDuration(300).start()
+        fab_new_note.animate().translationY(translationY).alpha(0f).setDuration(300).start()
     }
 
     // открывает выдвиг. меню
     private fun showFabMenu() {
-        isFabOpen = true
-        // показывает элементы
-        //fab1.visibility = VISIBLE
-        fab2.visibility = VISIBLE
-        bg_fab_menu.visibility = VISIBLE
+        isFabOpen = !isFabOpen
 
-        // "выдвигает" элементы
-        fab.animate().rotation(180f)
-        bg_fab_menu.animate().alpha(1f)
-        //fab1.animate().translationY(-300f).rotation(0f)
-        fab2.animate().translationY(-165f).rotation(0f)
+        fab_menu_note.animate().rotation(45f).setDuration(300).start()
+
+        fab_favourite_note.animate().translationY(0f).alpha(1f).setDuration(300).start()
+        fab_new_note.animate().translationY(0f).alpha(1f).setDuration(300).start()
     }
 }

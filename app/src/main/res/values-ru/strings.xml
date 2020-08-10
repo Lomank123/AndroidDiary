@@ -28,6 +28,8 @@
     <string name="dialog_check_delete_note">Вы хотите удалить заметку?</string>
     <string name="dialog_deleted">Удалено</string>
     <string name="dialog_delete">Удаление</string>
+    <string name="dialog_check_save_changes">Хотите ли вы сохранить изменения?</string>
+    <string name="dialog_save">Сохранение</string>
 
 
     <!-- Настройки -->
@@ -57,8 +59,6 @@
 
     <!-- Создатели -->
     <string name="creators">Создатели</string>
-    <string name="karina">Карина Габбасова</string>
-    <string name="jenya">Евгений Тайчинов</string>
     <string name="robert">Роберт Хакимов</string>
     <string name="app_ver">Версия приложения: 1.0</string>
 

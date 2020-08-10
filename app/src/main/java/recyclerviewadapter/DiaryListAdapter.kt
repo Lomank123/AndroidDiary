@@ -95,11 +95,14 @@ class DiaryListAdapter internal constructor(
             // установка фото
             if (extDiary.diary.img != null)
             {
+                diaryImageView.visibility = VISIBLE
                 val uriImage = Uri.parse(extDiary.diary.img)
                 diaryImageView.setImageURI(uriImage)
             }
             else
+                //TODO: Сделать подходящую картинку на случай если ее не выбрали
                 diaryImageView.setImageResource(R.mipmap.ic_launcher_round)
+                //diaryImageView.visibility = GONE
             // иконка со звездочкой (избранное)
             if (extDiary.diary.favorite)
                 diaryStarView.visibility = VISIBLE

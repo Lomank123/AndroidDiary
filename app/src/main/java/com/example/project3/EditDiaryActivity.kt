@@ -6,7 +6,7 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.TextUtils
-import kotlinx.android.synthetic.main.activity_new_word.*
+import kotlinx.android.synthetic.main.activity_new_diary.*
 import roomdatabase.Diary
 
 class EditDiaryActivity : AppCompatActivity() {
@@ -17,7 +17,7 @@ class EditDiaryActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_new_word)
+        setContentView(R.layout.activity_new_diary)
 
         val diary = intent.getSerializableExtra("diaryEdit") as? Diary
 
@@ -42,6 +42,7 @@ class EditDiaryActivity : AppCompatActivity() {
             // завершаем работу с активити
             finish()
         }
+        // TODO: Добавить диалоговое окно в случае нажатии кнопки отмена
         button_cancel_word1.setOnClickListener {
             // устанавливаем результат и завершаем работу с активити
             setResult(Activity.RESULT_CANCELED)

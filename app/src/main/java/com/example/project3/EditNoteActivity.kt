@@ -40,6 +40,7 @@ class EditNoteActivity : AppCompatActivity() {
             }
             finish()
         }
+        // TODO: Добавить диалоговое окно в случае нажатии кнопки отмена
         button_cancel_note1.setOnClickListener {
             // устанавливаем результат и завершаем работу с активити
             setResult(Activity.RESULT_CANCELED)

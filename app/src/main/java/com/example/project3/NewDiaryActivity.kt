@@ -5,7 +5,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.TextUtils
-import kotlinx.android.synthetic.main.activity_new_word.*
+import kotlinx.android.synthetic.main.activity_new_diary.*
 
 class NewDiaryActivity : AppCompatActivity() {
 
@@ -16,7 +16,7 @@ class NewDiaryActivity : AppCompatActivity() {
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_new_word)
+        setContentView(R.layout.activity_new_diary)
 
         // обработчик нажатий на кнопку Save
         button_save.setOnClickListener {
@@ -40,6 +40,7 @@ class NewDiaryActivity : AppCompatActivity() {
         }
 
         // слушатель для кнопки Cancel
+        // TODO: Добавить диалоговое окно в случае нажатии кнопки отмена
         button_cancel_word1.setOnClickListener {
             // устанавливаем результат и завершаем работу с активити
             setResult(Activity.RESULT_CANCELED)

@@ -1,6 +1,7 @@
 package com.example.project3
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Typeface
@@ -166,6 +167,59 @@ class ClickedActivity : AppCompatActivity() {
                 }
             }
         }
+
+    }
+
+    override fun onBackPressed() {
+        //super.onBackPressed()
+        val note = intent.getSerializableExtra("noteSerializable") as? Note
+
+        if(note!!.content != editText1.text.toString())
+            saveDialogShow(note)
+        else
+            super.onBackPressed()
+
+    }
+
+    // Сохраняет заметку
+    private fun saveNote(note : Note)
+    {
+        val replyIntent = Intent()
+        // обновляем введенный текст
+        note.content = editText1.text.toString()
+        // обновляем файл голосовой заметки
+        if(!isVoiceExist)
+        {
+            val outFile = File(fileName)
+            if (outFile.exists())
+                outFile.delete()
+        }
+        replyIntent.putExtra(EXTRA_REPLY_EDIT, note)
+        setResult(Activity.RESULT_OK, replyIntent) // resultCode будет RESULT_OK
+        // Завершаем работу с активити
+        Toast.makeText(this, resources.getString(R.string.saved),
+            Toast.LENGTH_SHORT).show()
+        finish()
+    }
+
+    private fun saveDialogShow(note : Note)
+    {
+        val saveDialog = AlertDialog.Builder(this)
+        saveDialog.setTitle(this.resources.getString(R.string.dialog_save))
+        saveDialog.setMessage(this.resources.getString(R.string.dialog_check_save_changes))
+        saveDialog.setPositiveButton(this.resources.getString(R.string.dialog_yes))
+        { _, _ ->
+            saveNote(note)
+        }
+        saveDialog.setNegativeButton(this.resources.getString(R.string.dialog_no))
+        { dialog, _ ->
+            setResult(Activity.RESULT_CANCELED)
+            Toast.makeText(this, resources.getString(R.string.canceled),
+                Toast.LENGTH_SHORT).show()
+            dialog.dismiss()
+            finish()
+        }
+        saveDialog.show()
     }
 
     override fun onResume()
@@ -230,25 +284,12 @@ class ClickedActivity : AppCompatActivity() {
 
     // когда выбираешь элемент меню
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val note = intent.getSerializableExtra("noteSerializable") as? Note
+
         when(item.itemId){
 
             R.id.save_btn_edit -> { // Кнопка Save
-                val note = intent.getSerializableExtra("noteSerializable") as? Note
-                val replyIntent = Intent()
-                // обновляем введенный текст
-                note!!.content = editText1.text.toString()
-                // обновляем файл голосовой заметки
-                if(!isVoiceExist)
-                {
-                    val outFile = File(fileName)
-                    if (outFile.exists())
-                        outFile.delete()
-                }
-                replyIntent.putExtra(EXTRA_REPLY_EDIT, note)
-                setResult(Activity.RESULT_OK, replyIntent) // resultCode будет RESULT_OK
-                // Завершаем работу с активити
-                Toast.makeText(this, resources.getString(R.string.saved), Toast.LENGTH_SHORT).show()
-                finish()
+                saveNote(note!!)
             }
             R.id.share_btn_edit -> {
                 val sendIntent = Intent().apply {
@@ -260,9 +301,8 @@ class ClickedActivity : AppCompatActivity() {
                 startActivity(shareIntent)
             }
             R.id.cancel_btn_edit -> { // Кнопка Cancel
-                setResult(Activity.RESULT_CANCELED)
-                Toast.makeText(this, resources.getString(R.string.canceled), Toast.LENGTH_SHORT).show()
-                finish()
+                if(note!!.content != editText1.text.toString())
+                    saveDialogShow(note)
             }
             R.id.voice_btn_edit -> {
                 isVoice = !isVoice
@@ -283,7 +323,6 @@ class ClickedActivity : AppCompatActivity() {
 
             val elapsedTime = createTimeLabel(mediaPlayer!!.currentPosition)
             start_time_active.text = elapsedTime
-
             val remainingTime = createTimeLabel(mediaPlayer!!.duration - mediaPlayer!!.currentPosition)
             end_time_active.text = remainingTime
 

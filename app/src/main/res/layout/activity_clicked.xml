@@ -18,7 +18,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0"
-        app:srcCompat="@color/white" />
+        app:srcCompat="@color/white"
+        android:alpha="0.3"/>
 
     <EditText
         android:id="@+id/editText1"

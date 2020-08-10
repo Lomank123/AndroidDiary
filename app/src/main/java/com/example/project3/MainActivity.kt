@@ -5,18 +5,19 @@ import android.app.Activity
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.os.Handler
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_main.bg_fab_menu
 import recyclerviewadapter.DiaryListAdapter
 import roomdatabase.ExtendedDiary
 import roomdatabase.Diary
@@ -32,6 +33,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mainViewModel: MainViewModel        // добавляем ViewModel
     private var isFabOpen : Boolean = false                  // по умолч. меню закрыто
     private val colors: List<String> = listOf("green", "blue", "grass", "purple", "yellow")
+
+    private val translationY = 100f
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,6 +55,10 @@ class MainActivity : AppCompatActivity() {
         // добавляет в декорацию элемента дневника и заметки этот отступ
         recyclerview.addItemDecoration(TopSpacingItemDecoration(20))
 
+        // TODO: Использовать это в Списке Дел
+        //val itemTouchHelper = ItemTouchHelper(itemTouchHelperCallback)
+        //itemTouchHelper.attachToRecyclerView(recyclerview)
+
         // Следит за изменением списка записей(дневников) и обновляет данные в RecyclerView
         mainViewModel.allExtendedDiaries.observe(this, Observer {
             if (prefs.getBoolean("sorted", false))
@@ -61,21 +68,21 @@ class MainActivity : AppCompatActivity() {
         })
         // Кнопки
         // Кнопка вызова выдвиг. меню
-        fab.setOnClickListener {
+        fab_menu.setOnClickListener {
             if (!isFabOpen)
                 showFabMenu()
             else
                 closeFabMenu()
         }
         // Кнопка для добавления записи
-        fab2.setOnClickListener {
+        fab_new_diary.setOnClickListener {
             closeFabMenu()
             val intent = Intent(this, NewDiaryActivity::class.java)
             // 2-ой аргумент это requestCode по которому определяется откуда был запрос
             startActivityForResult(intent, newDiaryActivityRequestCode)
         }
         // Кнопка сортировки по избранным
-        fab1.setOnClickListener {
+        fab_favourite.setOnClickListener {
             closeFabMenu()
             if(prefs.getBoolean("sorted", false))
             {
@@ -92,7 +99,31 @@ class MainActivity : AppCompatActivity() {
             // т.е. если нажать на затемненный фон меню закроется
             closeFabMenu()
         }
+
+        fab_new_diary.alpha = 0f
+        fab_favourite.alpha = 0f
+        fab_new_diary.translationY = translationY
+        fab_favourite.translationY = translationY
     }
+
+    // TODO: Использовать это в Списке Дел
+    // Поскольку передается позиция в списке адаптера, невозможно удалить нужный нам объект,
+    // т.к. позиции при поиске не совпадают с позициями в главном списке
+    //private val itemTouchHelperCallback=
+    //    object :
+    //        ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT){
+    //        override fun onMove(
+    //            recyclerView: RecyclerView,
+    //            viewHolder: RecyclerView.ViewHolder,
+    //            target: RecyclerView.ViewHolder
+    //        ): Boolean {
+    //            return false
+    //        }
+    //        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+    //            deleteDiary(mainViewModel.allExtendedDiaries.value!![viewHolder.adapterPosition])
+    //            recyclerview.adapter!!.notifyDataSetChanged()
+    //        }
+    //    }
 
     override fun onResume()
     {
@@ -117,7 +148,7 @@ class MainActivity : AppCompatActivity() {
         // Удаляем все файлы с голосовыми заметками из дневника
         for(note in extDiary.notes)
         {
-            val fileName = this.getExternalFilesDir(null)!!.absolutePath + "/${note.name}_${note.id}.3gpp"
+            val fileName = this@MainActivity.getExternalFilesDir(null)!!.absolutePath + "/${note.name}_${note.id}.3gpp"
             if(File(fileName).exists())
                 File(fileName).delete()
         }
@@ -247,7 +278,7 @@ class MainActivity : AppCompatActivity() {
                 adapter.setDiaries(allDiariesList)
         }
         // Слушатель на кнопку для правильной сортировки
-        fab1.setOnClickListener {
+        fab_favourite.setOnClickListener {
             closeFabMenu()
             if (prefs.getBoolean("sorted", false)) {
                 prefs.edit().putBoolean("sorted", false).apply()
@@ -286,34 +317,24 @@ class MainActivity : AppCompatActivity() {
 
     // закрывает меню
     private fun closeFabMenu() {
-        isFabOpen = false
+        isFabOpen = !isFabOpen
 
         // возвращает элементы на исходные позиции
-        fab.animate().rotation(0f)
-        bg_fab_menu.animate().alpha(0f)
-        fab1.animate().translationY(0f).rotation(90f)
-        fab2.animate().translationY(0f).rotation(90f)
+        fab_menu.animate().rotation(0f).setDuration(300).start()
 
-        // ставит задержку на исчезновение элементов меню (250 мс)
-        Handler().postDelayed({fab1.visibility = View.GONE }, 250)
-        Handler().postDelayed({fab2.visibility = View.GONE }, 250)
-        Handler().postDelayed({bg_fab_menu.visibility = View.GONE }, 250)
+        fab_favourite.animate().translationY(translationY).alpha(0f).setDuration(300).start()
+        fab_new_diary.animate().translationY(translationY).alpha(0f).setDuration(300).start()
+
     }
 
     // открывает выдвиг. меню
     private fun showFabMenu() {
-        isFabOpen = true
+        isFabOpen = !isFabOpen
 
-        // показывает элементы
-        fab1.visibility = View.VISIBLE
-        fab2.visibility = View.VISIBLE
-        bg_fab_menu.visibility = View.VISIBLE
+        fab_menu.animate().rotation(45f).setDuration(300).start()
 
-        // "выдвигает" элементы
-        fab.animate().rotation(180f)
-        bg_fab_menu.animate().alpha(1f)
-        fab1.animate().translationY(-350f).rotation(0f)
-        fab2.animate().translationY(-165f).rotation(0f)
+        fab_favourite.animate().translationY(0f).alpha(1f).setDuration(300).start()
+        fab_new_diary.animate().translationY(0f).alpha(1f).setDuration(300).start()
     }
 }
 

@@ -28,6 +28,8 @@
     <string name="dialog_check_delete_note">Do you want to delete this note?</string>
     <string name="dialog_deleted">Deleted</string>
     <string name="dialog_delete">Delete</string>
+    <string name="dialog_check_save_changes">Do you want to save changes?</string>
+    <string name="dialog_save">Saving</string>
 
     <!-- Settings -->
     <string name="categoryMainSettings">Main settings</string>
@@ -56,8 +58,6 @@
 
     <!-- Creators -->
     <string name="creators">Creators</string>
-    <string name="karina">Karina Gabbasova</string>
-    <string name="jenya">Eugene Taychinov</string>
     <string name="robert">Robert Khakimov</string>
     <string name="app_ver">App version: 1.0</string>
 

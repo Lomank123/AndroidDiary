@@ -4,14 +4,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/colorBackground">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerview1"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:alwaysDrawnWithCache="false"
-        android:background="@color/white"
+        android:background="@color/colorBackground"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -20,40 +21,47 @@
         app:layout_constraintVertical_bias="1.0"
         tools:listitem="@layout/recyclerview_layout" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/fab_margin"
+        android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
-        android:src="@android:drawable/ic_dialog_dialer"
-        app:fabSize="normal"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent">
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/standard_23"
-        android:rotation="90"
-        android:src="@android:drawable/btn_star_big_on"
-        android:visibility="gone"
-        app:fabSize="normal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_favourite_note"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="64dp"
+            android:src="@android:drawable/btn_star_big_on"
+            android:visibility="visible"
+            app:fabSize="normal" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/standard_23"
-        android:rotation="90"
-        android:src="@drawable/ic_add_black_24dp"
-        android:visibility="gone"
-        app:fabSize="normal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_new_note"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:src="@drawable/ic_add_black_24dp"
+            android:visibility="visible"
+            app:fabSize="normal" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_menu_note"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="16dp"
+            android:src="@android:drawable/ic_dialog_dialer"
+            app:fabSize="normal" />
+
+    </LinearLayout>
 
     <View
         android:id="@+id/bg_fab_menu"

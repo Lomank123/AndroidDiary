@@ -6,6 +6,8 @@ import android.content.SharedPreferences
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.*
 import androidx.core.content.ContextCompat
@@ -65,11 +67,13 @@ class NoteListAdapter internal constructor(
             noteDateView.text = note.date // дата
             if (note.img != null)
             {
+                noteImageView.visibility = VISIBLE
                 val uriImage = Uri.parse(note.img)
                 noteImageView.setImageURI(uriImage)
             }
             else
                 noteImageView.setImageResource(R.mipmap.ic_launcher_round)
+                //noteImageView.visibility = GONE
             if (prefs!!.getBoolean("color_check_note", false)) {
                 when (note.color)
                 {
