@@ -67,7 +67,7 @@ class DiaryListAdapter internal constructor(
             }
             // в RecyclerView будут видны первые 16 символов текста заметки
             diaryDescriptionView.text = str // текст заметки
-            diaryDateView.text = extDiary.diary.date // записываем дату
+            diaryDateView.text = extDiary.diary.lastEditDate // записываем дату
 
             if (prefs!!.getBoolean("color_check_diary", false)) {
                 when (extDiary.diary.color)

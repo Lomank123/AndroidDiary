@@ -13,9 +13,7 @@ import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main.bg_fab_menu
 import recyclerviewadapter.DiaryListAdapter
@@ -94,6 +92,7 @@ class MainActivity : AppCompatActivity() {
                 adapter.setFavoriteDiaries(mainViewModel.allExtendedDiaries.value!!)
             }
         }
+        // TODO: не забыть добавить или убрать
         // Темный фон во время открытого меню
         bg_fab_menu.setOnClickListener {
             // т.е. если нажать на затемненный фон меню закроется
@@ -197,9 +196,13 @@ class MainActivity : AppCompatActivity() {
             data?.getStringArrayListExtra(NewDiaryActivity.EXTRA_NEW_DIARY)?.let {
                 // получаем из экстра данных нашу строку и создаем объект Word с той же строкой
                 val diary = Diary(it[0], it[1], currentDate())
-                if (data.getStringExtra(NewDiaryActivity.EXTRA_NEW_DIARY_IMAGE) != "" && data.getStringExtra(NewDiaryActivity.EXTRA_NEW_DIARY_IMAGE) != null)
-                    diary.img = data.getStringExtra(NewDiaryActivity.EXTRA_NEW_DIARY_IMAGE)
+                val diaryImg = data.getStringExtra(NewDiaryActivity.EXTRA_NEW_DIARY_IMAGE)
+                if (diaryImg != null && diaryImg != "")
+                    diary.img = diaryImg
+                else
+                    diary.img = null
                 diary.color = colors.random()
+                diary.creationDate = currentDate()
                 mainViewModel.insertDiary(diary) // добавляем запись в БД
             }
         }
@@ -210,7 +213,9 @@ class MainActivity : AppCompatActivity() {
             {
                 if (imgDiaryEdit != null && imgDiaryEdit != "")
                     diaryEdit.img = imgDiaryEdit
-                diaryEdit.date = currentDate()
+                else
+                    diaryEdit.img = null
+                diaryEdit.lastEditDate = currentDate()
                 mainViewModel.updateDiary(diaryEdit) // обновляем запись в БД
             }
         }
@@ -269,9 +274,7 @@ class MainActivity : AppCompatActivity() {
                 adapter.setFavoriteDiaries(diariesSearchList)
             else
                 adapter.setDiaries(diariesSearchList)
-        }
-        else // Если строка поиска пуста
-        {
+        } else { // Если строка поиска пуста
             if (prefs!!.getBoolean("sorted", false))
                 adapter.setFavoriteDiaries(allDiariesList)
             else

@@ -30,6 +30,8 @@
     <string name="dialog_delete">Удаление</string>
     <string name="dialog_check_save_changes">Хотите ли вы сохранить изменения?</string>
     <string name="dialog_save">Сохранение</string>
+    <string name="dialog_check_leave">Есть не сохраненные изменения. Хотите закрыть это окно?</string>
+    <string name="dialog_leave_changes">Не сохраненные изменения</string>
 
 
     <!-- Настройки -->

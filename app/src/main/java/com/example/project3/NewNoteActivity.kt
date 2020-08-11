@@ -1,6 +1,7 @@
 package com.example.project3
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -10,7 +11,7 @@ import kotlinx.android.synthetic.main.activity_new_note.*
 class NewNoteActivity : AppCompatActivity() {
 
     private val choosePhotoRequestCode = 1
-
+    private var isPhotoExist = false
     private val replyIntent = Intent()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,9 +36,22 @@ class NewNoteActivity : AppCompatActivity() {
         }
         // TODO: Добавить диалоговое окно в случае нажатии кнопки отмена
         button_cancel_note1.setOnClickListener {
-            // устанавливаем результат и завершаем работу с активити
-            setResult(Activity.RESULT_CANCELED)
-            finish()
+            // Если изменения были, спрашиваем, хочет ли пользователь покинуть окно
+            if (isPhotoExist || edit_note.text.toString().isNotEmpty() || edit_text_note.text.toString().isNotEmpty())
+                makeDialog()
+            else {
+                // устанавливаем результат и завершаем работу с активити
+                setResult(Activity.RESULT_CANCELED, replyIntent)
+                finish()
+            }
+        }
+        // Кнопка Delete
+        delete_photo_button_note.setOnClickListener{
+            if (isPhotoExist) {
+                isPhotoExist = false
+                imageView_note.setImageResource(R.mipmap.ic_launcher_round)
+                replyIntent.putExtra(EXTRA_NEW_NOTE_IMAGE, "")
+            }
         }
         photo_button_note.setOnClickListener{
             // Выбираем фото из галереи
@@ -47,11 +61,39 @@ class NewNoteActivity : AppCompatActivity() {
         }
     }
 
+    private fun makeDialog()
+    {
+        val userDialog = AlertDialog.Builder(this)
+        userDialog.setTitle(this.resources.getString(R.string.dialog_leave_changes))
+        userDialog.setMessage(this.resources.getString(R.string.dialog_check_leave))
+        userDialog.setPositiveButton(this.resources.getString(R.string.dialog_yes))
+        { _, _ ->
+            setResult(Activity.RESULT_CANCELED, replyIntent)
+            finish()
+        }
+        userDialog.setNegativeButton(this.resources.getString(R.string.dialog_no))
+        { dialog, _ ->
+            dialog.dismiss()
+        }
+        userDialog.show()
+    }
+
+    override fun onBackPressed() {
+        //super.onBackPressed()
+        // Если изменения были, спрашиваем, хочет ли пользователь покинуть окно
+        if (isPhotoExist || edit_note.text.toString().isNotEmpty() || edit_text_note.text.toString().isNotEmpty())
+            makeDialog()
+        else {
+            super.onBackPressed()
+        }
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (requestCode == choosePhotoRequestCode && resultCode == Activity.RESULT_OK)
         {
+            isPhotoExist = true
             imageView_note.setImageURI(data?.data)
             replyIntent.putExtra(EXTRA_NEW_NOTE_IMAGE, data?.data.toString())
         }

@@ -14,13 +14,15 @@ import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.project3.R
+import roomdatabase.ExtendedDiary
 import roomdatabase.Note
 
 class NoteListAdapter internal constructor(
     context: Context,
-    private val listenerOpen : (Note) -> Unit,  // похоже на какой-то template для функций
+    private val listenerOpen : (Note) -> Unit,
     private val listenerDelete : (Note) -> Unit,
-    private val listenerEdit : (Note) -> Unit
+    private val listenerEdit : (Note) -> Unit,
+    private val listenerBookmark : (Note) -> Unit
 ) : RecyclerView.Adapter<NoteListAdapter.NoteViewHolder>() {
 
     // По сути переменная inflater используется как метка на родительский XML,
@@ -42,10 +44,9 @@ class NoteListAdapter internal constructor(
         private val noteItemView : TextView = itemView.findViewById(R.id.textView1)
         // textView - вью из файла recyclerview_layout.xml, отвечает за описание
         private val noteDescriptionView : TextView = itemView.findViewById(R.id.textView)
-
         private val noteImageView : ImageView = itemView.findViewById(R.id.imageView)
-
         private val noteDateView : TextView = itemView.findViewById(R.id.date_text)
+        private val noteStarView : ImageView = itemView.findViewById(R.id.imageView_star)
 
         // эта функция применяется для каждого члена RecyclerView т.к. вызывается в onBindViewHolder
         fun bindView(note: Note, listener : (Note) -> Unit) {
@@ -64,7 +65,7 @@ class NoteListAdapter internal constructor(
             }
             // в RecyclerView будут видны первые 16 символов текста заметки
             noteDescriptionView.text = str // текст заметки
-            noteDateView.text = note.date // дата
+            noteDateView.text = note.lastEditDate // дата
             if (note.img != null)
             {
                 noteImageView.visibility = VISIBLE
@@ -74,6 +75,13 @@ class NoteListAdapter internal constructor(
             else
                 noteImageView.setImageResource(R.mipmap.ic_launcher_round)
                 //noteImageView.visibility = GONE
+
+            // иконка со звездочкой (избранное)
+            if (note.favorite)
+                noteStarView.visibility = VISIBLE
+            else
+                noteStarView.visibility = GONE
+
             if (prefs!!.getBoolean("color_check_note", false)) {
                 when (note.color)
                 {
@@ -107,8 +115,18 @@ class NoteListAdapter internal constructor(
                 // Устанавливаем контекстное меню
                 val popupMenu = PopupMenu(mContext, it)
                 popupMenu.inflate(R.menu.menu_notes)
-                // Делает кнопку избранного невидимой
-                popupMenu.menu.findItem(R.id.bookmark).isVisible = false
+                // установка нужной надписи на пункт меню
+                if(note.favorite) {
+                    popupMenu.menu.findItem(R.id.bookmark).title = mContext.resources.
+                    getString(R.string.remove_bookmark)
+                }
+                else {
+                    popupMenu.menu.findItem(R.id.bookmark).title = mContext.resources.
+                    getString(R.string.bookmark)
+                }
+                // Делает кнопку избранного невидимой (не нужно)
+                //popupMenu.menu.findItem(R.id.bookmark).isVisible = false
+
                 popupMenu.setOnMenuItemClickListener { item ->
                     when(item.itemId) {     // сколько пунктов меню - столько и вариантов в when()
                         R.id.delete -> {
@@ -142,6 +160,15 @@ class NoteListAdapter internal constructor(
                         R.id.edit -> {
                             listenerEdit(note)
                             notifyDataSetChanged()
+                            true
+                        }
+                        R.id.bookmark -> {
+                            listenerBookmark(note)
+                            notifyDataSetChanged()
+                            if(note.favorite)
+                                noteStarView.visibility = VISIBLE
+                            else
+                                noteStarView.visibility = GONE
                             true
                         }
                         // Иначе вернем false (если when не сработал ни разу)
@@ -181,6 +208,11 @@ class NoteListAdapter internal constructor(
     internal fun setNotes(notes: List<Note>) {
         this.notes = notes      // обновляем внутренний список
         notifyDataSetChanged()  // даем понять адаптеру, что были внесены изменения
+    }
+
+    internal fun setFavoriteNotes(notes: List<Note>){
+        this.notes = notes.sortedBy { !it.favorite }
+        notifyDataSetChanged()
     }
 
     override fun getItemCount() = notes.size // сколько эл-тов будет в списке

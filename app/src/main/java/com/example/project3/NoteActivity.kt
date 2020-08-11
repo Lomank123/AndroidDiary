@@ -13,9 +13,7 @@ import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_note.*
 import kotlinx.android.synthetic.main.activity_note.bg_fab_menu
 import recyclerviewadapter.NoteListAdapter
@@ -44,6 +42,10 @@ class NoteActivity : AppCompatActivity() {
 
         val extDiaryParent = intent.getSerializableExtra("extDiaryParent") as? ExtendedDiary
 
+        val prefs: SharedPreferences? = PreferenceManager.getDefaultSharedPreferences(this)
+        if (!(prefs!!.contains("sorted_notes")))
+            prefs.edit().putBoolean("sorted_notes", false).apply()
+
         val adapter = newNoteAdapter()
         recyclerview1.adapter = adapter
         recyclerview1.layoutManager = LinearLayoutManager(this)
@@ -54,15 +56,11 @@ class NoteActivity : AppCompatActivity() {
 
         mainViewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         mainViewModel.allExtendedDiaries.observe(this, Observer {
-            var getList = emptyList<Note>()
-            for(extDiary in it) {
-                if(extDiary.diary.id == extDiaryParent!!.diary.id) // находим запись с нужным нам id дневника
-                {
-                    getList = extDiary.notes   // получаем список заметок этого дневника
-                    break
-                }
-            }
-            adapter.setNotes(getList)   // передаем полученный список в RecyclerView
+            val noteList = findListOfNotes(it, extDiaryParent)
+            if (prefs.getBoolean("sorted_notes", false))
+                adapter.setFavoriteNotes(noteList)
+            else
+                adapter.setNotes(noteList)
         })
 
         // Кнопки
@@ -80,7 +78,14 @@ class NoteActivity : AppCompatActivity() {
         // обработчик нажатий на 1-ую кнопку
         fab_favourite_note.setOnClickListener {
             closeFabMenu()
-            Toast.makeText(this, "Message", Toast.LENGTH_SHORT).show()
+            if(prefs.getBoolean("sorted_notes", false))
+            {
+                prefs.edit().putBoolean("sorted_notes", false).apply()
+                adapter.setNotes(findListOfNotes(mainViewModel.allExtendedDiaries.value!!, extDiaryParent))
+            } else {
+                prefs.edit().putBoolean("sorted_notes", true).apply()
+                adapter.setFavoriteNotes(findListOfNotes(mainViewModel.allExtendedDiaries.value!!, extDiaryParent))
+            }
         }
         // обработчик нажатий на 2-ую кнопку (вызывает NewNoteActivity для создания заметки)
         fab_new_note.setOnClickListener {
@@ -89,11 +94,26 @@ class NoteActivity : AppCompatActivity() {
             // 2-ой аргумент это requestCode по которому определяется откуда был запрос
             startActivityForResult(intent, newNoteActivityRequestCode)
         }
+        // TODO: не забыть добавить или убрать
         // обработчик нажатий на ФОН (когда вызывается фон затемняется)
         bg_fab_menu.setOnClickListener {
             // т.е. если нажать на затемненный фон меню закроется
             closeFabMenu()
         }
+    }
+
+    // Поиск нужного списка заметок
+    private fun findListOfNotes(extDiaries : List<ExtendedDiary>, extDiaryParent : ExtendedDiary?) : List<Note>
+    {
+        var noteList = emptyList<Note>()
+        for(extDiary in extDiaries) {
+            if(extDiary.diary.id == extDiaryParent!!.diary.id) // находим запись с нужным нам id дневника
+            {
+                noteList = extDiary.notes   // получаем список заметок этого дневника
+                break
+            }
+        }
+        return noteList
     }
 
     // Поскольку передается позиция в списке адаптера, невозможно удалить нужный нам объект,
@@ -147,6 +167,17 @@ class NoteActivity : AppCompatActivity() {
             val intent = Intent(this, EditNoteActivity::class.java)
             intent.putExtra("noteSerializableEdit", it)
             startActivityForResult(intent, editNoteActivityRequestCode)
+        }, {
+            // 4-ый listener, отвечает за избранные
+            it.favorite = !it.favorite
+            if(it.favorite) {
+                Toast.makeText(this, resources.getString(R.string.add_favor),
+                    Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, resources.getString(R.string.del_favor),
+                    Toast.LENGTH_SHORT).show()
+            }
+            mainViewModel.updateNote(it)
         })
     }
 
@@ -168,6 +199,7 @@ class NoteActivity : AppCompatActivity() {
         return simpleDateFormat.format(Date())
     }
 
+    // TODO: редактировать или убрать за ненадобностью
     // Создает объект Note
     private fun createNote(name : String, content : String, parent_id : Long, date : String,
     img : String?=null, color : String?=null) : Note
@@ -190,11 +222,14 @@ class NoteActivity : AppCompatActivity() {
             data?.getStringArrayListExtra(NewNoteActivity.EXTRA_NEW_NOTE)?.let {
                 // Из data достаем информацию о картинке, была ли она
                 // Если картинку не выбрали, установится та, что была на "обложке" дневника
-                val imgNote = data.getStringExtra(NewNoteActivity.EXTRA_NEW_NOTE_IMAGE) ?: extDiaryParent!!.diary.img
+                var imgNote = data.getStringExtra(NewNoteActivity.EXTRA_NEW_NOTE_IMAGE)
+                if (imgNote == null || imgNote == "")
+                    imgNote = extDiaryParent!!.diary.img
                 // С помощью ф-ии создаем объект заметки
                 // получаем из экстра данных массив с названием и текстом
                 val newNote = createNote(it[0], it[1], extDiaryParent!!.diary.id, currentDate(),
                     img = imgNote, color = colors.random())
+                newNote.creationDate = currentDate()
                 mainViewModel.insertNote(newNote)
             }
         }
@@ -210,11 +245,10 @@ class NoteActivity : AppCompatActivity() {
             // получаем с помощью Serializable наш объект класса Note из ClickedActivity
             val note = data?.getSerializableExtra(ClickedActivity.EXTRA_REPLY_EDIT) as? Note
             if (note != null) {
-                note.date = currentDate()   // обновляем дату
+                note.lastEditDate = currentDate()   // обновляем дату
                 mainViewModel.updateNote(note)  // обновляем заметку
             }
         }
-
         // Результат изменения заметки
         if (requestCode == editNoteActivityRequestCode && resultCode == Activity.RESULT_OK)
         {
@@ -223,8 +257,10 @@ class NoteActivity : AppCompatActivity() {
             if (noteEdit != null)
             {
                 // Обновляем дату
-                noteEdit.date = currentDate()
-                if (imgNoteEdit != null && imgNoteEdit != "")
+                noteEdit.lastEditDate = currentDate()
+                if (imgNoteEdit == null || imgNoteEdit == "")
+                    noteEdit.img = extDiaryParent!!.diary.img
+                else
                     noteEdit.img = imgNoteEdit
                 mainViewModel.updateNote(noteEdit)
             }
@@ -269,46 +305,47 @@ class NoteActivity : AppCompatActivity() {
 
     // Функция для вывода поискового запроса (используется только в SearchView)
     private fun setNotesForSearch(adapter : NoteListAdapter, prefs : SharedPreferences?,
-                                  all_objects_list : List<ExtendedDiary>, newText : String?)
+                                  extDiaries : List<ExtendedDiary>, newText : String?)
     {
         val extDiaryParent = intent.getSerializableExtra("extDiaryParent") as? ExtendedDiary
 
-        var getListNotes = emptyList<Note>()
-        for (i in all_objects_list) {
-            if (i.diary.id == extDiaryParent!!.diary.id) {
-                getListNotes = i.notes
-                break
-            }
-        }
+        val getListNotes = findListOfNotes(extDiaries, extDiaryParent) // Список заметок дневника
+        val noteList = mutableListOf<Note>()
+
         if (newText!!.isNotEmpty()) {
-            val noteList = mutableListOf<Note>()
             val search = newText.toLowerCase(Locale.ROOT)
 
             getListNotes.forEach{notes ->
                 if(notes.name.toLowerCase(Locale.ROOT).contains(search))
                     noteList.add(notes)
             }
-            adapter.setNotes(noteList)
+            if (prefs!!.getBoolean("sorted_notes", false))
+                adapter.setFavoriteNotes(noteList)
+            else
+                adapter.setNotes(noteList)
+        } else { // Если строка поиска пуста
+            if (prefs!!.getBoolean("sorted_notes", false))
+                adapter.setFavoriteNotes(getListNotes)
+            else
+                adapter.setNotes(getListNotes)
         }
-        else
-            adapter.setNotes(getListNotes)
         // Слушатель на кнопку для правильной сортировки
-        //fab1.setOnClickListener {
-        //    closeFabMenu()
-        //    if (prefs!!.getBoolean("sorted", false)) {
-        //        prefs.edit().putBoolean("sorted", false).apply()
-        //        if (newText.isNotEmpty())
-        //            (recyclerview.adapter as WordListAdapter).setWords(wordList1)
-        //        else
-        //            (recyclerview.adapter as WordListAdapter).setWords(all_words_list)
-        //    } else {
-        //        prefs.edit().putBoolean("sorted", true).apply()
-        //        if (newText.isNotEmpty())
-        //            (recyclerview.adapter as WordListAdapter).setFavoriteWords(wordList1)
-        //        else
-        //            (recyclerview.adapter as WordListAdapter).setFavoriteWords(all_words_list)
-        //    }
-        //}
+        fab_favourite_note.setOnClickListener {
+            closeFabMenu()
+            if (prefs.getBoolean("sorted_notes", false)) {
+                prefs.edit().putBoolean("sorted_notes", false).apply()
+                if (newText.isNotEmpty())
+                    (recyclerview1.adapter as NoteListAdapter).setNotes(noteList)
+                else
+                    (recyclerview1.adapter as NoteListAdapter).setNotes(getListNotes)
+            } else {
+                prefs.edit().putBoolean("sorted_notes", true).apply()
+                if (newText.isNotEmpty())
+                    (recyclerview1.adapter as NoteListAdapter).setFavoriteNotes(noteList)
+                else
+                    (recyclerview1.adapter as NoteListAdapter).setFavoriteNotes(getListNotes)
+            }
+        }
     }
 
     // когда выбираешь элемент меню
@@ -328,25 +365,6 @@ class NoteActivity : AppCompatActivity() {
                 val aboutIntent = Intent(this, AboutActivity::class.java)
                 startActivity(aboutIntent)
                 return super.onOptionsItemSelected(item)
-            }
-            R.id.favorite_view -> {
-                for (extDiary in mainViewModel.allExtendedDiaries.value!!)
-                    if (extDiary.diary.id == extDiaryParent!!.diary.id) {
-                        extDiary.diary.favorite = !extDiary.diary.favorite
-                        if(extDiary.diary.favorite) {
-                            item.setIcon(android.R.drawable.btn_star_big_on)
-                            Toast.makeText(this, resources.getString(R.string.add_favor),
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
-                        else {
-                            item.setIcon(android.R.drawable.btn_star_big_off)
-                            Toast.makeText(this, resources.getString(R.string.del_favor),
-                                Toast.LENGTH_SHORT).show()
-                        }
-                        mainViewModel.updateDiary(extDiary.diary)
-                        break
-                    }
             }
         }
         return super.onOptionsItemSelected(item)

@@ -27,10 +27,12 @@ class ClickedActivity : AppCompatActivity() {
 
     private var isVoice = false
     private var isVoiceExist = false
+    private var isRecording = false
 
     private var mediaRecorder : MediaRecorder? = MediaRecorder()    // Запись
     private var mediaPlayer : MediaPlayer? = MediaPlayer()          // Воспроизведение
     private var fileName : String = ""                              // Имя файла
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,44 +47,46 @@ class ClickedActivity : AppCompatActivity() {
         editText1.setText(note.content)
 
         // Если голосовая заметка найдена
-            if(File(fileName).exists())
-            {
-                isVoiceExist = true
-                record_voice_dis.visibility = GONE
-                record_time_dis.visibility = GONE
-                stop_recording_voice_dis.visibility = GONE
+        if(File(fileName).exists())
+        {
+            isVoiceExist = true
+            record_voice_dis.visibility = GONE
+            record_time_dis.visibility = GONE
+            stop_recording_voice_dis.visibility = GONE
 
-                play_btn_active.visibility = VISIBLE
-                delete_btn_active.visibility = VISIBLE
-                end_time_active.visibility = VISIBLE
-                start_time_active.visibility = VISIBLE
+            play_btn_active.visibility = VISIBLE
+            delete_btn_active.visibility = VISIBLE
+            end_time_active.visibility = VISIBLE
+            start_time_active.visibility = VISIBLE
+            // seekBar
+            seekBar_active.visibility = VISIBLE
 
-                // seekBar
-                seekBar_active.visibility = VISIBLE
+            playStart()
 
-                playStart()
+            seekBar_active.max = mediaPlayer!!.duration
+            seekBar_active.setOnSeekBarChangeListener(
+                object : SeekBar.OnSeekBarChangeListener {
 
-                seekBar_active.max = mediaPlayer!!.duration
-
-                seekBar_active.setOnSeekBarChangeListener(
-                    object : SeekBar.OnSeekBarChangeListener {
-                        override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                            if (fromUser) {
-                                mediaPlayer!!.seekTo(progress)
-
-                                val elapsedTime = createTimeLabel(progress)
-                                start_time_active.text = elapsedTime
-                                val remainingTime = createTimeLabel(mediaPlayer!!.duration - progress)
-                                end_time_active.text = remainingTime
-                            }
-                        }
-                        override fun onStartTrackingTouch(p0: SeekBar?) {
-                        }
-                        override fun onStopTrackingTouch(p0: SeekBar?) {
+                    override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                        if (fromUser) {
+                            mediaPlayer!!.seekTo(progress)
+                            val elapsedTime = createTimeLabel(progress)
+                            start_time_active.text = elapsedTime
+                            val remainingTime = createTimeLabel(mediaPlayer!!.duration - progress)
+                            end_time_active.text = remainingTime
                         }
                     }
-                )
-            }
+                    override fun onStartTrackingTouch(p0: SeekBar?) {
+                    }
+                    override fun onStopTrackingTouch(p0: SeekBar?) {
+                    }
+                }
+            )
+        }
+        else
+        {
+            record_time_dis.text = this.resources.getString(R.string.no_voice_note)
+        }
 
         play_btn_active.setOnClickListener {
             if (mediaPlayer!!.isPlaying) {
@@ -102,6 +106,8 @@ class ClickedActivity : AppCompatActivity() {
         // слушатель на кнопку начала записи голоса
         record_voice_dis.setOnClickListener {
 
+            isRecording = true
+            recordProgressUpdater(0)
             record_voice_dis.visibility = GONE
             stop_recording_voice_dis.visibility = VISIBLE
 
@@ -110,9 +116,12 @@ class ClickedActivity : AppCompatActivity() {
             // слушатель на кнопку остановки записи голос. заметки
             stop_recording_voice_dis.setOnClickListener {
 
+                isRecording = false
+                // Если VISIBLE, можно увидеть что recordProgressUpdater успевает насчитать линшнюю секунду
                 record_time_dis.visibility = GONE
                 stop_recording_voice_dis.visibility = GONE
 
+                play_btn_active.setImageResource(android.R.drawable.ic_media_play)
                 play_btn_active.visibility = VISIBLE
                 delete_btn_active.visibility = VISIBLE
                 start_time_active.visibility = VISIBLE
@@ -338,6 +347,19 @@ class ClickedActivity : AppCompatActivity() {
         }
     }
 
+    private fun recordProgressUpdater(time : Int)
+    {
+        val recordingTime = createTimeLabel(time)
+        record_time_dis.text = recordingTime
+        val newTime = time + 1000
+        if (isRecording) {
+            val notify1 = Runnable {
+                recordProgressUpdater(newTime)
+            }
+            Handler().postDelayed(notify1, 1000)
+        }
+    }
+
     // Переводит значение Int в формат (min:sec)
     private fun createTimeLabel(time : Int) : String
     {
@@ -363,10 +385,12 @@ class ClickedActivity : AppCompatActivity() {
             outFile.delete()
 
         record_voice_dis.visibility = VISIBLE
+        record_time_dis.text = this.resources.getString(R.string.no_voice_note)
         record_time_dis.visibility = VISIBLE
         stop_recording_voice_dis.visibility = GONE
 
         play_btn_active.visibility = GONE
+        play_btn_active.setImageResource(android.R.drawable.ic_media_pause)
         delete_btn_active.visibility = GONE
         start_time_active.visibility = GONE
         end_time_active.visibility = GONE

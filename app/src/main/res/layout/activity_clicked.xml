@@ -151,8 +151,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="1.0"
-            app:srcCompat="@android:drawable/ic_btn_speak_now"
-            tools:visibility="gone" />
+            app:srcCompat="@android:drawable/ic_btn_speak_now" />
 
         <TextView
             android:id="@+id/record_time_dis"

@@ -45,6 +45,21 @@
                 android:textColor="#352E35"
                 android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.06"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/imageView_note" />
+
+            <Button
+                android:id="@+id/delete_photo_button_note"
+                android:layout_width="145dp"
+                android:layout_height="47dp"
+                android:layout_marginTop="28dp"
+                android:background="@drawable/button_click_effect_cancel1"
+                android:text="@string/delete_btn"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.939"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/imageView_note" />
 

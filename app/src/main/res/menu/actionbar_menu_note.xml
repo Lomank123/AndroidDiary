@@ -18,6 +18,7 @@
         android:id="@+id/favorite_view"
         android:icon="@android:drawable/btn_star_big_off"
         android:title="@string/search"
+        android:visible="false"
         app:showAsAction="ifRoom|collapseActionView" />
 
 </menu>

@@ -30,6 +30,9 @@
     <string name="dialog_delete">Delete</string>
     <string name="dialog_check_save_changes">Do you want to save changes?</string>
     <string name="dialog_save">Saving</string>
+    <string name="dialog_check_leave">There are some unsaved changes. Do you want to close this window?</string>
+    <string name="dialog_leave_changes">Unsaved changes</string>
+
 
     <!-- Settings -->
     <string name="categoryMainSettings">Main settings</string>
