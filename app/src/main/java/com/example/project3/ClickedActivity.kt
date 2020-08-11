@@ -310,8 +310,14 @@ class ClickedActivity : AppCompatActivity() {
                 startActivity(shareIntent)
             }
             R.id.cancel_btn_edit -> { // Кнопка Cancel
-                if(note!!.content != editText1.text.toString())
+                if (note!!.content != editText1.text.toString())
                     saveDialogShow(note)
+                else {
+                    setResult(Activity.RESULT_CANCELED)
+                    Toast.makeText(
+                        this, resources.getString(R.string.canceled), Toast.LENGTH_SHORT).show()
+                    finish()
+                }
             }
             R.id.voice_btn_edit -> {
                 isVoice = !isVoice
