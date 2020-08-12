@@ -31,6 +31,33 @@ data class Diary(@ColumnInfo(name = "diary_name") var name: String,       // н�
 
     @ColumnInfo(name = "diary_creation_date")
     var creationDate : String? = null              // Дата создания
+
+    override fun equals(other: Any?): Boolean {
+
+        if(javaClass != other?.javaClass)
+            return false
+
+        other as Diary
+
+        if(id != other.id)
+            return false
+        if(name != other.name)
+            return false
+        if(content != other.content)
+            return false
+        if(creationDate != other.creationDate)
+            return false
+        if(img != other.img)
+            return false
+        if(color != other.color)
+            return false
+        if(lastEditDate != other.lastEditDate)
+            return false
+        if(favorite != other.favorite)
+            return false
+
+        return true
+    }
 }
 
 
@@ -60,6 +87,33 @@ data class Note(@ColumnInfo(name = "note_name") var name : String,          // �
 
     @ColumnInfo(name = "note_creation_date")
     var creationDate : String? = null               // Дата создания
+
+    override fun equals(other: Any?): Boolean {
+
+        if(javaClass != other?.javaClass)
+            return false
+
+        other as Note
+
+        if(id != other.id)
+            return false
+        if(name != other.name)
+            return false
+        if(content != other.content)
+            return false
+        if(creationDate != other.creationDate)
+            return false
+        if(img != other.img)
+            return false
+        if(color != other.color)
+            return false
+        if(lastEditDate != other.lastEditDate)
+            return false
+        if(favorite != other.favorite)
+            return false
+
+        return true
+    }
 }
 
 /**

@@ -15,7 +15,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_main.bg_fab_menu
 import recyclerviewadapter.DiaryListAdapter
 import roomdatabase.ExtendedDiary
 import roomdatabase.Diary
@@ -86,19 +85,14 @@ class MainActivity : AppCompatActivity() {
             {
                 prefs.edit().putBoolean("sorted", false).apply()
                 adapter.setDiaries(mainViewModel.allExtendedDiaries.value!!)
+                recyclerview.scrollToPosition(0)
             }
             else {
                 prefs.edit().putBoolean("sorted", true).apply()
                 adapter.setFavoriteDiaries(mainViewModel.allExtendedDiaries.value!!)
+                recyclerview.scrollToPosition(0)
             }
         }
-        // TODO: не забыть добавить или убрать
-        // Темный фон во время открытого меню
-        bg_fab_menu.setOnClickListener {
-            // т.е. если нажать на затемненный фон меню закроется
-            closeFabMenu()
-        }
-
         fab_new_diary.alpha = 0f
         fab_favourite.alpha = 0f
         fab_new_diary.translationY = translationY
@@ -334,7 +328,7 @@ class MainActivity : AppCompatActivity() {
     private fun showFabMenu() {
         isFabOpen = !isFabOpen
 
-        fab_menu.animate().rotation(45f).setDuration(300).start()
+        fab_menu.animate().rotation(90f).setDuration(300).start()
 
         fab_favourite.animate().translationY(0f).alpha(1f).setDuration(300).start()
         fab_new_diary.animate().translationY(0f).alpha(1f).setDuration(300).start()

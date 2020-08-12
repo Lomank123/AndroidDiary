@@ -20,16 +20,17 @@ class NewDiaryActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_new_diary)
 
+        imageView_new_diary.setImageResource(R.drawable.logo)
         // обработчик нажатий на кнопку Save
         button_save.setOnClickListener {
             // если поле пустое устанавливаем отриц. результат
-            if (TextUtils.isEmpty(edit_word.text)) {
+            if (TextUtils.isEmpty(edit_diary.text)) {
                 // устанавливаем результат как RESULT_CANCELED (отменен)
                 setResult(Activity.RESULT_CANCELED, replyIntent)
             } else {
                 // создаем массив с названием и описанием дневника
-                val diaryContext = arrayListOf(edit_word.text.toString(),
-                    edit_descr.text.toString())
+                val diaryContext = arrayListOf(edit_diary.text.toString(),
+                    edit_content.text.toString())
                 // кладем то, что написано в editText в word и передаем по тегу EXTRA_REPLY (ниже)
                 replyIntent.putExtra(EXTRA_NEW_DIARY, diaryContext)
                 setResult(Activity.RESULT_OK, replyIntent) // resultCode будет RESULT_OK
@@ -38,9 +39,9 @@ class NewDiaryActivity : AppCompatActivity() {
             finish()
         }
         // Кнопка Cancel
-        button_cancel_word1.setOnClickListener {
+        button_cancel_diary.setOnClickListener {
             // Если изменения были, спрашиваем, хочет ли пользователь покинуть окно
-            if (isPhotoExist || edit_word.text.toString().isNotEmpty() || edit_descr.text.toString().isNotEmpty())
+            if (isPhotoExist || edit_diary.text.toString().isNotEmpty() || edit_content.text.toString().isNotEmpty())
                 makeDialog()
             else {
                 // устанавливаем результат и завершаем работу с активити
@@ -52,7 +53,7 @@ class NewDiaryActivity : AppCompatActivity() {
         delete_photo_button.setOnClickListener{
             if (isPhotoExist) {
                 isPhotoExist = false
-                imageView5.setImageResource(R.mipmap.ic_launcher_round)
+                imageView_new_diary.setImageResource(R.drawable.logo)
                 replyIntent.putExtra(EXTRA_NEW_DIARY_IMAGE, "")
             }
         }
@@ -85,7 +86,7 @@ class NewDiaryActivity : AppCompatActivity() {
     override fun onBackPressed() {
         //super.onBackPressed()
         // Если изменения были, спрашиваем, хочет ли пользователь покинуть окно
-        if (isPhotoExist || edit_word.text.toString().isNotEmpty() || edit_descr.text.toString().isNotEmpty())
+        if (isPhotoExist || edit_diary.text.toString().isNotEmpty() || edit_content.text.toString().isNotEmpty())
             makeDialog()
         else {
             super.onBackPressed()
@@ -99,7 +100,7 @@ class NewDiaryActivity : AppCompatActivity() {
         if (requestCode == choosePhotoRequestCode && resultCode == Activity.RESULT_OK)
         {
             isPhotoExist = true
-            imageView5.setImageURI(data?.data)
+            imageView_new_diary.setImageURI(data?.data)
             replyIntent.putExtra(EXTRA_NEW_DIARY_IMAGE, data?.data.toString())
         }
     }

@@ -31,6 +31,9 @@ class EditNoteActivity : AppCompatActivity() {
             val uriImage = Uri.parse(note.img)
             imageView_note.setImageURI(uriImage)
         }
+        else
+            imageView_note.setImageResource(R.drawable.blank_sheet)
+
         button_save_note.setOnClickListener {
             if (TextUtils.isEmpty(edit_note.text)) {
                 // устанавливаем результат как RESULT_CANCELED (отменен)
@@ -43,7 +46,7 @@ class EditNoteActivity : AppCompatActivity() {
             }
             finish()
         }
-        button_cancel_note1.setOnClickListener {
+        button_cancel_note.setOnClickListener {
             // Если изменения были, спрашиваем, хочет ли пользователь покинуть окно
             if (isPhotoChanged || edit_note.text.toString() != note.name || edit_text_note.text.toString() != note.content)
                 makeDialog()
@@ -57,7 +60,7 @@ class EditNoteActivity : AppCompatActivity() {
             if (isPhotoExist) {
                 isPhotoChanged = note.img != null
                 isPhotoExist = false
-                imageView_note.setImageResource(R.mipmap.ic_launcher_round)
+                imageView_note.setImageResource(R.drawable.blank_sheet)
                 // Кладем в экстра данные картинки пустую строку
                 replyIntent.putExtra(EXTRA_IMAGE_EDIT_NOTE,"")
             }

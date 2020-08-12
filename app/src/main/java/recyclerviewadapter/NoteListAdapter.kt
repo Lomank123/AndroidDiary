@@ -12,9 +12,9 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.project3.R
-import roomdatabase.ExtendedDiary
 import roomdatabase.Note
 
 class NoteListAdapter internal constructor(
@@ -35,15 +35,37 @@ class NoteListAdapter internal constructor(
 
     private var notes = emptyList<Note>()   // Сохраненная копия заметок
 
+    class NoteItemDiffCallBack(
+        var oldNoteList : List<Note>,
+        var newNoteList : List<Note>
+    ): DiffUtil.Callback() {
+        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            return (oldNoteList[oldItemPosition].id == newNoteList[newItemPosition].id)
+        }
+
+        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            return oldNoteList[oldItemPosition].equals(newNoteList[newItemPosition])
+        }
+
+        override fun getOldListSize(): Int {
+            return oldNoteList.size
+        }
+
+        override fun getNewListSize(): Int {
+            return newNoteList.size
+        }
+
+    }
+
     // передаем сюда образец одного элемента списка
     // этот класс ХРАНИТ в себе то самое вью, в котором будут что-то менять
     inner class NoteViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        private val layoutItemView : RelativeLayout = itemView.findViewById(R.id.rellayout)
+        private val layoutItemView : RelativeLayout = itemView.findViewById(R.id.relative_layout)
         // textView1 - вью из файла recyclerview_layout.xml, отвечает за название
-        private val noteItemView : TextView = itemView.findViewById(R.id.textView1)
+        private val noteItemView : TextView = itemView.findViewById(R.id.textView_name)
         // textView - вью из файла recyclerview_layout.xml, отвечает за описание
-        private val noteDescriptionView : TextView = itemView.findViewById(R.id.textView)
+        private val noteDescriptionView : TextView = itemView.findViewById(R.id.textView_content)
         private val noteImageView : ImageView = itemView.findViewById(R.id.imageView)
         private val noteDateView : TextView = itemView.findViewById(R.id.date_text)
         private val noteStarView : ImageView = itemView.findViewById(R.id.imageView_star)
@@ -73,7 +95,7 @@ class NoteListAdapter internal constructor(
                 noteImageView.setImageURI(uriImage)
             }
             else
-                noteImageView.setImageResource(R.mipmap.ic_launcher_round)
+                noteImageView.setImageResource(R.drawable.blank_sheet)
                 //noteImageView.visibility = GONE
 
             // иконка со звездочкой (избранное)
@@ -206,13 +228,24 @@ class NoteListAdapter internal constructor(
     }
 
     internal fun setNotes(notes: List<Note>) {
+
+        val oldList = this.notes
+        val diffResult : DiffUtil.DiffResult = DiffUtil.calculateDiff(
+            NoteItemDiffCallBack(oldList, notes)
+        )
         this.notes = notes      // обновляем внутренний список
-        notifyDataSetChanged()  // даем понять адаптеру, что были внесены изменения
+        diffResult.dispatchUpdatesTo(this)
+        //notifyDataSetChanged()  // даем понять адаптеру, что были внесены изменения
     }
 
     internal fun setFavoriteNotes(notes: List<Note>){
+        val oldList = this.notes
+        val diffResult : DiffUtil.DiffResult = DiffUtil.calculateDiff(
+            NoteItemDiffCallBack(oldList, notes.sortedBy { !it.favorite })
+        )
         this.notes = notes.sortedBy { !it.favorite }
-        notifyDataSetChanged()
+        diffResult.dispatchUpdatesTo(this)
+        //notifyDataSetChanged()
     }
 
     override fun getItemCount() = notes.size // сколько эл-тов будет в списке

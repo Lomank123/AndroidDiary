@@ -15,7 +15,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_note.*
-import kotlinx.android.synthetic.main.activity_note.bg_fab_menu
 import recyclerviewadapter.NoteListAdapter
 import roomdatabase.ExtendedDiary
 import roomdatabase.Note
@@ -47,9 +46,9 @@ class NoteActivity : AppCompatActivity() {
             prefs.edit().putBoolean("sorted_notes", false).apply()
 
         val adapter = newNoteAdapter()
-        recyclerview1.adapter = adapter
-        recyclerview1.layoutManager = LinearLayoutManager(this)
-        recyclerview1.addItemDecoration(TopSpacingItemDecoration(20))       // Отступы
+        recyclerview_note.adapter = adapter
+        recyclerview_note.layoutManager = LinearLayoutManager(this)
+        recyclerview_note.addItemDecoration(TopSpacingItemDecoration(20))       // Отступы
 
         //val itemTouchHelper = ItemTouchHelper(itemTouchHelperCallback)
         //itemTouchHelper.attachToRecyclerView(recyclerview1)
@@ -82,9 +81,11 @@ class NoteActivity : AppCompatActivity() {
             {
                 prefs.edit().putBoolean("sorted_notes", false).apply()
                 adapter.setNotes(findListOfNotes(mainViewModel.allExtendedDiaries.value!!, extDiaryParent))
+                recyclerview_note.scrollToPosition(0)
             } else {
                 prefs.edit().putBoolean("sorted_notes", true).apply()
                 adapter.setFavoriteNotes(findListOfNotes(mainViewModel.allExtendedDiaries.value!!, extDiaryParent))
+                recyclerview_note.scrollToPosition(0)
             }
         }
         // обработчик нажатий на 2-ую кнопку (вызывает NewNoteActivity для создания заметки)
@@ -93,12 +94,6 @@ class NoteActivity : AppCompatActivity() {
             val intent = Intent(this, NewNoteActivity::class.java)
             // 2-ой аргумент это requestCode по которому определяется откуда был запрос
             startActivityForResult(intent, newNoteActivityRequestCode)
-        }
-        // TODO: не забыть добавить или убрать
-        // обработчик нажатий на ФОН (когда вызывается фон затемняется)
-        bg_fab_menu.setOnClickListener {
-            // т.е. если нажать на затемненный фон меню закроется
-            closeFabMenu()
         }
     }
 
@@ -149,7 +144,7 @@ class NoteActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        recyclerview1.adapter!!.notifyDataSetChanged()
+        recyclerview_note.adapter!!.notifyDataSetChanged()
     }
 
     private fun newNoteAdapter() : NoteListAdapter
@@ -291,10 +286,10 @@ class NoteActivity : AppCompatActivity() {
                 }
                 override fun onQueryTextChange(newText: String?): Boolean {
                     mainViewModel.allExtendedDiaries.observe(this@NoteActivity, Observer {
-                        setNotesForSearch((recyclerview1.adapter as NoteListAdapter), prefs,
+                        setNotesForSearch((recyclerview_note.adapter as NoteListAdapter), prefs,
                             it, newText)
                     })
-                    setNotesForSearch((recyclerview1.adapter as NoteListAdapter), prefs,
+                    setNotesForSearch((recyclerview_note.adapter as NoteListAdapter), prefs,
                         mainViewModel.allExtendedDiaries.value!!, newText)
                     return true
                 }
@@ -335,24 +330,21 @@ class NoteActivity : AppCompatActivity() {
             if (prefs.getBoolean("sorted_notes", false)) {
                 prefs.edit().putBoolean("sorted_notes", false).apply()
                 if (newText.isNotEmpty())
-                    (recyclerview1.adapter as NoteListAdapter).setNotes(noteList)
+                    (recyclerview_note.adapter as NoteListAdapter).setNotes(noteList)
                 else
-                    (recyclerview1.adapter as NoteListAdapter).setNotes(getListNotes)
+                    (recyclerview_note.adapter as NoteListAdapter).setNotes(getListNotes)
             } else {
                 prefs.edit().putBoolean("sorted_notes", true).apply()
                 if (newText.isNotEmpty())
-                    (recyclerview1.adapter as NoteListAdapter).setFavoriteNotes(noteList)
+                    (recyclerview_note.adapter as NoteListAdapter).setFavoriteNotes(noteList)
                 else
-                    (recyclerview1.adapter as NoteListAdapter).setFavoriteNotes(getListNotes)
+                    (recyclerview_note.adapter as NoteListAdapter).setFavoriteNotes(getListNotes)
             }
         }
     }
 
     // когда выбираешь элемент меню
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-
-        val extDiaryParent = intent.getSerializableExtra("extDiaryParent") as? ExtendedDiary
-
         when(item.itemId){
             R.id.settings -> {
                 // открытие окна "Настройки"
@@ -384,7 +376,7 @@ class NoteActivity : AppCompatActivity() {
     private fun showFabMenu() {
         isFabOpen = !isFabOpen
 
-        fab_menu_note.animate().rotation(45f).setDuration(300).start()
+        fab_menu_note.animate().rotation(90f).setDuration(300).start()
 
         fab_favourite_note.animate().translationY(0f).alpha(1f).setDuration(300).start()
         fab_new_note.animate().translationY(0f).alpha(1f).setDuration(300).start()

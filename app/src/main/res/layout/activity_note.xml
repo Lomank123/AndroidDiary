@@ -8,7 +8,7 @@
     android:background="@color/colorBackground">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerview1"
+        android:id="@+id/recyclerview_note"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:alwaysDrawnWithCache="false"
@@ -62,17 +62,4 @@
             app:fabSize="normal" />
 
     </LinearLayout>
-
-    <View
-        android:id="@+id/bg_fab_menu"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:alpha="0"
-        android:background="#48000000"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="parent"
-        app:layout_constraintEnd_toStartOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

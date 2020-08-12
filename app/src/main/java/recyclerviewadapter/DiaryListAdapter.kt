@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.project3.R
 import roomdatabase.ExtendedDiary
@@ -37,15 +38,37 @@ class DiaryListAdapter internal constructor(
 
     private val prefs: SharedPreferences? = PreferenceManager.getDefaultSharedPreferences(mContext)
 
+    class DiaryItemDiffCallBack(
+        var oldDiaryList : List<ExtendedDiary>,
+        var newDiaryList : List<ExtendedDiary>
+    ): DiffUtil.Callback() {
+        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            return (oldDiaryList[oldItemPosition].diary.id == newDiaryList[newItemPosition].diary.id)
+        }
+
+        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            return oldDiaryList[oldItemPosition].equals(newDiaryList[newItemPosition])
+        }
+
+        override fun getOldListSize(): Int {
+            return oldDiaryList.size
+        }
+
+        override fun getNewListSize(): Int {
+            return newDiaryList.size
+        }
+
+    }
+
     // передаем сюда образец одного элемента списка
     // этот класс ХРАНИТ в себе то самое вью, в котором будут что-то менять
     inner class DiaryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        private val layoutItemView : RelativeLayout = itemView.findViewById(R.id.rellayout)
+        private val layoutItemView : RelativeLayout = itemView.findViewById(R.id.relative_layout)
         // textView1 - отвечает за название
-        private val diaryItemView: TextView = itemView.findViewById(R.id.textView1)
+        private val diaryItemView: TextView = itemView.findViewById(R.id.textView_name)
         // textView - отвечает за описание
-        private val diaryDescriptionView: TextView = itemView.findViewById(R.id.textView)
+        private val diaryDescriptionView: TextView = itemView.findViewById(R.id.textView_content)
         private val diaryDateView: TextView = itemView.findViewById(R.id.date_text)
         private val diaryImageView: ImageView = itemView.findViewById(R.id.imageView)
         private val diaryStarView: ImageView = itemView.findViewById(R.id.imageView_star)
@@ -100,8 +123,7 @@ class DiaryListAdapter internal constructor(
                 diaryImageView.setImageURI(uriImage)
             }
             else
-                //TODO: Сделать подходящую картинку на случай если ее не выбрали
-                diaryImageView.setImageResource(R.mipmap.ic_launcher_round)
+                diaryImageView.setImageResource(R.drawable.logo)
                 //diaryImageView.visibility = GONE
             // иконка со звездочкой (избранное)
             if (extDiary.diary.favorite)
@@ -209,14 +231,25 @@ class DiaryListAdapter internal constructor(
     // ВАЖНО: setWords вызывается в момент того, когда обсервер заметил изменения в записях
     // и чтобы зафиксировать эти изменения в RecyclerView, нужно передавать новый список сюда
     internal fun setDiaries(diaries: List<ExtendedDiary>) {
-        this.diaries = diaries      // обновляем внутренний список
+        val oldList = this.diaries
+        val diffResult : DiffUtil.DiffResult = DiffUtil.calculateDiff(
+            DiaryItemDiffCallBack(oldList, diaries)
+        )
         // notifyDataSetChanged() даст сигнал о том, что данные изменились
         // и нужно их обновить и в самом RecycleView
-        notifyDataSetChanged()
+        this.diaries = diaries      // обновляем внутренний список
+        diffResult.dispatchUpdatesTo(this)
+        //notifyDataSetChanged()
     }
     internal fun setFavoriteDiaries(diaries: List<ExtendedDiary>){
+
+        val oldList = this.diaries
+        val diffResult : DiffUtil.DiffResult = DiffUtil.calculateDiff(
+            DiaryItemDiffCallBack(oldList, diaries.sortedBy { !it.diary.favorite })
+        )
         this.diaries = diaries.sortedBy { !it.diary.favorite }
-        notifyDataSetChanged()
+        diffResult.dispatchUpdatesTo(this)
+        //notifyDataSetChanged()
     }
 
     override fun getItemCount() = diaries.size // сколько эл-тов будет в списке

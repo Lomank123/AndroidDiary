@@ -43,7 +43,7 @@ class ClickedActivity : AppCompatActivity() {
         fileName = this.getExternalFilesDir(null)!!.absolutePath + "/${note!!.name}_${note.id}.3gpp"
 
         // получаем экстра данные из NoteActivity
-        textView1.text = note.name
+        textView_name.text = note.name
         editText1.setText(note.content)
 
         // Если голосовая заметка найдена
@@ -246,33 +246,36 @@ class ClickedActivity : AppCompatActivity() {
                 val uriImage = Uri.parse(note.img)
                 imageView_clicked.setImageURI(uriImage)
             }
+            else
+                imageView_clicked.setImageResource(R.drawable.blank_sheet)
+                //imageView_clicked.alpha = 0.1f
         }
 
         when(prefs.getString("list_preference_1", "0"))
         {
             "Default" ->
             {
-                textView1.typeface = Typeface.DEFAULT
+                textView_name.typeface = Typeface.DEFAULT
                 editText1.typeface = Typeface.DEFAULT
             }
             "Serif" ->
             {
-                textView1.typeface = Typeface.SERIF
+                textView_name.typeface = Typeface.SERIF
                 editText1.typeface = Typeface.SERIF
             }
             "Sans Serif" ->
             {
-                textView1.typeface = Typeface.SANS_SERIF
+                textView_name.typeface = Typeface.SANS_SERIF
                 editText1.typeface = Typeface.SANS_SERIF
             }
             "Default Bald" ->
             {
-                textView1.typeface = Typeface.DEFAULT_BOLD
+                textView_name.typeface = Typeface.DEFAULT_BOLD
                 editText1.typeface = Typeface.DEFAULT_BOLD
             }
             "Monospace" ->
             {
-                textView1.typeface = Typeface.MONOSPACE
+                textView_name.typeface = Typeface.MONOSPACE
                 editText1.typeface = Typeface.MONOSPACE
             }
         }

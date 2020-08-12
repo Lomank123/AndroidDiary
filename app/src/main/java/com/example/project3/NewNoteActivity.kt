@@ -18,6 +18,7 @@ class NewNoteActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_new_note)
 
+        imageView_note.setImageResource(R.drawable.blank_sheet)
         // обработчик нажатий на кнопку Save
         button_save_note.setOnClickListener {
             // если поле пустое устанавливаем отриц. результат
@@ -34,8 +35,7 @@ class NewNoteActivity : AppCompatActivity() {
             // завершаем работу с активити
             finish()
         }
-        // TODO: Добавить диалоговое окно в случае нажатии кнопки отмена
-        button_cancel_note1.setOnClickListener {
+        button_cancel_note.setOnClickListener {
             // Если изменения были, спрашиваем, хочет ли пользователь покинуть окно
             if (isPhotoExist || edit_note.text.toString().isNotEmpty() || edit_text_note.text.toString().isNotEmpty())
                 makeDialog()
@@ -49,7 +49,7 @@ class NewNoteActivity : AppCompatActivity() {
         delete_photo_button_note.setOnClickListener{
             if (isPhotoExist) {
                 isPhotoExist = false
-                imageView_note.setImageResource(R.mipmap.ic_launcher_round)
+                imageView_note.setImageResource(R.drawable.blank_sheet)
                 replyIntent.putExtra(EXTRA_NEW_NOTE_IMAGE, "")
             }
         }

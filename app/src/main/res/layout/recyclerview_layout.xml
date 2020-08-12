@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -11,7 +10,7 @@
     android:foreground="?android:attr/selectableItemBackground">
 
     <RelativeLayout
-        android:id="@+id/rellayout"
+        android:id="@+id/relative_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#FFFFFF"
@@ -27,7 +26,7 @@
             app:civ_border_width="2dp" />
 
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/textView_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
@@ -39,7 +38,7 @@
             android:textSize="16sp" />
 
         <TextView
-            android:id="@+id/textView1"
+            android:id="@+id/textView_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
@@ -78,4 +77,5 @@
             app:srcCompat="@android:drawable/btn_star_big_on" />
 
     </RelativeLayout>
+
 </androidx.cardview.widget.CardView>

@@ -23,30 +23,33 @@ class EditDiaryActivity : AppCompatActivity() {
 
         val diary = intent.getSerializableExtra("diaryEdit") as? Diary
 
-        edit_word.setText(diary!!.name)
-        edit_descr.setText(diary.content)
+        edit_diary.setText(diary!!.name)
+        edit_content.setText(diary.content)
 
         if (diary.img != null && diary.img != "") {
             isPhotoExist = true
             val uriImage = Uri.parse(diary.img)
-            imageView5.setImageURI(uriImage)
+            imageView_new_diary.setImageURI(uriImage)
         }
+        else
+            imageView_new_diary.setImageResource(R.drawable.logo)
+
         button_save.setOnClickListener {
-            if (TextUtils.isEmpty(edit_word.text)) {
+            if (TextUtils.isEmpty(edit_diary.text)) {
                 // устанавливаем результат как RESULT_CANCELED (отменен)
                 setResult(Activity.RESULT_CANCELED, replyIntent)
             } else {
-                diary.name = edit_word.text.toString()
-                diary.content = edit_descr.text.toString()
+                diary.name = edit_diary.text.toString()
+                diary.content = edit_content.text.toString()
                 replyIntent.putExtra(EXTRA_EDIT_DIARY, diary)
                 setResult(Activity.RESULT_OK, replyIntent)
             }
             // завершаем работу с активити
             finish()
         }
-        button_cancel_word1.setOnClickListener {
+        button_cancel_diary.setOnClickListener {
             // Если изменения были, спрашиваем, хочет ли пользователь покинуть окно
-            if (isPhotoChanged || edit_word.text.toString() != diary.name || edit_descr.text.toString() != diary.content)
+            if (isPhotoChanged || edit_diary.text.toString() != diary.name || edit_content.text.toString() != diary.content)
                 makeDialog()
             else {
                 setResult(Activity.RESULT_CANCELED, replyIntent)
@@ -58,7 +61,7 @@ class EditDiaryActivity : AppCompatActivity() {
             if (isPhotoExist) {
                 isPhotoChanged = diary.img != null
                 isPhotoExist = false
-                imageView5.setImageResource(R.mipmap.ic_launcher_round)
+                imageView_new_diary.setImageResource(R.drawable.logo)
                 // Кладем в экстра данные картинки пустую строку
                 replyIntent.putExtra(EXTRA_EDIT_DIARY_IMAGE, "")
             }
@@ -93,7 +96,7 @@ class EditDiaryActivity : AppCompatActivity() {
         //super.onBackPressed()
         val diary = intent.getSerializableExtra("diaryEdit") as? Diary
         // Если изменения были, спрашиваем, хочет ли пользователь покинуть окно
-        if (isPhotoChanged || edit_word.text.toString() != diary!!.name || edit_descr.text.toString() != diary.content)
+        if (isPhotoChanged || edit_diary.text.toString() != diary!!.name || edit_content.text.toString() != diary.content)
             makeDialog()
         else
             super.onBackPressed()
@@ -104,7 +107,7 @@ class EditDiaryActivity : AppCompatActivity() {
         if (requestCode == choosePhotoRequestCode && resultCode == Activity.RESULT_OK)
         {
             val diary = intent.getSerializableExtra("diaryEdit") as? Diary
-            imageView5.setImageURI(data?.data)
+            imageView_new_diary.setImageURI(data?.data)
             replyIntent.putExtra(EXTRA_EDIT_DIARY_IMAGE, data?.data.toString())
 
             isPhotoChanged = diary!!.img != data?.data.toString()
