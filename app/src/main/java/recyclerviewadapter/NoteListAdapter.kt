@@ -36,25 +36,21 @@ class NoteListAdapter internal constructor(
     private var notes = emptyList<Note>()   // Сохраненная копия заметок
 
     class NoteItemDiffCallBack(
-        var oldNoteList : List<Note>,
-        var newNoteList : List<Note>
+        private var oldNoteList : List<Note>,
+        private var newNoteList : List<Note>
     ): DiffUtil.Callback() {
         override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
             return (oldNoteList[oldItemPosition].id == newNoteList[newItemPosition].id)
         }
-
         override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-            return oldNoteList[oldItemPosition].equals(newNoteList[newItemPosition])
+            return oldNoteList[oldItemPosition] == newNoteList[newItemPosition]
         }
-
         override fun getOldListSize(): Int {
             return oldNoteList.size
         }
-
         override fun getNewListSize(): Int {
             return newNoteList.size
         }
-
     }
 
     // передаем сюда образец одного элемента списка
@@ -181,12 +177,10 @@ class NoteListAdapter internal constructor(
                         }
                         R.id.edit -> {
                             listenerEdit(note)
-                            notifyDataSetChanged()
                             true
                         }
                         R.id.bookmark -> {
                             listenerBookmark(note)
-                            notifyDataSetChanged()
                             if(note.favorite)
                                 noteStarView.visibility = VISIBLE
                             else
@@ -197,23 +191,12 @@ class NoteListAdapter internal constructor(
                         else -> false
                     }
                 }
-                // показываем меню
-                popupMenu.show()
+                popupMenu.show() // показываем меню
                 // Т.к. в LongClickListener нужно вернуть boolean, возвращаем его
                 return@setOnLongClickListener true
             }
         }
     }
-
-    //private fun setAnimation(viewToAnimate : View)
-    //{
-    //    if(viewToAnimate.animation == null)
-    //    {
-    //        val animation = AnimationUtils.loadAnimation(viewToAnimate.context,
-    //            android.R.anim.slide_in_left)
-    //        viewToAnimate.animation = animation
-    //    }
-    //}
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoteViewHolder {
         // добавляет контент(XML) из 1-го аргумента, и помещает во второй (родительский)
@@ -228,11 +211,9 @@ class NoteListAdapter internal constructor(
     }
 
     internal fun setNotes(notes: List<Note>) {
-
         val oldList = this.notes
         val diffResult : DiffUtil.DiffResult = DiffUtil.calculateDiff(
-            NoteItemDiffCallBack(oldList, notes)
-        )
+            NoteItemDiffCallBack(oldList, notes))
         this.notes = notes      // обновляем внутренний список
         diffResult.dispatchUpdatesTo(this)
         //notifyDataSetChanged()  // даем понять адаптеру, что были внесены изменения
@@ -241,8 +222,7 @@ class NoteListAdapter internal constructor(
     internal fun setFavoriteNotes(notes: List<Note>){
         val oldList = this.notes
         val diffResult : DiffUtil.DiffResult = DiffUtil.calculateDiff(
-            NoteItemDiffCallBack(oldList, notes.sortedBy { !it.favorite })
-        )
+            NoteItemDiffCallBack(oldList, notes.sortedBy { !it.favorite }))
         this.notes = notes.sortedBy { !it.favorite }
         diffResult.dispatchUpdatesTo(this)
         //notifyDataSetChanged()

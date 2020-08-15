@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.os.Handler
 import android.view.*
 import androidx.fragment.app.Fragment
 import android.widget.Toast
@@ -39,7 +40,6 @@ class NoteFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         setHasOptionsMenu(true)
         super.onCreate(savedInstanceState)
-
     }
 
     override fun onCreateView(
@@ -158,7 +158,6 @@ class NoteFragment : Fragment() {
     // Удаление записи
     private fun deleteNote(note : Note)
     {
-        // TODO: проверить удаление голосовой заметки!!!
         val fileName = activity!!.getExternalFilesDir(null)!!.absolutePath + "/${note.name}_${note.id}.3gpp"
         if (File(fileName).exists())
             File(fileName).delete()
@@ -242,6 +241,7 @@ class NoteFragment : Fragment() {
     }
 
     // создает OptionsMenu
+    // TODO: Добавить возможность удаления свайпом и перемещение элементов и отредактировать как в MainActivity
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.actionbar_menu_note, menu)
 
@@ -344,6 +344,10 @@ class NoteFragment : Fragment() {
 
         fab_favourite_note.animate().translationY(translationY).alpha(0f).setDuration(300).start()
         fab_new_note.animate().translationY(translationY).alpha(0f).setDuration(300).start()
+        Handler().postDelayed({
+            fab_favourite_note.visibility = View.GONE
+            fab_new_note.visibility = View.GONE
+        }, 300)
     }
 
     // открывает выдвиг. меню
@@ -352,6 +356,8 @@ class NoteFragment : Fragment() {
 
         fab_menu_note.animate().rotation(90f).setDuration(300).start()
 
+        fab_favourite_note.visibility = View.VISIBLE
+        fab_new_note.visibility = View.VISIBLE
         fab_favourite_note.animate().translationY(0f).alpha(1f).setDuration(300).start()
         fab_new_note.animate().translationY(0f).alpha(1f).setDuration(300).start()
     }

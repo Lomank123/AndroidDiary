@@ -5,15 +5,20 @@ import android.app.Activity
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.os.Handler
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_main.*
 import recyclerviewadapter.DiaryListAdapter
 import roomdatabase.ExtendedDiary
@@ -30,6 +35,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mainViewModel: MainViewModel        // добавляем ViewModel
     private var isFabOpen : Boolean = false                  // по умолч. меню закрыто
     private val colors: List<String> = listOf("green", "blue", "grass", "purple", "yellow")
+    private lateinit var extDiaryList : List<ExtendedDiary>
 
     private val translationY = 100f
 
@@ -53,16 +59,18 @@ class MainActivity : AppCompatActivity() {
         recyclerview.addItemDecoration(TopSpacingItemDecoration(20))
 
         // TODO: Использовать это в Списке Дел
-        //val itemTouchHelper = ItemTouchHelper(itemTouchHelperCallback)
-        //itemTouchHelper.attachToRecyclerView(recyclerview)
+        val itemTouchHelper = ItemTouchHelper(itemTouchHelperCallback)
+        itemTouchHelper.attachToRecyclerView(recyclerview)
 
         // Следит за изменением списка записей(дневников) и обновляет данные в RecyclerView
         mainViewModel.allExtendedDiaries.observe(this, Observer {
+            extDiaryList = it
             if (prefs.getBoolean("sorted", false))
                 adapter.setFavoriteDiaries(it)
             else
                 adapter.setDiaries(it)
         })
+
         // Кнопки
         // Кнопка вызова выдвиг. меню
         fab_menu.setOnClickListener {
@@ -81,17 +89,14 @@ class MainActivity : AppCompatActivity() {
         // Кнопка сортировки по избранным
         fab_favourite.setOnClickListener {
             closeFabMenu()
-            if(prefs.getBoolean("sorted", false))
-            {
+            if (prefs.getBoolean("sorted", false)) {
                 prefs.edit().putBoolean("sorted", false).apply()
-                adapter.setDiaries(mainViewModel.allExtendedDiaries.value!!)
-                recyclerview.scrollToPosition(0)
-            }
-            else {
+                adapter.setDiaries(extDiaryList)
+            } else {
                 prefs.edit().putBoolean("sorted", true).apply()
-                adapter.setFavoriteDiaries(mainViewModel.allExtendedDiaries.value!!)
-                recyclerview.scrollToPosition(0)
+                adapter.setFavoriteDiaries(extDiaryList)
             }
+            recyclerview.scrollToPosition(0)
         }
         fab_new_diary.alpha = 0f
         fab_favourite.alpha = 0f
@@ -100,23 +105,28 @@ class MainActivity : AppCompatActivity() {
     }
 
     // TODO: Использовать это в Списке Дел
-    // Поскольку передается позиция в списке адаптера, невозможно удалить нужный нам объект,
-    // т.к. позиции при поиске не совпадают с позициями в главном списке
-    //private val itemTouchHelperCallback=
-    //    object :
-    //        ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT){
-    //        override fun onMove(
-    //            recyclerView: RecyclerView,
-    //            viewHolder: RecyclerView.ViewHolder,
-    //            target: RecyclerView.ViewHolder
-    //        ): Boolean {
-    //            return false
-    //        }
-    //        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-    //            deleteDiary(mainViewModel.allExtendedDiaries.value!![viewHolder.adapterPosition])
-    //            recyclerview.adapter!!.notifyDataSetChanged()
-    //        }
-    //    }
+    // Реализует удаление свайпом вправо, а так же переставление элементов списка
+    private val itemTouchHelperCallback=
+        object :
+            ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT){
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                return false
+            }
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val prefs: SharedPreferences? = PreferenceManager.getDefaultSharedPreferences(this@MainActivity)
+                val objToDelete : ExtendedDiary
+                objToDelete = if (prefs!!.getBoolean("sorted", false))
+                    extDiaryList.sortedBy{ !it.diary.favorite }[viewHolder.adapterPosition]
+                else {
+                    extDiaryList[viewHolder.adapterPosition]
+                }
+                deleteDiary(objToDelete)
+            }
+        }
 
     override fun onResume()
     {
@@ -237,12 +247,16 @@ class MainActivity : AppCompatActivity() {
                 }
                 override fun onQueryTextChange(newText: String?): Boolean {
                     // будет обновлять список когда будут добавляться/удаляться записи
+                    // Перед установкой нового Observer предварительно удаляем старый,
+                    // чтобы избежать мигания элементов списка
+                    if (mainViewModel.allExtendedDiaries.hasActiveObservers())
+                        mainViewModel.allExtendedDiaries.removeObservers(this@MainActivity)
                     mainViewModel.allExtendedDiaries.observe(this@MainActivity, Observer {
-                        setDiariesForSearch(recyclerview.adapter as DiaryListAdapter, prefs, it,
+                        extDiaryList = it
+                        setDiariesForSearch(recyclerview.adapter as DiaryListAdapter, prefs,
                             newText)
                     })
-                    setDiariesForSearch(recyclerview.adapter as DiaryListAdapter, prefs,
-                        mainViewModel.allExtendedDiaries.value!!, newText)
+                    setDiariesForSearch(recyclerview.adapter as DiaryListAdapter, prefs, newText)
                     return true
                 }
             })
@@ -251,8 +265,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     // Функция для вывода поискового запроса (используется только в SearchView)
-    private fun setDiariesForSearch(adapter : DiaryListAdapter, prefs : SharedPreferences?,
-                                  allDiariesList : List<ExtendedDiary>, newText : String?)
+    private fun setDiariesForSearch(adapter : DiaryListAdapter, prefs : SharedPreferences?, newText : String?)
     {
         // diariesSearchList - список записей, удовлетворяющих поисковому запросу
         val diariesSearchList = mutableListOf<ExtendedDiary>()
@@ -264,32 +277,17 @@ class MainActivity : AppCompatActivity() {
                 if(it.diary.name.toLowerCase(Locale.ROOT).contains(search))
                     diariesSearchList.add(it)
             }
+            extDiaryList = diariesSearchList
             if (prefs!!.getBoolean("sorted", false))
-                adapter.setFavoriteDiaries(diariesSearchList)
+                adapter.setFavoriteDiaries(extDiaryList)
             else
-                adapter.setDiaries(diariesSearchList)
+                adapter.setDiaries(extDiaryList)
         } else { // Если строка поиска пуста
+            extDiaryList = mainViewModel.allExtendedDiaries.value!!
             if (prefs!!.getBoolean("sorted", false))
-                adapter.setFavoriteDiaries(allDiariesList)
+                adapter.setFavoriteDiaries(extDiaryList)
             else
-                adapter.setDiaries(allDiariesList)
-        }
-        // Слушатель на кнопку для правильной сортировки
-        fab_favourite.setOnClickListener {
-            closeFabMenu()
-            if (prefs.getBoolean("sorted", false)) {
-                prefs.edit().putBoolean("sorted", false).apply()
-                if (newText.isNotEmpty())
-                    (recyclerview.adapter as DiaryListAdapter).setDiaries(diariesSearchList)
-                else
-                    (recyclerview.adapter as DiaryListAdapter).setDiaries(allDiariesList)
-            } else {
-                prefs.edit().putBoolean("sorted", true).apply()
-                if (newText.isNotEmpty())
-                    (recyclerview.adapter as DiaryListAdapter).setFavoriteDiaries(diariesSearchList)
-                else
-                    (recyclerview.adapter as DiaryListAdapter).setFavoriteDiaries(allDiariesList)
-            }
+                adapter.setDiaries(extDiaryList)
         }
     }
 
@@ -319,8 +317,13 @@ class MainActivity : AppCompatActivity() {
         // возвращает элементы на исходные позиции
         fab_menu.animate().rotation(0f).setDuration(300).start()
 
+
         fab_favourite.animate().translationY(translationY).alpha(0f).setDuration(300).start()
         fab_new_diary.animate().translationY(translationY).alpha(0f).setDuration(300).start()
+        Handler().postDelayed({
+            fab_new_diary.visibility = GONE
+            fab_favourite.visibility = GONE
+        }, 300)
 
     }
 
@@ -330,6 +333,8 @@ class MainActivity : AppCompatActivity() {
 
         fab_menu.animate().rotation(90f).setDuration(300).start()
 
+        fab_new_diary.visibility = VISIBLE
+        fab_favourite.visibility = VISIBLE
         fab_favourite.animate().translationY(0f).alpha(1f).setDuration(300).start()
         fab_new_diary.animate().translationY(0f).alpha(1f).setDuration(300).start()
     }

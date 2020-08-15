@@ -39,25 +39,21 @@ class DiaryListAdapter internal constructor(
     private val prefs: SharedPreferences? = PreferenceManager.getDefaultSharedPreferences(mContext)
 
     class DiaryItemDiffCallBack(
-        var oldDiaryList : List<ExtendedDiary>,
-        var newDiaryList : List<ExtendedDiary>
+        private var oldDiaryList : List<ExtendedDiary>,
+        private var newDiaryList : List<ExtendedDiary>
     ): DiffUtil.Callback() {
         override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
             return (oldDiaryList[oldItemPosition].diary.id == newDiaryList[newItemPosition].diary.id)
         }
-
         override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-            return oldDiaryList[oldItemPosition].equals(newDiaryList[newItemPosition])
+            return oldDiaryList[oldItemPosition] == newDiaryList[newItemPosition]
         }
-
         override fun getOldListSize(): Int {
             return oldDiaryList.size
         }
-
         override fun getNewListSize(): Int {
             return newDiaryList.size
         }
-
     }
 
     // передаем сюда образец одного элемента списка
@@ -185,7 +181,6 @@ class DiaryListAdapter internal constructor(
                         }
                         R.id.bookmark -> {
                             listenerBookmarkDiary(extDiary)
-                            notifyDataSetChanged()
                             if(extDiary.diary.favorite)
                                 diaryStarView.visibility = VISIBLE
                             else
@@ -196,24 +191,12 @@ class DiaryListAdapter internal constructor(
                         else -> false
                     }
                 }
-                // показываем меню
-                popupMenu.show()
+                popupMenu.show() // показываем меню
                 // Т.к. в LongClickListener нужно вернуть boolean, возвращаем его
                 return@setOnLongClickListener true
             }
-
         }
     }
-
-    //private fun setAnimation(viewToAnimate : View)
-    //{
-    //    if(viewToAnimate.animation == null)
-    //    {
-    //        val animation = AnimationUtils.loadAnimation(viewToAnimate.context,
-    //        android.R.anim.slide_in_left)
-    //        viewToAnimate.animation = animation
-    //    }
-    //}
 
     // создание ViewHolder (одинаково для всех RecyclerView)
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DiaryViewHolder {
@@ -228,25 +211,20 @@ class DiaryListAdapter internal constructor(
         holder.bindView(diaries[position])
     }
 
-    // ВАЖНО: setWords вызывается в момент того, когда обсервер заметил изменения в записях
+    // ВАЖНО: setDiaries вызывается в момент того, когда обсервер заметил изменения в записях
     // и чтобы зафиксировать эти изменения в RecyclerView, нужно передавать новый список сюда
     internal fun setDiaries(diaries: List<ExtendedDiary>) {
         val oldList = this.diaries
         val diffResult : DiffUtil.DiffResult = DiffUtil.calculateDiff(
-            DiaryItemDiffCallBack(oldList, diaries)
-        )
-        // notifyDataSetChanged() даст сигнал о том, что данные изменились
-        // и нужно их обновить и в самом RecycleView
+            DiaryItemDiffCallBack(oldList, diaries))
         this.diaries = diaries      // обновляем внутренний список
         diffResult.dispatchUpdatesTo(this)
         //notifyDataSetChanged()
     }
     internal fun setFavoriteDiaries(diaries: List<ExtendedDiary>){
-
         val oldList = this.diaries
         val diffResult : DiffUtil.DiffResult = DiffUtil.calculateDiff(
-            DiaryItemDiffCallBack(oldList, diaries.sortedBy { !it.diary.favorite })
-        )
+            DiaryItemDiffCallBack(oldList, diaries.sortedBy { !it.diary.favorite }))
         this.diaries = diaries.sortedBy { !it.diary.favorite }
         diffResult.dispatchUpdatesTo(this)
         //notifyDataSetChanged()
