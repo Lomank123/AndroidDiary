@@ -65,9 +65,10 @@ class NoteListAdapter internal constructor(
         private val noteImageView : ImageView = itemView.findViewById(R.id.imageView)
         private val noteDateView : TextView = itemView.findViewById(R.id.date_text)
         private val noteStarView : ImageView = itemView.findViewById(R.id.imageView_star)
+        private val noteImageButtonView : ImageButton = itemView.findViewById(R.id.imageButtonOptions)
 
         // эта функция применяется для каждого члена RecyclerView т.к. вызывается в onBindViewHolder
-        fun bindView(note: Note, listener : (Note) -> Unit) {
+        fun bindView(note: Note) {
             // устанавливаем значения во вью
             noteItemView.text = note.name // название заметки
             // Лимит на кол-во символов в тексте заметки для отображения: 12
@@ -126,10 +127,10 @@ class NoteListAdapter internal constructor(
             // Устанавливаем обработчик нажатий на элемент RecyclerView, при нажатии
             // будет вызываться первый listener (listenerOpen), который открывает заметку
             itemView.setOnClickListener {
-                listener(note)
+                listenerOpen(note)
             }
             // обработчик долгих нажатий для вызова контекстного меню
-            itemView.setOnLongClickListener{
+            noteImageButtonView.setOnClickListener{
                 // Устанавливаем контекстное меню
                 val popupMenu = PopupMenu(mContext, it)
                 popupMenu.inflate(R.menu.menu_notes)
@@ -171,7 +172,7 @@ class NoteListAdapter internal constructor(
                             true
                         }
                         R.id.open -> {
-                            listener(note)  // открытие записи
+                            listenerOpen(note)  // открытие записи
                             // Т.к. в этом обработчике нужно вернуть boolean, возвращаем true
                             true
                         }
@@ -193,7 +194,6 @@ class NoteListAdapter internal constructor(
                 }
                 popupMenu.show() // показываем меню
                 // Т.к. в LongClickListener нужно вернуть boolean, возвращаем его
-                return@setOnLongClickListener true
             }
         }
     }
@@ -207,7 +207,7 @@ class NoteListAdapter internal constructor(
 
     // Устанавливает значение для каждого элемента RecyclerView
     override fun onBindViewHolder(holder: NoteViewHolder, position: Int) {
-        holder.bindView(notes[position], listenerOpen)
+        holder.bindView(notes[position])
     }
 
     internal fun setNotes(notes: List<Note>) {

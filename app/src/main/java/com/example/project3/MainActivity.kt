@@ -21,12 +21,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_main.*
 import recyclerviewadapter.DiaryListAdapter
-import roomdatabase.ExtendedDiary
 import roomdatabase.Diary
+import roomdatabase.ExtendedDiary
 import viewmodel.MainViewModel
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -55,13 +56,12 @@ class MainActivity : AppCompatActivity() {
         recyclerview.adapter = adapter
         // задаем LinearLayoutManager (одинаково для всех RecyclerView)
         recyclerview.layoutManager = LinearLayoutManager(this)
-        // добавляет в декорацию элемента дневника и заметки этот отступ
-        recyclerview.addItemDecoration(TopSpacingItemDecoration(20))
+        recyclerview.addItemDecoration(TopSpacingItemDecoration(20)) // отступы
 
         // TODO: Использовать это в Списке Дел
         val itemTouchHelper = ItemTouchHelper(itemTouchHelperCallback)
         itemTouchHelper.attachToRecyclerView(recyclerview)
-
+        
         // Следит за изменением списка записей(дневников) и обновляет данные в RecyclerView
         mainViewModel.allExtendedDiaries.observe(this, Observer {
             extDiaryList = it
@@ -105,7 +105,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     // TODO: Использовать это в Списке Дел
-    // Реализует удаление свайпом вправо, а так же переставление элементов списка
+    // Реализует удаление свайпом вправо
     private val itemTouchHelperCallback=
         object :
             ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT){
@@ -114,7 +114,29 @@ class MainActivity : AppCompatActivity() {
                 viewHolder: RecyclerView.ViewHolder,
                 target: RecyclerView.ViewHolder
             ): Boolean {
-                return false
+                //TODO: использовать только в списке дел
+            //    val fromPosition = viewHolder.adapterPosition
+            //    val toPosition = target.adapterPosition
+            //    if (fromPosition < toPosition) {
+            //        for (i in fromPosition until toPosition) {
+            //            Collections.swap(extDiaryList, i, i + 1)
+            //            val order1: Int = extDiaryList[i].diary.order!!
+            //            val order2: Int = extDiaryList[i + 1].diary.order!!
+            //            extDiaryList[i + 1].diary.order = order1
+            //            extDiaryList[i].diary.order = order2
+            //        }
+            //    } else {
+            //        for (i in fromPosition downTo toPosition + 1) {
+            //            Collections.swap(mWordEntities, i, i - 1)
+            //            val order1: Int = mWordEntities.get(i).getOrder()
+            //            val order2: Int = mWordEntities.get(i - 1).getOrder()
+            //            mWordEntities.get(i).setOrder(order2)
+            //            mWordEntities.get(i - 1).setOrder(order1)
+            //        }
+            //    }
+            //    //TODO: DiffUtil
+            //    recyclerview.adapter!!.notifyItemMoved(fromPosition, toPosition)
+                return true
             }
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val prefs: SharedPreferences? = PreferenceManager.getDefaultSharedPreferences(this@MainActivity)

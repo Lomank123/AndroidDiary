@@ -116,6 +116,75 @@ data class Note(@ColumnInfo(name = "note_name") var name : String,          // �
     }
 }
 
+@Entity(tableName = "daily_list_table")                                           // Название таблицы
+data class DailyListName(@ColumnInfo(name = "daily_list_name") var name : String,          // Название
+                         @ColumnInfo(name = "daily_list_parent_id") val parentId : Long   // id дневника, к к-му привязана
+) : Serializable
+{
+    // Первичный ключ - id с авто-генерацией ключей
+    @PrimaryKey(autoGenerate = true)
+    var id : Long = 0                               // id заметки
+
+    @ColumnInfo(name = "daily_list_creation_date")
+    var creationDate : String? = null               // Дата создания
+
+    override fun equals(other: Any?): Boolean {
+
+        if(javaClass != other?.javaClass)
+            return false
+
+        other as DailyListName
+
+        if(id != other.id)
+            return false
+        if(name != other.name)
+            return false
+        if(creationDate != other.creationDate)
+            return false
+
+        return true
+    }
+}
+
+@Entity(tableName = "daily_list_item_table")                                           // Название таблицы
+data class DailyListItem(@ColumnInfo(name = "daily_list_item_name") var name : String,          // Название
+                         @ColumnInfo(name = "daily_list_item_parent_id") val parentId : Long   // id дневника, к к-му привязана
+) : Serializable
+{
+    // Первичный ключ - id с авто-генерацией ключей
+    @PrimaryKey(autoGenerate = true)
+    var id : Long = 0                               // id заметки
+
+    @ColumnInfo(name = "daily_list_item_color")
+    var color : String? = null                      // цвет
+
+    @ColumnInfo(name = "daily_list_item_is_done")
+    var isDone : Boolean = false                    // сделано ли дело
+
+    override fun equals(other: Any?): Boolean {
+
+        if(javaClass != other?.javaClass)
+            return false
+
+        other as DailyListItem
+
+        if(id != other.id)
+            return false
+        if(name != other.name)
+            return false
+        if(color != other.color)
+            return false
+
+        return true
+    }
+}
+
+
+
+data class DailyList(@Embedded val dailyListName : DailyListName,
+                     @Relation(parentColumn = "id", entityColumn = "daily_list_item_parent_id")
+                     val dailyListItems : List<DailyListItem>) : Serializable
+
 /**
  * Дата-класс, в котором ключевая модель - модель Diary, а связные - все остальные
  * Т.е. при помощи полиморфной связи в этом классе соединены несколько моделей

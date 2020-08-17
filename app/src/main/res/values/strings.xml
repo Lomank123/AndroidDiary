@@ -32,6 +32,13 @@
     <string name="dialog_save">Saving</string>
     <string name="dialog_check_leave">There are some unsaved changes. Do you want to close this window?</string>
     <string name="dialog_leave_changes">Unsaved changes</string>
+    <string name="dialog_new_item">New item</string>
+    <string name="dialog_item_name">Item name…</string>
+    <string name="dialog_item_input_text">Input a name of a new item</string>
+    <string name="dialog_new_daily_list">New Daily List</string>
+    <string name="dialog_new_daily_list_text">Input Daily List name</string>
+    <string name="dialog_new_daily_list_hint">Name…</string>
+
 
 
     <!-- Settings -->

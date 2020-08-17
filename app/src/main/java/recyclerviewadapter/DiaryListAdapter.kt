@@ -68,6 +68,7 @@ class DiaryListAdapter internal constructor(
         private val diaryDateView: TextView = itemView.findViewById(R.id.date_text)
         private val diaryImageView: ImageView = itemView.findViewById(R.id.imageView)
         private val diaryStarView: ImageView = itemView.findViewById(R.id.imageView_star)
+        private val diaryImageButtonView : ImageButton = itemView.findViewById(R.id.imageButtonOptions)
 
         // эта функция применяется для каждого члена RecyclerView т.к. вызывается в onBindViewHolder
         fun bindView(extDiary: ExtendedDiary) {
@@ -133,7 +134,7 @@ class DiaryListAdapter internal constructor(
                 listenerOpenDiary(extDiary)
             }
             // обработчик долгих нажатий для вызова контекстного меню
-            itemView.setOnLongClickListener{
+            diaryImageButtonView.setOnClickListener{
                 // Устанавливаем контекстное меню
                 val popupMenu = PopupMenu(mContext, it)
                 popupMenu.inflate(R.menu.menu_notes)
@@ -192,8 +193,6 @@ class DiaryListAdapter internal constructor(
                     }
                 }
                 popupMenu.show() // показываем меню
-                // Т.к. в LongClickListener нужно вернуть boolean, возвращаем его
-                return@setOnLongClickListener true
             }
         }
     }

@@ -31,6 +31,7 @@ class NoteFragment : Fragment() {
     private val clickedActivityRequestCode = 2              // для ClickedActivity (requestCode)
     private val editNoteActivityRequestCode = 3
     private lateinit var mainViewModel: MainViewModel       // добавляем ViewModel
+    private lateinit var mainNoteList : List<Note>
 
     private var isFabOpen : Boolean = false                 // по умолч. меню закрыто
     private val translationY = 100f
@@ -48,7 +49,7 @@ class NoteFragment : Fragment() {
     ): View? {
         val layout = inflater.inflate(R.layout.fragment_note, container, false)
 
-        val extDiaryParent = activity!!.intent.getSerializableExtra("extDiaryParent") as? ExtendedDiary
+        val extDiaryParent = requireActivity().intent.getSerializableExtra("extDiaryParent") as? ExtendedDiary
 
         val prefs: SharedPreferences? = PreferenceManager.getDefaultSharedPreferences(activity)
         if (!(prefs!!.contains("sorted_notes")))
@@ -60,16 +61,18 @@ class NoteFragment : Fragment() {
         layout.recyclerview_note.addItemDecoration(TopSpacingItemDecoration(20))       // Отступы
 
         //val itemTouchHelper = ItemTouchHelper(itemTouchHelperCallback)
-        //itemTouchHelper.attachToRecyclerView(recyclerview1)
+        //itemTouchHelper.attachToRecyclerView(recyclerview_note)
 
         mainViewModel = ViewModelProvider(this).get(MainViewModel::class.java)
 
+        if (mainViewModel.allExtendedDiaries.hasActiveObservers())
+            mainViewModel.allExtendedDiaries.removeObservers(requireActivity())
         mainViewModel.allExtendedDiaries.observe(viewLifecycleOwner, Observer {
-            val noteList = findListOfNotes(it, extDiaryParent)
+            mainNoteList = findListOfNotes(it, extDiaryParent)
             if (prefs.getBoolean("sorted_notes", false))
-                adapter.setFavoriteNotes(noteList)
+                adapter.setFavoriteNotes(mainNoteList)
             else
-                adapter.setNotes(noteList)
+                adapter.setNotes(mainNoteList)
         })
 
         // Кнопки
@@ -87,13 +90,12 @@ class NoteFragment : Fragment() {
         // обработчик нажатий на 1-ую кнопку
         layout.fab_favourite_note.setOnClickListener {
             closeFabMenu()
-            if(prefs.getBoolean("sorted_notes", false))
-            {
+            if(prefs.getBoolean("sorted_notes", false)) {
                 prefs.edit().putBoolean("sorted_notes", false).apply()
-                adapter.setNotes(findListOfNotes(mainViewModel.allExtendedDiaries.value!!, extDiaryParent))
+                adapter.setNotes(mainNoteList)
             } else {
                 prefs.edit().putBoolean("sorted_notes", true).apply()
-                adapter.setFavoriteNotes(findListOfNotes(mainViewModel.allExtendedDiaries.value!!, extDiaryParent))
+                adapter.setFavoriteNotes(mainNoteList)
             }
             layout.recyclerview_note.scrollToPosition(0)
         }
@@ -128,7 +130,7 @@ class NoteFragment : Fragment() {
 
     private fun newNoteAdapter() : NoteListAdapter
     {
-        return NoteListAdapter(activity!!, {
+        return NoteListAdapter(requireActivity(), {
             val intent = Intent(activity, ClickedActivity::class.java)
             // передаем необходимые данные в ClickedActivity
             intent.putExtra("noteSerializable", it)
@@ -155,10 +157,34 @@ class NoteFragment : Fragment() {
         })
     }
 
+    // TODO: Убрать за ненадобностью
+    // нет смысла добавлять удаление свайпом вправо т.к. свайп вправо - смена фрагмента
+    //private val itemTouchHelperCallback =
+    //    object :
+    //        ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT){
+    //        override fun onMove(
+    //            recyclerView: RecyclerView,
+    //            viewHolder: RecyclerView.ViewHolder,
+    //            target: RecyclerView.ViewHolder
+    //        ): Boolean {
+    //            return false
+    //        }
+    //        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+    //            val prefs: SharedPreferences? = PreferenceManager.getDefaultSharedPreferences(activity)
+    //            val objToDelete : Note
+    //            objToDelete = if (prefs!!.getBoolean("sorted_notes", false))
+    //                mainNoteList.sortedBy{ !it.favorite }[viewHolder.adapterPosition]
+    //            else {
+    //                mainNoteList[viewHolder.adapterPosition]
+    //            }
+    //            deleteNote(objToDelete)
+    //        }
+    //    }
+
     // Удаление записи
     private fun deleteNote(note : Note)
     {
-        val fileName = activity!!.getExternalFilesDir(null)!!.absolutePath + "/${note.name}_${note.id}.3gpp"
+        val fileName = requireActivity().getExternalFilesDir(null)!!.absolutePath + "/${note.name}_${note.id}.3gpp"
         if (File(fileName).exists())
             File(fileName).delete()
         mainViewModel.deleteNote(note)
@@ -172,22 +198,11 @@ class NoteFragment : Fragment() {
         return simpleDateFormat.format(Date())
     }
 
-    // TODO: редактировать или убрать за ненадобностью
-    // Создает объект Note
-    private fun createNote(name : String, content : String, parent_id : Long, date : String,
-                           img : String?=null, color : String?=null) : Note
-    {
-        val note = Note(name, content, parent_id, date)
-        note.img = img
-        note.color = color
-        return note
-    }
-
     // функция для обработки результата после вызова startActivityForResult()
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        val extDiaryParent = activity!!.intent.getSerializableExtra("extDiaryParent") as? ExtendedDiary
+        val extDiaryParent = requireActivity().intent.getSerializableExtra("extDiaryParent") as? ExtendedDiary
 
         // Результат для добавления заметки
         if (requestCode == newNoteActivityRequestCode && resultCode == Activity.RESULT_OK)
@@ -200,8 +215,9 @@ class NoteFragment : Fragment() {
                     imgNote = extDiaryParent!!.diary.img
                 // С помощью ф-ии создаем объект заметки
                 // получаем из экстра данных массив с названием и текстом
-                val newNote = createNote(it[0], it[1], extDiaryParent!!.diary.id, currentDate(),
-                    img = imgNote, color = colors.random())
+                val newNote = Note(it[0], it[1], extDiaryParent!!.diary.id, currentDate())
+                newNote.img = imgNote
+                newNote.color = colors.random()
                 newNote.creationDate = currentDate()
                 mainViewModel.insertNote(newNote)
             }
@@ -241,12 +257,11 @@ class NoteFragment : Fragment() {
     }
 
     // создает OptionsMenu
-    // TODO: Добавить возможность удаления свайпом и перемещение элементов и отредактировать как в MainActivity
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.actionbar_menu_note, menu)
 
         val prefs: SharedPreferences? = PreferenceManager.getDefaultSharedPreferences(activity)
-        //val extDiaryParent = activity!!.intent.getSerializableExtra("extDiaryParent") as? ExtendedDiary
+        val extDiaryParent = requireActivity().intent.getSerializableExtra("extDiaryParent") as? ExtendedDiary
 
         val searchItem = menu.findItem(R.id.search_view)
         if (searchItem != null) {
@@ -256,7 +271,12 @@ class NoteFragment : Fragment() {
                     return true
                 }
                 override fun onQueryTextChange(newText: String?): Boolean {
+                    // Удаляем лишние обсерверы для плавной анимации
+                    if (mainViewModel.allExtendedDiaries.hasActiveObservers())
+                        mainViewModel.allExtendedDiaries.removeObservers(activity!!)
+
                     mainViewModel.allExtendedDiaries.observe(activity!!, Observer {
+                        mainNoteList = findListOfNotes(it, extDiaryParent)
                         setNotesForSearch((recyclerview_note.adapter as NoteListAdapter), prefs,
                             it, newText)
                     })
@@ -266,7 +286,6 @@ class NoteFragment : Fragment() {
                 }
             })
         }
-
         super.onCreateOptionsMenu(menu, inflater)
     }
 
@@ -293,45 +312,27 @@ class NoteFragment : Fragment() {
     private fun setNotesForSearch(adapter : NoteListAdapter, prefs : SharedPreferences?,
                                   extDiaries : List<ExtendedDiary>, newText : String?)
     {
-        val extDiaryParent = activity!!.intent.getSerializableExtra("extDiaryParent") as? ExtendedDiary
-
-        val getListNotes = findListOfNotes(extDiaries, extDiaryParent) // Список заметок дневника
+        val extDiaryParent = requireActivity().intent.getSerializableExtra("extDiaryParent") as? ExtendedDiary
         val noteList = mutableListOf<Note>()
 
         if (newText!!.isNotEmpty()) {
             val search = newText.toLowerCase(Locale.ROOT)
 
-            getListNotes.forEach{notes ->
+            mainNoteList.forEach{notes ->
                 if(notes.name.toLowerCase(Locale.ROOT).contains(search))
                     noteList.add(notes)
             }
+            mainNoteList = noteList
             if (prefs!!.getBoolean("sorted_notes", false))
-                adapter.setFavoriteNotes(noteList)
+                adapter.setFavoriteNotes(mainNoteList)
             else
-                adapter.setNotes(noteList)
+                adapter.setNotes(mainNoteList)
         } else { // Если строка поиска пуста
+            mainNoteList = findListOfNotes(extDiaries, extDiaryParent)
             if (prefs!!.getBoolean("sorted_notes", false))
-                adapter.setFavoriteNotes(getListNotes)
+                adapter.setFavoriteNotes(mainNoteList)
             else
-                adapter.setNotes(getListNotes)
-        }
-        // Слушатель на кнопку для правильной сортировки
-        fab_favourite_note.setOnClickListener {
-            closeFabMenu()
-            if (prefs.getBoolean("sorted_notes", false)) {
-                prefs.edit().putBoolean("sorted_notes", false).apply()
-                if (newText.isNotEmpty())
-                    (recyclerview_note.adapter as NoteListAdapter).setNotes(noteList)
-                else
-                    (recyclerview_note.adapter as NoteListAdapter).setNotes(getListNotes)
-            } else {
-                prefs.edit().putBoolean("sorted_notes", true).apply()
-                if (newText.isNotEmpty())
-                    (recyclerview_note.adapter as NoteListAdapter).setFavoriteNotes(noteList)
-                else
-                    (recyclerview_note.adapter as NoteListAdapter).setFavoriteNotes(getListNotes)
-            }
-            recyclerview_note.scrollToPosition(0)
+                adapter.setNotes(mainNoteList)
         }
     }
 

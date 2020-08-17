@@ -70,11 +70,52 @@ interface DiaryDao {
     @Query("DELETE FROM note_table")
     suspend fun deleteAllNotes()
 
+    // DailyListName queries
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertDailyListName(dailyListName : DailyListName)
+
+    @Update
+    suspend fun updateDailyListName(dailyListName : DailyListName)
+
+    @Transaction
+    @Query("DELETE FROM daily_list_table WHERE id = :dailyListNameId")
+    suspend fun deleteDailyListName(dailyListNameId : Long)
+
+    @Query("DELETE FROM daily_list_table")
+    suspend fun deleteAllDailyListNames()
+
+    // DailyListItem queries
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertDailyListItem(dailyListItem : DailyListItem)
+
+    @Update
+    suspend fun updateDailyListItem(dailyListItem : DailyListItem)
+
+    @Transaction
+    @Query("DELETE FROM daily_list_item_table WHERE daily_list_item_parent_id = :dailyListNameId")
+    suspend fun deleteItemsFromDailyList(dailyListNameId : Long)
+
+    @Transaction
+    @Query("DELETE FROM daily_list_item_table WHERE id = :dailyListItemId")
+    suspend fun deleteOneDailyListItem(dailyListItemId : Long)
+
+    @Query("DELETE FROM daily_list_item_table")
+    suspend fun deleteAllDailyListItems()
+
     // ExtendedDiary queries
 
     // Выдает все записи для дата-класса ExtendedDiary
     @Transaction
     @Query("SELECT * from diary_table")
     fun getExtendedDiaries() : LiveData<List<ExtendedDiary>>
+
+    // DailyList queries
+
+    @Transaction
+    @Query("SELECT * from daily_list_table")
+    fun getDailyLists() : LiveData<List<DailyList>>
+
 
 }

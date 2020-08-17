@@ -6,10 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import repository.MainRepository
-import roomdatabase.DiaryRoomDatabase
-import roomdatabase.Note
-import roomdatabase.ExtendedDiary
-import roomdatabase.Diary
+import roomdatabase.*
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -17,6 +14,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val repository: MainRepository
     // LiveData дают нам обновленные слова, когда они меняются
     val allExtendedDiaries: LiveData<List<ExtendedDiary>>
+    val allDailyLists : LiveData<List<DailyList>>
 
     init {
         // Gets reference to WordDao from WordRoomDatabase to construct
@@ -28,6 +26,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         repository = MainRepository(diaryDao)
         // передаем данные из репозитория во ViewModel
         allExtendedDiaries = repository.allExtendedDiaries
+        allDailyLists = repository.allDailyLists
     }
 
     // Diaries:
@@ -63,4 +62,39 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun updateNote(note: Note) = viewModelScope.launch{
         repository.updateNote(note)
     }
+
+    // DailyListNames:
+
+    fun insertDailyListName(dailyListName : DailyListName) = viewModelScope.launch{
+        repository.insertDailyListName(dailyListName)
+    }
+
+    fun deleteDailyListName(dailyListName : DailyListName) = viewModelScope.launch{
+        repository.deleteDailyListName(dailyListName)
+    }
+
+    fun updateDailyListName(dailyListName : DailyListName) = viewModelScope.launch{
+        repository.updateDailyListName(dailyListName)
+    }
+
+    // DailyListItems:
+
+    // добавить заметку
+    fun insertDailyListItem(dailyListItem : DailyListItem) = viewModelScope.launch{
+        repository.insertDailyListItem(dailyListItem)
+    }
+
+    // удалить заметку
+    fun deleteOneDailyListItem(dailyListItem : DailyListItem) = viewModelScope.launch{
+        repository.deleteOneDailyListItem(dailyListItem)
+    }
+
+    // обновить заметку
+    fun updateDailyListItem(dailyListItem : DailyListItem) = viewModelScope.launch{
+        repository.updateDailyListItem(dailyListItem)
+    }
+
+
+
+
 }
