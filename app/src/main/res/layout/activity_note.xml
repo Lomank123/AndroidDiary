@@ -15,16 +15,19 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tablayout1" />
+        app:layout_constraintTop_toBottomOf="@+id/tablayout1" >
+
+    </androidx.viewpager2.widget.ViewPager2>
 
     <com.google.android.material.tabs.TabLayout
+        app:tabGravity="fill"
         android:id="@+id/tablayout1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:tabMode="scrollable" />
+        app:tabMode="fixed" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

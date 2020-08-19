@@ -114,28 +114,6 @@ class MainActivity : AppCompatActivity() {
                 viewHolder: RecyclerView.ViewHolder,
                 target: RecyclerView.ViewHolder
             ): Boolean {
-                //TODO: использовать только в списке дел
-            //    val fromPosition = viewHolder.adapterPosition
-            //    val toPosition = target.adapterPosition
-            //    if (fromPosition < toPosition) {
-            //        for (i in fromPosition until toPosition) {
-            //            Collections.swap(extDiaryList, i, i + 1)
-            //            val order1: Int = extDiaryList[i].diary.order!!
-            //            val order2: Int = extDiaryList[i + 1].diary.order!!
-            //            extDiaryList[i + 1].diary.order = order1
-            //            extDiaryList[i].diary.order = order2
-            //        }
-            //    } else {
-            //        for (i in fromPosition downTo toPosition + 1) {
-            //            Collections.swap(mWordEntities, i, i - 1)
-            //            val order1: Int = mWordEntities.get(i).getOrder()
-            //            val order2: Int = mWordEntities.get(i - 1).getOrder()
-            //            mWordEntities.get(i).setOrder(order2)
-            //            mWordEntities.get(i - 1).setOrder(order1)
-            //        }
-            //    }
-            //    //TODO: DiffUtil
-            //    recyclerview.adapter!!.notifyItemMoved(fromPosition, toPosition)
                 return true
             }
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {

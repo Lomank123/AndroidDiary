@@ -30,8 +30,11 @@ class NoteActivity : AppCompatActivity() {
         viewPager.adapter = pagerAdapter
 
         val tabLayout : TabLayout = findViewById(R.id.tablayout1)
-        TabLayoutMediator(tabLayout, viewPager){ tab, _ ->
-            tab.text = "Fragment"
+        TabLayoutMediator(tabLayout, viewPager){ tab, position ->
+            when (position){
+                0 -> tab.text = "Notes"
+                1 -> tab.text = "Daily list"
+            }
         }.attach()
     }
 }

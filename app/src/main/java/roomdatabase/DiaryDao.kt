@@ -70,22 +70,16 @@ interface DiaryDao {
     @Query("DELETE FROM note_table")
     suspend fun deleteAllNotes()
 
-    // DailyListName queries
+    // DailyListItem queries
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertDailyListName(dailyListName : DailyListName)
+    //@Query("SELECT * from daily_list_item_table WHERE daily_list_item_parent_id = :diaryId")
+    //fun getDailyListItemsFromDiary(diaryId : Long): List<DailyListItem>
+
+    //@Query("SELECT MAX(daily_list_item_order) FROM daily_list_item_table WHERE daily_list_item_parent_id = :diaryId")
+    //suspend fun getOrderedItems(diaryId: Long) : Int
 
     @Update
-    suspend fun updateDailyListName(dailyListName : DailyListName)
-
-    @Transaction
-    @Query("DELETE FROM daily_list_table WHERE id = :dailyListNameId")
-    suspend fun deleteDailyListName(dailyListNameId : Long)
-
-    @Query("DELETE FROM daily_list_table")
-    suspend fun deleteAllDailyListNames()
-
-    // DailyListItem queries
+    suspend fun updateListOfItems(list : List<DailyListItem>)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertDailyListItem(dailyListItem : DailyListItem)
@@ -94,8 +88,8 @@ interface DiaryDao {
     suspend fun updateDailyListItem(dailyListItem : DailyListItem)
 
     @Transaction
-    @Query("DELETE FROM daily_list_item_table WHERE daily_list_item_parent_id = :dailyListNameId")
-    suspend fun deleteItemsFromDailyList(dailyListNameId : Long)
+    @Query("DELETE FROM daily_list_item_table WHERE daily_list_item_parent_id = :diaryId")
+    suspend fun deleteItemsFromDailyList(diaryId : Long)
 
     @Transaction
     @Query("DELETE FROM daily_list_item_table WHERE id = :dailyListItemId")
@@ -110,12 +104,4 @@ interface DiaryDao {
     @Transaction
     @Query("SELECT * from diary_table")
     fun getExtendedDiaries() : LiveData<List<ExtendedDiary>>
-
-    // DailyList queries
-
-    @Transaction
-    @Query("SELECT * from daily_list_table")
-    fun getDailyLists() : LiveData<List<DailyList>>
-
-
 }

@@ -8,7 +8,6 @@ class MainRepository (private val diaryDao : DiaryDao) {
 
     // получаем записи по запросу
     var allExtendedDiaries : LiveData<List<ExtendedDiary>> = diaryDao.getExtendedDiaries()
-    val allDailyLists : LiveData<List<DailyList>> = diaryDao.getDailyLists()
 
     // ВАЖНО: LiveData объекты постоянно активны и при изменениях в БД они сразу
     // же получают эту информацию,
@@ -24,6 +23,7 @@ class MainRepository (private val diaryDao : DiaryDao) {
     // удаляет дневник и ВСЕ записи в нем с помощью вызова 2-х запросов в DiaryDao
     suspend fun deleteDiary(diary: Diary)
     {
+        diaryDao.deleteItemsFromDailyList(diary.id) // Удаляем все пункты списка дел
         diaryDao.deleteNotesFromDiary(diary.id) // Сначала удаляем ВСЕ заметки у этого дневника
         diaryDao.deleteDiary(diary.id)  // Затем удаляем САМ дневник
     }
@@ -52,23 +52,6 @@ class MainRepository (private val diaryDao : DiaryDao) {
         diaryDao.updateNote(note)
     }
 
-    // DailyListNames:
-
-    suspend fun insertDailyListName(dailyListName : DailyListName)
-    {
-        diaryDao.insertDailyListName(dailyListName)
-    }
-
-    suspend fun deleteDailyListName(dailyListName : DailyListName)
-    {
-        diaryDao.deleteItemsFromDailyList(dailyListName.id)
-        diaryDao.deleteDailyListName(dailyListName.id)
-    }
-
-    suspend fun updateDailyListName(dailyListName : DailyListName){
-        diaryDao.updateDailyListName(dailyListName)
-    }
-
     // DailyListItems:
 
     // добавить заметку
@@ -87,5 +70,10 @@ class MainRepository (private val diaryDao : DiaryDao) {
     suspend fun updateDailyListItem(dailyListItem : DailyListItem){
         diaryDao.updateDailyListItem(dailyListItem)
     }
+
+    suspend fun updateListOfItems(list : List<DailyListItem>) {
+        diaryDao.updateListOfItems(list)
+    }
+
 
 }

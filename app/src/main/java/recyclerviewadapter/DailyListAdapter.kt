@@ -1,32 +1,28 @@
 package recyclerviewadapter
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
-import android.widget.CompoundButton
-import android.widget.RelativeLayout
-import androidx.preference.PreferenceManager
+import android.widget.ImageButton
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.input.input
 import com.example.project3.R
 import roomdatabase.DailyListItem
-import roomdatabase.Note
 
 
 class DailyListAdapter internal constructor(
     context: Context,
     private val listenerUpdateList : (DailyListItem) -> Unit,
-    private val listenerEdit : (DailyListItem) -> Unit
+    private val listenerDelete : (DailyListItem) -> Unit
 ) : RecyclerView.Adapter<DailyListAdapter.DailyListViewHolder>() {
 
     private val inflater: LayoutInflater = LayoutInflater.from(context)
 
     private val mContext = context
-
-    private val prefs: SharedPreferences? = PreferenceManager.getDefaultSharedPreferences(mContext)
 
     private var dailyListItems = emptyList<DailyListItem>()
 
@@ -50,24 +46,41 @@ class DailyListAdapter internal constructor(
 
     inner class DailyListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        private val layoutItemView : RelativeLayout = itemView.findViewById(R.id.relative_layout_list)
         private val checkBoxItemView : CheckBox = itemView.findViewById(R.id.checkBox_list)
+        private val buttonDeleteItemView : ImageButton = itemView.findViewById(R.id.imageButton_delete)
+        private val buttonEditItemView : ImageButton = itemView.findViewById(R.id.imageButton_edit)
 
         fun bindView(dailyListItem : DailyListItem) {
 
-
             checkBoxItemView.text = dailyListItem.name
             checkBoxItemView.isChecked = dailyListItem.isDone
-            checkBoxItemView.setOnCheckedChangeListener{ _: CompoundButton?, isChecked: Boolean ->
-                dailyListItem.isDone = isChecked
+            checkBoxItemView.setOnClickListener{
+                dailyListItem.isDone = !dailyListItem.isDone
                 listenerUpdateList(dailyListItem)
-
             }
 
+            buttonEditItemView.setOnClickListener{
+                val dialog = MaterialDialog(mContext)
+                dialog.show{
+                    title(R.string.edit_btn)
+                    message(R.string.dialog_edit_text)
+                    input(hintRes = R.string.dialog_item_name){ _, text ->
+                        dailyListItem.name = text.toString()
+                        listenerUpdateList(dailyListItem)
+                    }
+                    positiveButton(R.string.dialog_yes) {
+                        dialog.dismiss()
+                    }
+                    negativeButton(R.string.dialog_no) {
+                        dialog.dismiss()
+                    }
+                }
+            }
 
+            buttonDeleteItemView.setOnClickListener{
+                listenerDelete(dailyListItem)
+            }
         }
-
-
     }
 
     internal fun setDailyListItems(dailyListItems: List<DailyListItem>) {
@@ -77,6 +90,9 @@ class DailyListAdapter internal constructor(
         )
         this.dailyListItems = dailyListItems
         diffResult.dispatchUpdatesTo(this)
+
+        // Т.к. в первом случае анимация немного "лагает" лучше использовать это
+        //this.dailyListItems = dailyListItems
         //notifyDataSetChanged()
     }
 

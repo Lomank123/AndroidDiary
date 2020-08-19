@@ -38,6 +38,7 @@
     <string name="dialog_new_daily_list">Новый список дел</string>
     <string name="dialog_new_daily_list_text">Введите название для списка дел</string>
     <string name="dialog_new_daily_list_hint">Название…</string>
+    <string name="dialog_edit_text">Введите новое название</string>
 
 
     <!-- Настройки -->
@@ -74,5 +75,9 @@
     <string name="start_time">0:00</string>
     <string name="end_time">-1:11</string>
     <string name="no_voice_note">Нажмите для записи</string>
+
+    <!-- Other -->
+    <string name="progressbar_progress"> из 100</string>
+    <string name="progressbar_progress_full">0 из 100</string>
 
 </resources>

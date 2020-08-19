@@ -38,6 +38,7 @@
     <string name="dialog_new_daily_list">New Daily List</string>
     <string name="dialog_new_daily_list_text">Input Daily List name</string>
     <string name="dialog_new_daily_list_hint">Name…</string>
+    <string name="dialog_edit_text">Enter a new name</string>
 
 
 
@@ -75,7 +76,9 @@
     <string name="start_time">0:00</string>
     <string name="end_time">-1:11</string>
     <string name="no_voice_note">Tap to start recording</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!-- Other -->
+    <string name="progressbar_progress"> of 100</string>
+    <string name="progressbar_progress_full">0 of 100</string>
 
 </resources>

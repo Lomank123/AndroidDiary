@@ -14,7 +14,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val repository: MainRepository
     // LiveData дают нам обновленные слова, когда они меняются
     val allExtendedDiaries: LiveData<List<ExtendedDiary>>
-    val allDailyLists : LiveData<List<DailyList>>
 
     init {
         // Gets reference to WordDao from WordRoomDatabase to construct
@@ -26,7 +25,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         repository = MainRepository(diaryDao)
         // передаем данные из репозитория во ViewModel
         allExtendedDiaries = repository.allExtendedDiaries
-        allDailyLists = repository.allDailyLists
     }
 
     // Diaries:
@@ -63,20 +61,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         repository.updateNote(note)
     }
 
-    // DailyListNames:
-
-    fun insertDailyListName(dailyListName : DailyListName) = viewModelScope.launch{
-        repository.insertDailyListName(dailyListName)
-    }
-
-    fun deleteDailyListName(dailyListName : DailyListName) = viewModelScope.launch{
-        repository.deleteDailyListName(dailyListName)
-    }
-
-    fun updateDailyListName(dailyListName : DailyListName) = viewModelScope.launch{
-        repository.updateDailyListName(dailyListName)
-    }
-
     // DailyListItems:
 
     // добавить заметку
@@ -94,7 +78,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         repository.updateDailyListItem(dailyListItem)
     }
 
-
-
+    fun updateListOfItems(list : List<DailyListItem>) = viewModelScope.launch {
+        repository.updateListOfItems(list)
+    }
 
 }

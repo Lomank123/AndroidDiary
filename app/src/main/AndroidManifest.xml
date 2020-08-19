@@ -31,7 +31,8 @@
             android:label="@string/new_note" />
         <activity
             android:name=".NoteActivity"
-            android:label="@string/notes_btn" />
+            android:label="@string/notes_btn"
+            android:theme="@style/NoBarTheme"/>
         <activity
             android:name=".ClickedActivity"
             android:label="@string/clicked_note" />

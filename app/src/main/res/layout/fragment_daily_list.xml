@@ -1,4 +1,5 @@
-<FrameLayout
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    android:id="@+id/main_layout"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -6,95 +7,96 @@
     android:layout_height="match_parent"
     tools:context="fragments.DailyListFragment">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/layout_no_list"
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="visible">
+        android:layout_height="wrap_content"
+        android:id="@+id/appbar_layout"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
-        <Button
-            android:id="@+id/button_create_list"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="340dp"
-            android:text="Create"
-            android:visibility="visible"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <TextView
-            android:id="@+id/textView_no_list"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="No List, wanna create one?"
-            android:visibility="visible"
-            app:layout_constraintBottom_toTopOf="@+id/button_create_list"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/layout_list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:visibility="gone">
-
-        <TextView
-            android:id="@+id/textView_new_list"
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:id="@+id/collapsing_toolbar_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorBackground"
-            android:text="@string/sample"
-            android:textAlignment="center"
-            android:textSize="24sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_scrollFlags="scroll|snap|exitUntilCollapsed"
+            app:title="@string/sample"
+            app:contentScrim="@color/accent_color1">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerview_list"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:alwaysDrawnWithCache="false"
-            android:background="@color/colorBackground"
-            android:visibility="visible"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView_new_list"
-            app:layout_constraintVertical_bias="0.0"
-            tools:listitem="@layout/recyclerview_layout_list">
 
-        </androidx.recyclerview.widget.RecyclerView>
-
-        <LinearLayout
-            android:id="@+id/linearLayout_list"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="16dp"
-            android:gravity="center_horizontal"
-            android:orientation="vertical"
-            android:visibility="visible"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
-
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fab_new_item"
+            <ImageButton
+                android:id="@+id/imageButton_edit_list_name"
+                android:layout_gravity="bottom|end"
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="24dp"
+                android:background="@null"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="4dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginBottom="16dp"
-                android:src="@drawable/ic_add_black_24dp"
-                android:visibility="visible"
-                app:fabSize="normal" />
+                android:src="@android:drawable/ic_menu_edit"
+                android:contentDescription="@string/sample" />
 
-        </LinearLayout>
+            <ImageView
+                android:id="@+id/imageView_appbar"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:scaleType="centerCrop"
+                android:contentDescription="@string/sample"/>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <ProgressBar
+                android:id="@+id/progressBar_appbar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="115dp"
+                android:layout_height="115dp"
+                android:max="100"
+                android:progress="0"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="12dp"
+                android:progressDrawable="@drawable/progressbar_states"/>
 
-</FrameLayout>
+            <TextView
+                android:id="@+id/progressbar_text"
+                android:layout_width="115dp"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="60dp"
+                android:text="@string/sample"
+                android:textAlignment="center"
+                android:textColor="#000"
+                android:textSize="13sp">
+
+            </TextView>
+
+            <androidx.appcompat.widget.Toolbar
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"/>
+
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_new_item"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="24dp"
+        android:src="@drawable/ic_add_black_24dp"
+        android:visibility="visible"
+        app:fabSize="normal"
+        android:layout_gravity="bottom|end"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerview_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:alwaysDrawnWithCache="false"
+        android:background="@color/colorBackground"
+        android:visibility="visible"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:listitem="@layout/recyclerview_layout_list"
+        android:layout_gravity="top"
+        android:paddingBottom="64dp"
+        android:clipToPadding="false">
+    </androidx.recyclerview.widget.RecyclerView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
