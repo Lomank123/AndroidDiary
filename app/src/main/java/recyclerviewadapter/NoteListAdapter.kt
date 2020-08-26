@@ -1,6 +1,7 @@
 package recyclerviewadapter
 
-import android.app.AlertDialog
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.content.Context
 import android.content.SharedPreferences
 import android.net.Uri
@@ -10,11 +11,16 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.*
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.project3.R
+import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.list.customListAdapter
+import com.lomank.diary.R
+import roomdatabase.ExtendedDiary
 import roomdatabase.Note
 
 class NoteListAdapter internal constructor(
@@ -22,7 +28,7 @@ class NoteListAdapter internal constructor(
     private val listenerOpen : (Note) -> Unit,
     private val listenerDelete : (Note) -> Unit,
     private val listenerEdit : (Note) -> Unit,
-    private val listenerBookmark : (Note) -> Unit
+    private val listenerUpdate : (Note) -> Unit
 ) : RecyclerView.Adapter<NoteListAdapter.NoteViewHolder>() {
 
     // По сути переменная inflater используется как метка на родительский XML,
@@ -34,6 +40,8 @@ class NoteListAdapter internal constructor(
     private val prefs: SharedPreferences? = PreferenceManager.getDefaultSharedPreferences(mContext)
 
     private var notes = emptyList<Note>()   // Сохраненная копия заметок
+
+    private var extDiaryList = emptyList<ExtendedDiary>()
 
     class NoteItemDiffCallBack(
         private var oldNoteList : List<Note>,
@@ -57,18 +65,29 @@ class NoteListAdapter internal constructor(
     // этот класс ХРАНИТ в себе то самое вью, в котором будут что-то менять
     inner class NoteViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        private val layoutItemView : RelativeLayout = itemView.findViewById(R.id.relative_layout)
-        // textView1 - вью из файла recyclerview_layout.xml, отвечает за название
+        private val layoutItemView : ConstraintLayout = itemView.findViewById(R.id.constraint_layout)
         private val noteItemView : TextView = itemView.findViewById(R.id.textView_name)
-        // textView - вью из файла recyclerview_layout.xml, отвечает за описание
         private val noteDescriptionView : TextView = itemView.findViewById(R.id.textView_content)
         private val noteImageView : ImageView = itemView.findViewById(R.id.imageView)
-        private val noteDateView : TextView = itemView.findViewById(R.id.date_text)
         private val noteStarView : ImageView = itemView.findViewById(R.id.imageView_star)
         private val noteImageButtonView : ImageButton = itemView.findViewById(R.id.imageButtonOptions)
+        // expandable layout
+        private val expandableLayoutItemView : ConstraintLayout = itemView.findViewById(R.id.expandable_layout)
+        private val creationDateItemView : TextView = itemView.findViewById(R.id.creation_date_text2)
+        private val lastEditDateItemView : TextView = itemView.findViewById(R.id.last_edit_date_text2)
+
+        private var isExpanded = false
 
         // эта функция применяется для каждого члена RecyclerView т.к. вызывается в onBindViewHolder
         fun bindView(note: Note) {
+            creationDateItemView.text = note.creationDate.toString()
+            lastEditDateItemView.text = note.lastEditDate
+
+            // Устанавливаем обработчик нажатий на элемент RecyclerView, при нажатии
+            // будет вызываться первый listener (listenerOpen), который открывает заметку
+            itemView.setOnClickListener {
+                listenerOpen(note)
+            }
             // устанавливаем значения во вью
             noteItemView.text = note.name // название заметки
             // Лимит на кол-во символов в тексте заметки для отображения: 12
@@ -84,7 +103,6 @@ class NoteListAdapter internal constructor(
             }
             // в RecyclerView будут видны первые 16 символов текста заметки
             noteDescriptionView.text = str // текст заметки
-            noteDateView.text = note.lastEditDate // дата
             if (note.img != null)
             {
                 noteImageView.visibility = VISIBLE
@@ -101,34 +119,12 @@ class NoteListAdapter internal constructor(
             else
                 noteStarView.visibility = GONE
 
-            if (prefs!!.getBoolean("color_check_note", false)) {
-                when (note.color)
-                {
-                    "green" ->
-                        layoutItemView.setBackgroundColor(ContextCompat.getColor(mContext,
-                            R.color.green))
-                    "yellow" ->
-                        layoutItemView.setBackgroundColor(ContextCompat.getColor(mContext,
-                            R.color.yellow))
-                    "blue" ->
-                        layoutItemView.setBackgroundColor(ContextCompat.getColor(mContext,
-                            R.color.blue))
-                    "grass" ->
-                        layoutItemView.setBackgroundColor(ContextCompat.getColor(mContext,
-                            R.color.grass))
-                    "purple" ->
-                        layoutItemView.setBackgroundColor(ContextCompat.getColor(mContext,
-                            R.color.purple))
-                }
+            if (note.color != null && prefs!!.getBoolean("color_check_note", false)) {
+                layoutItemView.setBackgroundColor(note.color!!)
             }
             else
                 layoutItemView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white))
 
-            // Устанавливаем обработчик нажатий на элемент RecyclerView, при нажатии
-            // будет вызываться первый listener (listenerOpen), который открывает заметку
-            itemView.setOnClickListener {
-                listenerOpen(note)
-            }
             // обработчик долгих нажатий для вызова контекстного меню
             noteImageButtonView.setOnClickListener{
                 // Устанавливаем контекстное меню
@@ -149,26 +145,19 @@ class NoteListAdapter internal constructor(
                 popupMenu.setOnMenuItemClickListener { item ->
                     when(item.itemId) {     // сколько пунктов меню - столько и вариантов в when()
                         R.id.delete -> {
-                            val deleteDialog = AlertDialog.Builder(mContext)
-                            deleteDialog.setTitle(mContext.resources.
-                            getString(R.string.dialog_delete))
-                            deleteDialog.setMessage(mContext.resources.
-                            getString(R.string.dialog_check_delete_note))
-                            deleteDialog.setPositiveButton(mContext.resources.
-                            getString(R.string.dialog_yes))
-                            { _, _ ->
-                                listenerDelete(note)  // удаление записи
-                                notifyDataSetChanged()
-                                Toast.makeText(mContext,
-                                    mContext.resources.getString(R.string.dialog_deleted),
-                                    Toast.LENGTH_SHORT).show()
+                            val dialog = MaterialDialog(mContext)
+                            dialog.show{
+                                title(R.string.dialog_delete)
+                                message(R.string.dialog_check_delete)
+                                positiveButton(R.string.dialog_yes) {
+                                    listenerDelete(note)
+                                    Toast.makeText(mContext, mContext.resources.getString(R.string.dialog_deleted), Toast.LENGTH_SHORT).show()
+                                    dialog.dismiss()
+                                }
+                                negativeButton(R.string.dialog_no) {
+                                    dialog.dismiss()
+                                }
                             }
-                            deleteDialog.setNegativeButton(mContext.resources.
-                            getString(R.string.dialog_no))
-                            { dialog, _ ->
-                                dialog.dismiss()
-                            }
-                            deleteDialog.show()
                             true
                         }
                         R.id.open -> {
@@ -181,11 +170,55 @@ class NoteListAdapter internal constructor(
                             true
                         }
                         R.id.bookmark -> {
-                            listenerBookmark(note)
-                            if(note.favorite)
+                            note.favorite = !note.favorite
+                            if(note.favorite) {
                                 noteStarView.visibility = VISIBLE
-                            else
+                                Toast.makeText(mContext, mContext.resources.getString(R.string.add_favor),
+                                    Toast.LENGTH_SHORT).show()
+                            } else {
                                 noteStarView.visibility = GONE
+                                Toast.makeText(mContext, mContext.resources.getString(R.string.del_favor),
+                                    Toast.LENGTH_SHORT).show()
+                            }
+                            listenerUpdate(note)
+                            true
+                        }
+                        R.id.move -> {
+                            val dialog = MaterialDialog(mContext)
+                            val anotherAdapter = MaterialDialogAdapter(extDiaryList
+                            ) {diary ->
+                                note.parentId = diary.id
+                                listenerUpdate(note)
+                                dialog.dismiss()
+                            }
+                            dialog.show{
+                                title(R.string.move_btn)
+                                customListAdapter(anotherAdapter, LinearLayoutManager(mContext))
+                                negativeButton {
+                                    dialog.dismiss()
+                                }
+                            }
+                            true
+                        }
+                        R.id.info -> {
+                            isExpanded = !isExpanded
+                            if(isExpanded) {
+                                //expandableLayoutItemView.visibility = VISIBLE
+                                expandableLayoutItemView.animate()
+                                    .alpha(1f).setDuration(500).setListener(object : AnimatorListenerAdapter(){
+                                        override fun onAnimationStart(animation: Animator?) {
+                                            expandableLayoutItemView.visibility = VISIBLE
+                                        }
+                                    }).start()
+                            } else {
+                                //expandableLayoutItemView.visibility = GONE
+                                expandableLayoutItemView.animate()
+                                    .alpha(0f).setDuration(500).setListener(object : AnimatorListenerAdapter(){
+                                        override fun onAnimationEnd(animation: Animator?) {
+                                            expandableLayoutItemView.visibility = GONE
+                                        }
+                                    }).start()
+                            }
                             true
                         }
                         // Иначе вернем false (если when не сработал ни разу)
@@ -193,7 +226,6 @@ class NoteListAdapter internal constructor(
                     }
                 }
                 popupMenu.show() // показываем меню
-                // Т.к. в LongClickListener нужно вернуть boolean, возвращаем его
             }
         }
     }
@@ -210,7 +242,8 @@ class NoteListAdapter internal constructor(
         holder.bindView(notes[position])
     }
 
-    internal fun setNotes(notes: List<Note>) {
+    internal fun setNotes(notes: List<Note>, extDiariesList : List<ExtendedDiary>) {
+        this.extDiaryList = extDiariesList
         val oldList = this.notes
         val diffResult : DiffUtil.DiffResult = DiffUtil.calculateDiff(
             NoteItemDiffCallBack(oldList, notes))
@@ -219,7 +252,8 @@ class NoteListAdapter internal constructor(
         //notifyDataSetChanged()  // даем понять адаптеру, что были внесены изменения
     }
 
-    internal fun setFavoriteNotes(notes: List<Note>){
+    internal fun setFavoriteNotes(notes: List<Note>, extDiariesList : List<ExtendedDiary>){
+        this.extDiaryList = extDiariesList
         val oldList = this.notes
         val diffResult : DiffUtil.DiffResult = DiffUtil.calculateDiff(
             NoteItemDiffCallBack(oldList, notes.sortedBy { !it.favorite }))

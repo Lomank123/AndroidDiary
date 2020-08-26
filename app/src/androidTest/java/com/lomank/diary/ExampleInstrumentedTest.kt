@@ -1,4 +1,4 @@
-package com.example.project3
+package com.lomank.diary
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

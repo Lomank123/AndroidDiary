@@ -20,6 +20,8 @@
     </string>
     <string name="add_favor">Добавлено в Избранные</string>
     <string name="del_favor">Удалено из Избранных</string>
+    <string name="creation_date">Дата создания: </string>
+    <string name="last_edit_date">Дата последнего изменения: </string>
 
     <!-- Диалоговое окно -->
     <string name="dialog_yes">Да</string>
@@ -52,6 +54,8 @@
     <string name="edit_btn">Редактировать</string>
     <string name="open_btn">Открыть</string>
     <string name="delete_btn">Удалить</string>
+    <string name="move_btn">Переместить в</string>
+    <string name="info_btn">Информация</string>
 
     <!-- Надписи -->
     <string name="about_btn">О приложении</string>

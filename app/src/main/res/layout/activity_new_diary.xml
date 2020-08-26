@@ -1,21 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:id="@+id/scrollView2"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0">
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -25,7 +24,7 @@
                 android:id="@+id/imageView_new_diary"
                 android:layout_width="182dp"
                 android:layout_height="182dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="20dp"
                 android:contentDescription="@string/description"
                 android:src="@mipmap/ic_launcher_round"
                 app:civ_border_color="#DD8D15"
@@ -39,7 +38,7 @@
                 android:id="@+id/photo_button"
                 android:layout_width="145dp"
                 android:layout_height="47dp"
-                android:layout_marginTop="32dp"
+                android:layout_marginTop="20dp"
                 android:background="@drawable/button_click_effect_photo1"
                 android:text="@string/photo_choose"
                 android:textColor="#352E35"
@@ -53,7 +52,7 @@
                 android:id="@+id/delete_photo_button"
                 android:layout_width="145dp"
                 android:layout_height="47dp"
-                android:layout_marginTop="32dp"
+                android:layout_marginTop="20dp"
                 android:background="@drawable/button_click_effect_cancel1"
                 android:text="@string/delete_btn"
                 android:textColor="#FFFFFF"
@@ -68,23 +67,22 @@
                 android:layout_width="128dp"
                 android:layout_height="44dp"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="60dp"
-                android:layout_marginEnd="123dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="16dp"
                 android:background="@drawable/button_click_effect1"
                 android:text="@string/button_save"
                 android:textColor="@color/white"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/button_cancel_diary"
-                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/edit_content" />
+                app:layout_constraintTop_toBottomOf="@+id/edit_content"
+                app:layout_constraintVertical_bias="1.0" />
 
             <EditText
                 android:id="@+id/edit_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="28dp"
+                android:layout_marginTop="20dp"
                 android:hint="@string/description"
                 android:importantForAutofill="no"
                 android:inputType="textAutoComplete"
@@ -97,7 +95,7 @@
                 android:id="@+id/edit_diary"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="28dp"
+                android:layout_marginTop="20dp"
                 android:hint="@string/hint_diary"
                 android:importantForAutofill="no"
                 android:inputType="textAutoComplete"
@@ -105,14 +103,16 @@
                 android:padding="@dimen/small_padding"
                 android:textSize="18sp"
                 app:fontFamily="sans-serif-light"
-                app:layout_constraintTop_toBottomOf="@+id/photo_button"
+                app:layout_constraintTop_toBottomOf="@+id/imageButton_color"
                 tools:layout_editor_absoluteX="0dp" />
 
             <Button
                 android:id="@+id/button_cancel_diary"
                 android:layout_width="128dp"
                 android:layout_height="44dp"
+                android:layout_marginTop="20dp"
                 android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
                 android:background="@drawable/button_click_effect_cancel1"
                 android:text="@string/cancel_btn"
                 android:textColor="@color/white"
@@ -121,6 +121,21 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/edit_content"
                 app:layout_constraintVertical_bias="1.0" />
+
+            <ImageButton
+                android:id="@+id/imageButton_color"
+                android:layout_width="47dp"
+                android:layout_height="47dp"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="12dp"
+                android:background="@drawable/color_choose_button"
+                android:contentDescription="@string/sample"
+                app:layout_constraintEnd_toStartOf="@+id/delete_photo_button"
+                app:layout_constraintHorizontal_bias="0.491"
+                app:layout_constraintStart_toEndOf="@+id/photo_button"
+                app:layout_constraintTop_toBottomOf="@+id/imageView_new_diary"
+                app:srcCompat="@android:drawable/ic_menu_compass" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 

@@ -1,12 +1,14 @@
-package com.example.project3
+package com.lomank.diary
 
 import android.app.Activity
-import android.app.AlertDialog
 import android.content.Intent
+import android.graphics.Color
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.TextUtils
+import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.color.colorChooser
 import kotlinx.android.synthetic.main.activity_new_diary.*
 import roomdatabase.Diary
 
@@ -15,6 +17,7 @@ class EditDiaryActivity : AppCompatActivity() {
     private val choosePhotoRequestCode = 1
     private var isPhotoChanged = false
     private var isPhotoExist = false
+    private val colorArray = intArrayOf(Color.RED, Color.BLUE, Color.GREEN)
     private val replyIntent = Intent()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -73,23 +76,45 @@ class EditDiaryActivity : AppCompatActivity() {
             choosePhotoIntent.type = "image/*"
             startActivityForResult(choosePhotoIntent, choosePhotoRequestCode)
         }
+        // color button
+        imageButton_color.setOnClickListener {
+            val colorDialog = MaterialDialog(this)
+            colorDialog.show {
+                title(R.string.dialog_item_name)
+                colorChooser(
+                    colors = colorArray,
+                    allowCustomArgb = true,
+                    showAlphaSelector = true
+                ) { _, color ->
+                    replyIntent.putExtra(EXTRA_EDIT_DIARY_COLOR, color)
+                }
+                positiveButton(R.string.dialog_yes) {
+                    colorDialog.dismiss()
+                }
+                negativeButton(R.string.dialog_no) {
+                    replyIntent.putExtra(EXTRA_EDIT_DIARY_COLOR, 0)
+                    colorDialog.dismiss()
+                }
+            }
+        }
+
     }
 
     private fun makeDialog()
     {
-        val userDialog = AlertDialog.Builder(this)
-        userDialog.setTitle(this.resources.getString(R.string.dialog_leave_changes))
-        userDialog.setMessage(this.resources.getString(R.string.dialog_check_leave))
-        userDialog.setPositiveButton(this.resources.getString(R.string.dialog_yes))
-        { _, _ ->
-            setResult(Activity.RESULT_CANCELED, replyIntent)
-            finish()
+        val newDialog = MaterialDialog(this)
+        newDialog.show {
+            title(R.string.dialog_leave_changes)
+            message(R.string.dialog_check_leave)
+            positiveButton(R.string.dialog_yes) {
+                setResult(Activity.RESULT_CANCELED, replyIntent)
+                newDialog.dismiss()
+                finish()
+            }
+            negativeButton(R.string.dialog_no) {
+                newDialog.dismiss()
+            }
         }
-        userDialog.setNegativeButton(this.resources.getString(R.string.dialog_no))
-        { dialog, _ ->
-            dialog.dismiss()
-        }
-        userDialog.show()
     }
 
     override fun onBackPressed() {
@@ -119,5 +144,6 @@ class EditDiaryActivity : AppCompatActivity() {
     companion object {
         const val EXTRA_EDIT_DIARY = "EXTRA_EDIT_DIARY"
         const val EXTRA_EDIT_DIARY_IMAGE = "EXTRA_EDIT_DIARY_IMAGE"
+        const val EXTRA_EDIT_DIARY_COLOR = "EXTRA_EDIT_DIARY_COLOR"
     }
 }

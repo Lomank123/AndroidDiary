@@ -24,7 +24,7 @@ data class Diary(@ColumnInfo(name = "diary_name") var name: String,       // н�
     var img : String? = null                       // картинка
 
     @ColumnInfo(name = "diary_color")
-    var color : String? = null                     // цвет
+    var color : Int? = null                     // цвет
 
     @ColumnInfo(name = "diary_is_favorite")
     var favorite : Boolean = false                 // является ли избранным
@@ -73,7 +73,7 @@ data class Diary(@ColumnInfo(name = "diary_name") var name: String,       // н�
 @Entity(tableName = "note_table")                                           // Название таблицы
 data class Note(@ColumnInfo(name = "note_name") var name : String,          // Название
                 @ColumnInfo(name = "note_content") var content : String,    // Текст
-                @ColumnInfo(name = "note_parent_id") val parentId : Long,   // id дневника, к к-му привязана
+                @ColumnInfo(name = "note_parent_id") var parentId : Long,   // id дневника, к к-му привязана
                 @ColumnInfo(name = "note_date") var lastEditDate : String           // Дата последнего изменения
 ) : Serializable
 {
@@ -85,7 +85,7 @@ data class Note(@ColumnInfo(name = "note_name") var name : String,          // �
     var img : String? = null                        // картинка
 
     @ColumnInfo(name = "note_color")
-    var color : String? = null                      // цвет
+    var color : Int? = null                      // цвет
 
     @ColumnInfo(name = "note_is_favorite")
     var favorite : Boolean = false                  // является ли избранным
@@ -131,7 +131,7 @@ data class DailyListItem(@ColumnInfo(name = "daily_list_item_name") var name : S
     var id : Long = 0                               // id заметки
 
     @ColumnInfo(name = "daily_list_item_color")
-    var color : String? = null                      // цвет
+    var color : Int? = null                      // цвет
 
     @ColumnInfo(name = "daily_list_item_is_done")
     var isDone : Boolean = false                    // сделано ли дело

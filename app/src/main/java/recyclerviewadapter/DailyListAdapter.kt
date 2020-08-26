@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.input.input
-import com.example.project3.R
+import com.lomank.diary.R
 import roomdatabase.DailyListItem
 
 
@@ -50,7 +50,7 @@ class DailyListAdapter internal constructor(
         private val buttonDeleteItemView : ImageButton = itemView.findViewById(R.id.imageButton_delete)
         private val buttonEditItemView : ImageButton = itemView.findViewById(R.id.imageButton_edit)
 
-        fun bindView(dailyListItem : DailyListItem) {
+        fun bindView(dailyListItem : DailyListItem, position: Int) {
 
             checkBoxItemView.text = dailyListItem.name
             checkBoxItemView.isChecked = dailyListItem.isDone
@@ -58,7 +58,6 @@ class DailyListAdapter internal constructor(
                 dailyListItem.isDone = !dailyListItem.isDone
                 listenerUpdateList(dailyListItem)
             }
-
             buttonEditItemView.setOnClickListener{
                 val dialog = MaterialDialog(mContext)
                 dialog.show{
@@ -66,9 +65,10 @@ class DailyListAdapter internal constructor(
                     message(R.string.dialog_edit_text)
                     input(hintRes = R.string.dialog_item_name){ _, text ->
                         dailyListItem.name = text.toString()
-                        listenerUpdateList(dailyListItem)
                     }
                     positiveButton(R.string.dialog_yes) {
+                        listenerUpdateList(dailyListItem)
+                        notifyItemChanged(position)
                         dialog.dismiss()
                     }
                     negativeButton(R.string.dialog_no) {
@@ -76,7 +76,6 @@ class DailyListAdapter internal constructor(
                     }
                 }
             }
-
             buttonDeleteItemView.setOnClickListener{
                 listenerDelete(dailyListItem)
             }
@@ -91,7 +90,7 @@ class DailyListAdapter internal constructor(
         this.dailyListItems = dailyListItems
         diffResult.dispatchUpdatesTo(this)
 
-        // Т.к. в первом случае анимация немного "лагает" лучше использовать это
+        // Alternative
         //this.dailyListItems = dailyListItems
         //notifyDataSetChanged()
     }
@@ -103,7 +102,7 @@ class DailyListAdapter internal constructor(
     }
 
     override fun onBindViewHolder(holder: DailyListAdapter.DailyListViewHolder, position: Int) {
-        holder.bindView(dailyListItems[position])
+        holder.bindView(dailyListItems[position], position)
     }
 
     override fun getItemCount(): Int {

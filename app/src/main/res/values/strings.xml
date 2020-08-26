@@ -20,6 +20,8 @@
     </string>
     <string name="add_favor">Added to Favorites</string>
     <string name="del_favor">Removed from Favorites</string>
+    <string name="creation_date">Creation date: </string>
+    <string name="last_edit_date">Last edit date: </string>
 
     <!-- Dialog screen -->
     <string name="dialog_yes">Yes</string>
@@ -53,6 +55,8 @@
     <string name="edit_btn">Edit</string>
     <string name="open_btn">Open</string>
     <string name="delete_btn">Delete</string>
+    <string name="move_btn">Move to</string>
+    <string name="info_btn">Info</string>
 
     <!-- Labels -->
     <string name="about_btn">About</string>

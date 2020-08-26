@@ -1,4 +1,4 @@
-package com.example.project3
+package com.lomank.diary
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle

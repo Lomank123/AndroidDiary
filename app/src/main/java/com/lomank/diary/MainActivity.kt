@@ -1,4 +1,4 @@
-package com.example.project3
+package com.lomank.diary
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -35,7 +35,6 @@ class MainActivity : AppCompatActivity() {
     private val editDiaryActivityRequestCode = 2             // для EditActivity
     private lateinit var mainViewModel: MainViewModel        // добавляем ViewModel
     private var isFabOpen : Boolean = false                  // по умолч. меню закрыто
-    private val colors: List<String> = listOf("green", "blue", "grass", "purple", "yellow")
     private lateinit var extDiaryList : List<ExtendedDiary>
 
     private val translationY = 100f
@@ -52,13 +51,11 @@ class MainActivity : AppCompatActivity() {
         mainViewModel = ViewModelProvider(this).get(MainViewModel::class.java)
 
         val adapter = newDiaryAdapter()
-        // задаем Adapter (одинаково для всех RecyclerView)
         recyclerview.adapter = adapter
-        // задаем LinearLayoutManager (одинаково для всех RecyclerView)
         recyclerview.layoutManager = LinearLayoutManager(this)
         recyclerview.addItemDecoration(TopSpacingItemDecoration(20)) // отступы
 
-        // TODO: Использовать это в Списке Дел
+        // TODO: Возможно это не нужно (убрать)
         val itemTouchHelper = ItemTouchHelper(itemTouchHelperCallback)
         itemTouchHelper.attachToRecyclerView(recyclerview)
         
@@ -104,7 +101,7 @@ class MainActivity : AppCompatActivity() {
         fab_favourite.translationY = translationY
     }
 
-    // TODO: Использовать это в Списке Дел
+    // TODO: Возможно это не нужно (убрать)
     // Реализует удаление свайпом вправо
     private val itemTouchHelperCallback=
         object :
@@ -140,7 +137,7 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("SimpleDateFormat")
     private fun currentDate() : String
     {
-        val pattern = "\t\t\tHH:mm\n\ndd.MM.yyyy"
+        val pattern = "\t\t\tHH:mm dd.MM.yyyy"
         val simpleDateFormat = SimpleDateFormat(pattern)
         return simpleDateFormat.format(Date())
     }
@@ -165,34 +162,25 @@ class MainActivity : AppCompatActivity() {
     {
         return DiaryListAdapter(this,
             {
-                // Первый listener, отвечает за удаление дневника
+                // listenerOpen
                 deleteDiary(it)
             }, {
-                // Второй listener. Открывает список заметок (NoteActivity)
+                // listenerDelete
                 val intent = Intent(this, NoteActivity::class.java)
                 intent.putExtra("extDiaryParent", it) // Передаем ExtendedDiary
                 startActivity(intent)
             }, {
-                // 3-ий listener, отвечает за изменение дневника
+                // listenerEdit
                 val intent = Intent(this, EditDiaryActivity::class.java)
                 intent.putExtra("diaryEdit", it.diary)
                 startActivityForResult(intent, editDiaryActivityRequestCode)
             }, {
-               // 4-ый listener. Добавление в избранные
-                it.diary.favorite = !it.diary.favorite
-                if(it.diary.favorite) {
-                    Toast.makeText(this, resources.getString(R.string.add_favor),
-                        Toast.LENGTH_SHORT).show()
-                } else {
-                    Toast.makeText(this, resources.getString(R.string.del_favor),
-                        Toast.LENGTH_SHORT).show()
-                }
+               // listenerUpdate
                 mainViewModel.updateDiary(it.diary)
             })
     }
 
     // функция для обработки результата после вызова startActivityForResult()
-    @SuppressLint("SimpleDateFormat")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -205,7 +193,9 @@ class MainActivity : AppCompatActivity() {
                     diary.img = diaryImg
                 else
                     diary.img = null
-                diary.color = colors.random()
+                diary.color = data.getIntExtra(NewDiaryActivity.EXTRA_NEW_DIARY_COLOR, 0)
+                if(diary.color == 0)
+                    diary.color = null
                 diary.creationDate = currentDate()
                 mainViewModel.insertDiary(diary) // добавляем запись в БД
             }
@@ -219,6 +209,9 @@ class MainActivity : AppCompatActivity() {
                     diaryEdit.img = imgDiaryEdit
                 else
                     diaryEdit.img = null
+                diaryEdit.color = data.getIntExtra(EditDiaryActivity.EXTRA_EDIT_DIARY_COLOR, 0)
+                if (diaryEdit.color == 0)
+                    diaryEdit.color = null
                 diaryEdit.lastEditDate = currentDate()
                 mainViewModel.updateDiary(diaryEdit) // обновляем запись в БД
             }
@@ -289,6 +282,7 @@ class MainActivity : AppCompatActivity() {
             else
                 adapter.setDiaries(extDiaryList)
         }
+        recyclerview.scrollToPosition(0)
     }
 
     // когда выбираешь элемент меню

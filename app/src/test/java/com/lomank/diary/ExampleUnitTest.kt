@@ -1,4 +1,4 @@
-package com.example.project3
+package com.lomank.diary
 
 import org.junit.Test
 

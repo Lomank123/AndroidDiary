@@ -8,67 +8,78 @@
     tools:context="fragments.DailyListFragment">
 
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appbar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/appbar_layout"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+        android:background="@color/colorBackground">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/collapsing_toolbar_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="115dp"
             app:layout_scrollFlags="scroll|snap|exitUntilCollapsed"
-            app:title="@string/sample"
-            app:contentScrim="@color/accent_color1">
+            app:title="@string/sample">
 
 
             <ImageButton
                 android:id="@+id/imageButton_edit_list_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_gravity="bottom|end"
                 android:layout_marginEnd="24dp"
                 android:layout_marginBottom="24dp"
                 android:background="@null"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@android:drawable/ic_menu_edit"
-                android:contentDescription="@string/sample" />
+                android:contentDescription="@string/sample"
+                android:src="@android:drawable/ic_menu_edit" />
 
-            <ImageView
-                android:id="@+id/imageView_appbar"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/progress_layout"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:scaleType="centerCrop"
-                android:contentDescription="@string/sample"/>
+                android:layout_height="?attr/actionBarSize">
 
-            <ProgressBar
-                android:id="@+id/progressBar_appbar"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="115dp"
-                android:layout_height="115dp"
-                android:max="100"
-                android:progress="0"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="12dp"
-                android:progressDrawable="@drawable/progressbar_states"/>
+                <ProgressBar
+                    android:id="@+id/progressBar_appbar"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center_horizontal"
+                    android:max="100"
+                    android:progress="0"
+                    android:progressDrawable="@drawable/progressbar_states_2"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/progressbar_text"
-                android:layout_width="115dp"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="60dp"
-                android:text="@string/sample"
-                android:textAlignment="center"
-                android:textColor="#000"
-                android:textSize="13sp">
+                <TextView
+                    android:id="@+id/progressbar_text"
+                    android:layout_width="115dp"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:layout_gravity="center_horizontal"
+                    android:text="@string/sample"
+                    android:textAlignment="center"
+                    android:textColor="#000"
+                    android:layout_marginTop="10dp"
+                    android:textSize="13sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/progressBar_appbar" />
 
-            </TextView>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
 
             <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar_list"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"/>
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Dark" >
+
+
+            </androidx.appcompat.widget.Toolbar>
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 

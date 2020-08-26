@@ -13,5 +13,11 @@
     <item
         android:id="@+id/bookmark"
         android:title="@string/bookmark"/>
+    <item
+        android:id="@+id/move"
+        android:title="@string/move_btn"/>
+    <item
+        android:id="@+id/info"
+        android:title="@string/info_btn"/>
 
 </menu>

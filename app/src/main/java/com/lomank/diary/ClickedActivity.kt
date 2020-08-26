@@ -1,7 +1,6 @@
-package com.example.project3
+package com.lomank.diary
 
 import android.app.Activity
-import android.app.AlertDialog
 import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Typeface
@@ -18,6 +17,7 @@ import android.view.View.VISIBLE
 import android.widget.SeekBar
 import android.widget.Toast
 import androidx.preference.PreferenceManager
+import com.afollestad.materialdialogs.MaterialDialog
 import kotlinx.android.synthetic.main.activity_clicked.*
 import roomdatabase.Note
 import java.io.File
@@ -176,7 +176,11 @@ class ClickedActivity : AppCompatActivity() {
                 }
             }
         }
-
+        // FAB save
+        fab_save.setOnClickListener{
+            saveNote(note)
+        }
+        layout_voice.translationY = 0f
     }
 
     override fun onBackPressed() {
@@ -213,22 +217,21 @@ class ClickedActivity : AppCompatActivity() {
 
     private fun saveDialogShow(note : Note)
     {
-        val saveDialog = AlertDialog.Builder(this)
-        saveDialog.setTitle(this.resources.getString(R.string.dialog_save))
-        saveDialog.setMessage(this.resources.getString(R.string.dialog_check_save_changes))
-        saveDialog.setPositiveButton(this.resources.getString(R.string.dialog_yes))
-        { _, _ ->
-            saveNote(note)
+        val dialog = MaterialDialog(this@ClickedActivity)
+        dialog.show{
+            title(R.string.dialog_save)
+            message(R.string.dialog_check_save_changes)
+            positiveButton(R.string.dialog_yes) {
+                saveNote(note)
+                dialog.dismiss()
+            }
+            negativeButton(R.string.dialog_no) {
+                setResult(Activity.RESULT_CANCELED)
+                Toast.makeText(this@ClickedActivity, resources.getString(R.string.canceled), Toast.LENGTH_SHORT).show()
+                dialog.dismiss()
+                finish()
+            }
         }
-        saveDialog.setNegativeButton(this.resources.getString(R.string.dialog_no))
-        { dialog, _ ->
-            setResult(Activity.RESULT_CANCELED)
-            Toast.makeText(this, resources.getString(R.string.canceled),
-                Toast.LENGTH_SHORT).show()
-            dialog.dismiss()
-            finish()
-        }
-        saveDialog.show()
     }
 
     override fun onResume()
@@ -324,10 +327,11 @@ class ClickedActivity : AppCompatActivity() {
             }
             R.id.voice_btn_edit -> {
                 isVoice = !isVoice
-                if (isVoice)
+                if (isVoice) {
                     layout_voice.visibility = VISIBLE
-                else
+                } else {
                     layout_voice.visibility = GONE
+                }
             }
         }
         return super.onOptionsItemSelected(item)

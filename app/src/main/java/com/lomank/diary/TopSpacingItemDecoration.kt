@@ -1,4 +1,4 @@
-package com.example.project3
+package com.lomank.diary
 
 import android.graphics.Rect
 import android.view.View
