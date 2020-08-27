@@ -1,12 +1,16 @@
 package com.lomank.diary
 
+import android.Manifest
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import android.graphics.Typeface
 import android.media.MediaPlayer
 import android.media.MediaRecorder
 import android.net.Uri
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
@@ -16,6 +20,8 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.SeekBar
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import androidx.core.content.PermissionChecker
 import androidx.preference.PreferenceManager
 import com.afollestad.materialdialogs.MaterialDialog
 import kotlinx.android.synthetic.main.activity_clicked.*
@@ -24,6 +30,13 @@ import java.io.File
 import java.lang.Exception
 
 class ClickedActivity : AppCompatActivity() {
+
+    private val permissionRequestCode = 11
+    private val permissionsList = arrayOf(
+        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+        Manifest.permission.READ_EXTERNAL_STORAGE,
+        Manifest.permission.RECORD_AUDIO
+    )
 
     private var isVoice = false
     private var isVoiceExist = false
@@ -183,6 +196,19 @@ class ClickedActivity : AppCompatActivity() {
         layout_voice.translationY = 0f
     }
 
+    private fun checkPermission(context : Context, permissions : Array<String>) : Boolean {
+        var allSuccess = true
+        for(i in permissions.indices) {
+            if(PermissionChecker.checkCallingOrSelfPermission(
+                    context,
+                    permissions[i]
+                ) == PermissionChecker.PERMISSION_DENIED) {
+                allSuccess = false
+            }
+        }
+        return allSuccess
+    }
+
     override fun onBackPressed() {
         //super.onBackPressed()
         val note = intent.getSerializableExtra("noteSerializable") as? Note
@@ -326,6 +352,10 @@ class ClickedActivity : AppCompatActivity() {
                 }
             }
             R.id.voice_btn_edit -> {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                    if(!checkPermission(this, permissionsList)) {
+                        ActivityCompat.requestPermissions(this, permissionsList, permissionRequestCode)
+                    }
                 isVoice = !isVoice
                 if (isVoice) {
                     layout_voice.visibility = VISIBLE
@@ -495,6 +525,33 @@ class ClickedActivity : AppCompatActivity() {
         pausePlay()
         releasePlayer()
         releaseRecorder()
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        //val prefs: SharedPreferences? = PreferenceManager.getDefaultSharedPreferences(this)
+
+        when(requestCode) {
+            permissionRequestCode -> {
+                var allSuccess = true
+                for(i in permissions.indices) {
+                    if (grantResults[i] == PackageManager.PERMISSION_DENIED) {
+                        allSuccess = false
+                        val requestAgain = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && shouldShowRequestPermissionRationale(permissions[i])
+                        if(requestAgain)
+                            Toast.makeText(this, "permission denied", Toast.LENGTH_SHORT).show()
+                        else
+                            Toast.makeText(this, "go to settings and enable the permission", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                if(allSuccess)
+                    Toast.makeText(this, "permission granted", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     // тег для распознавания именно этого запроса

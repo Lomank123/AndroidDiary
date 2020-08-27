@@ -209,16 +209,13 @@ class NoteFragment : Fragment() {
         {
             val noteEdit = data?.getSerializableExtra(EditNoteActivity.EXTRA_EDIT_NOTE) as? Note
             val imgNoteEdit = data?.getStringExtra(EditNoteActivity.EXTRA_IMAGE_EDIT_NOTE)
+            val colorNoteEdit = data?.getIntExtra(EditNoteActivity.EXTRA_COLOR_EDIT_NOTE, 0)
             if (noteEdit != null)
             {
-                // Обновляем дату
                 noteEdit.lastEditDate = currentDate()
-                noteEdit.color = data.getIntExtra(EditNoteActivity.EXTRA_COLOR_EDIT_NOTE, 0)
-                if (noteEdit.color == 0)
-                    noteEdit.color = null
-                if (imgNoteEdit == null || imgNoteEdit == "")
-                    noteEdit.img = extDiaryParent!!.diary.img
-                else
+                if (colorNoteEdit != null && colorNoteEdit != 0)
+                    noteEdit.color = colorNoteEdit
+                if (imgNoteEdit != null && imgNoteEdit != "")
                     noteEdit.img = imgNoteEdit
                 mainViewModel.updateNote(noteEdit)
             }

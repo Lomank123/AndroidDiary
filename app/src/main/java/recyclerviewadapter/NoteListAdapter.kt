@@ -1,10 +1,13 @@
 package recyclerviewadapter
 
+import android.Manifest
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
+import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
 import android.net.Uri
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -12,7 +15,9 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.*
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.PermissionChecker
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -42,6 +47,12 @@ class NoteListAdapter internal constructor(
     private var notes = emptyList<Note>()   // Сохраненная копия заметок
 
     private var extDiaryList = emptyList<ExtendedDiary>()
+
+    private val permissionRequestCode = 11
+    private val permissionsList = arrayOf(
+        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+        Manifest.permission.READ_EXTERNAL_STORAGE
+    )
 
     class NoteItemDiffCallBack(
         private var oldNoteList : List<Note>,
@@ -103,15 +114,22 @@ class NoteListAdapter internal constructor(
             }
             // в RecyclerView будут видны первые 16 символов текста заметки
             noteDescriptionView.text = str // текст заметки
-            if (note.img != null)
-            {
-                noteImageView.visibility = VISIBLE
-                val uriImage = Uri.parse(note.img)
-                noteImageView.setImageURI(uriImage)
-            }
-            else
-                noteImageView.setImageResource(R.drawable.blank_sheet)
-                //noteImageView.visibility = GONE
+
+            // photo
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                if(checkPermission(mContext, permissionsList)) {
+                    if (note.img != null)
+                    {
+                        noteImageView.visibility = VISIBLE
+                        val uriImage = Uri.parse(note.img)
+                        noteImageView.setImageURI(uriImage)
+                    }
+                    else
+                        noteImageView.setImageResource(R.drawable.blank_sheet)
+                        //noteImageView.visibility = GONE
+                } else {
+                    ActivityCompat.requestPermissions(mContext as Activity, permissionsList, permissionRequestCode)
+                }
 
             // иконка со звездочкой (избранное)
             if (note.favorite)
@@ -228,6 +246,19 @@ class NoteListAdapter internal constructor(
                 popupMenu.show() // показываем меню
             }
         }
+    }
+
+    private fun checkPermission(context : Context, permissions : Array<String>) : Boolean {
+        var allSuccess = true
+        for(i in permissions.indices) {
+            if(PermissionChecker.checkCallingOrSelfPermission(
+                    context,
+                    permissions[i]
+                ) == PermissionChecker.PERMISSION_DENIED) {
+                allSuccess = false
+            }
+        }
+        return allSuccess
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoteViewHolder {

@@ -51,6 +51,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         repository.insertNote(note)
     }
 
+    fun insertListNote(notes: List<Note>) = viewModelScope.launch {
+        repository.insertListNote(notes)
+    }
+
     // удаляет запись, вызывая функцию в репозитории
     fun deleteNote(note : Note) = viewModelScope.launch{
         repository.deleteNote(note)
@@ -68,6 +72,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         repository.insertDailyListItem(dailyListItem)
     }
 
+    fun insertListItems(dailyListItems: List<DailyListItem>) = viewModelScope.launch {
+        repository.insertListItems(dailyListItems)
+    }
+
     // удалить заметку
     fun deleteOneDailyListItem(dailyListItem : DailyListItem) = viewModelScope.launch{
         repository.deleteOneDailyListItem(dailyListItem)
@@ -78,8 +86,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         repository.updateDailyListItem(dailyListItem)
     }
 
-    fun updateListOfItems(list : List<DailyListItem>) = viewModelScope.launch {
-        repository.updateListOfItems(list)
-    }
+
 
 }

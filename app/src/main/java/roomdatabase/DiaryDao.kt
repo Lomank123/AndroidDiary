@@ -51,6 +51,10 @@ interface DiaryDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertNote(note : Note)
 
+    // Добавляет заметку
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertListNote(notes : List<Note>)
+
     // Обновляет заметку
     @Update
     suspend fun updateNote(note : Note)
@@ -83,6 +87,9 @@ interface DiaryDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertDailyListItem(dailyListItem : DailyListItem)
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertListItems(dailyListItems : List<DailyListItem>)
 
     @Update
     suspend fun updateDailyListItem(dailyListItem : DailyListItem)

@@ -1,13 +1,17 @@
 package com.lomank.diary
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.Toast
@@ -19,6 +23,7 @@ import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 import recyclerviewadapter.DiaryListAdapter
 import roomdatabase.Diary
@@ -28,11 +33,17 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
-
 class MainActivity : AppCompatActivity() {
+
+    private val permissionRequestCode = 11
+    private val permissionsList = arrayOf(
+        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+        Manifest.permission.READ_EXTERNAL_STORAGE
+    )
 
     private val newDiaryActivityRequestCode = 1              // для NewWordActivity
     private val editDiaryActivityRequestCode = 2             // для EditActivity
+
     private lateinit var mainViewModel: MainViewModel        // добавляем ViewModel
     private var isFabOpen : Boolean = false                  // по умолч. меню закрыто
     private lateinit var extDiaryList : List<ExtendedDiary>
@@ -58,14 +69,14 @@ class MainActivity : AppCompatActivity() {
         // TODO: Возможно это не нужно (убрать)
         val itemTouchHelper = ItemTouchHelper(itemTouchHelperCallback)
         itemTouchHelper.attachToRecyclerView(recyclerview)
-        
+
         // Следит за изменением списка записей(дневников) и обновляет данные в RecyclerView
-        mainViewModel.allExtendedDiaries.observe(this, Observer {
-            extDiaryList = it
+        mainViewModel.allExtendedDiaries.observe(this, Observer { objects ->
+            extDiaryList = objects
             if (prefs.getBoolean("sorted", false))
-                adapter.setFavoriteDiaries(it)
+                adapter.setDiaries(extDiaryList.sortedBy { !it.diary.favorite })
             else
-                adapter.setDiaries(it)
+                adapter.setDiaries(extDiaryList)
         })
 
         // Кнопки
@@ -91,7 +102,7 @@ class MainActivity : AppCompatActivity() {
                 adapter.setDiaries(extDiaryList)
             } else {
                 prefs.edit().putBoolean("sorted", true).apply()
-                adapter.setFavoriteDiaries(extDiaryList)
+                adapter.setDiaries(extDiaryList.sortedBy { !it.diary.favorite })
             }
             recyclerview.scrollToPosition(0)
         }
@@ -99,6 +110,32 @@ class MainActivity : AppCompatActivity() {
         fab_favourite.alpha = 0f
         fab_new_diary.translationY = translationY
         fab_favourite.translationY = translationY
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when(requestCode) {
+            permissionRequestCode -> {
+                var allSuccess = true
+                for(i in permissions.indices) {
+                    if (grantResults[i] == PackageManager.PERMISSION_DENIED) {
+                        allSuccess = false
+                        val requestAgain = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && shouldShowRequestPermissionRationale(permissions[i])
+                        if(requestAgain)
+                            Toast.makeText(this, "permission denied", Toast.LENGTH_SHORT).show()
+                        else
+                            Toast.makeText(this, "go to settings and enable the permission", Toast.LENGTH_SHORT).show()
+
+                    }
+                }
+                if(allSuccess)
+                    Toast.makeText(this, "permission granted", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     // TODO: Возможно это не нужно (убрать)
@@ -142,20 +179,6 @@ class MainActivity : AppCompatActivity() {
         return simpleDateFormat.format(Date())
     }
 
-    // Удаляет дневник. Вызов происходит через ViewModel
-    private fun deleteDiary(extDiary : ExtendedDiary)
-    {
-        // Удаляем все файлы с голосовыми заметками из дневника
-        for(note in extDiary.notes)
-        {
-            val fileName = this@MainActivity.getExternalFilesDir(null)!!.absolutePath + "/${note.name}_${note.id}.3gpp"
-            if(File(fileName).exists())
-                File(fileName).delete()
-        }
-        // Затем удаляем сам дневник
-        mainViewModel.deleteDiary(extDiary.diary)
-    }
-
     // адаптер для RecyclerView
     // то, что в фигурных скобках это и есть аргумент listener : (ExtendedDiary) -> Unit в адаптере
     private fun newDiaryAdapter() : DiaryListAdapter
@@ -176,7 +199,7 @@ class MainActivity : AppCompatActivity() {
                 startActivityForResult(intent, editDiaryActivityRequestCode)
             }, {
                // listenerUpdate
-                mainViewModel.updateDiary(it.diary)
+                updateDiary(it)
             })
     }
 
@@ -203,15 +226,13 @@ class MainActivity : AppCompatActivity() {
         if (requestCode == editDiaryActivityRequestCode && resultCode == Activity.RESULT_OK) {
             val diaryEdit = data?.getSerializableExtra(EditDiaryActivity.EXTRA_EDIT_DIARY) as? Diary
             val imgDiaryEdit = data?.getStringExtra(EditDiaryActivity.EXTRA_EDIT_DIARY_IMAGE)
+            val colorDiaryEdit = data?.getIntExtra(EditDiaryActivity.EXTRA_EDIT_DIARY_COLOR, 0)
             if (diaryEdit != null)
             {
                 if (imgDiaryEdit != null && imgDiaryEdit != "")
                     diaryEdit.img = imgDiaryEdit
-                else
-                    diaryEdit.img = null
-                diaryEdit.color = data.getIntExtra(EditDiaryActivity.EXTRA_EDIT_DIARY_COLOR, 0)
-                if (diaryEdit.color == 0)
-                    diaryEdit.color = null
+                if (colorDiaryEdit != null && colorDiaryEdit != 0)
+                    diaryEdit.color = data.getIntExtra(EditDiaryActivity.EXTRA_EDIT_DIARY_COLOR, 0)
                 diaryEdit.lastEditDate = currentDate()
                 mainViewModel.updateDiary(diaryEdit) // обновляем запись в БД
             }
@@ -272,13 +293,13 @@ class MainActivity : AppCompatActivity() {
             }
             extDiaryList = diariesSearchList
             if (prefs!!.getBoolean("sorted", false))
-                adapter.setFavoriteDiaries(extDiaryList)
+                adapter.setDiaries(extDiaryList.sortedBy { !it.diary.favorite })
             else
                 adapter.setDiaries(extDiaryList)
         } else { // Если строка поиска пуста
             extDiaryList = mainViewModel.allExtendedDiaries.value!!
             if (prefs!!.getBoolean("sorted", false))
-                adapter.setFavoriteDiaries(extDiaryList)
+                adapter.setDiaries(extDiaryList.sortedBy { !it.diary.favorite })
             else
                 adapter.setDiaries(extDiaryList)
         }
@@ -331,6 +352,63 @@ class MainActivity : AppCompatActivity() {
         fab_favourite.visibility = VISIBLE
         fab_favourite.animate().translationY(0f).alpha(1f).setDuration(300).start()
         fab_new_diary.animate().translationY(0f).alpha(1f).setDuration(300).start()
+    }
+
+    // TODO: change to string resources
+    // SnackBar creation (with UNDO button)
+    private fun createUndoSnackBar(view : View, extDiary : ExtendedDiary){
+        val snackBar = Snackbar.make(view, "diary changed", Snackbar.LENGTH_LONG)
+        var isUndo = false
+        snackBar.setAction("UNDO"){
+            insertDiary(extDiary.diary)
+            mainViewModel.insertListNote(extDiary.notes)
+            mainViewModel.insertListItems(extDiary.dailyListItems)
+
+            isUndo = true
+
+        }
+        snackBar.addCallback(object : Snackbar.Callback(){
+            override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
+                super.onDismissed(transientBottomBar, event)
+                if(!isUndo) {
+
+                    // Удаляем все файлы с голосовыми заметками из дневника
+                    // TODO: EXTERNAL_STORAGE
+                    for(note in extDiary.notes)
+                    {
+                        val fileName = this@MainActivity.getExternalFilesDir(null)!!.absolutePath + "/${note.name}_${note.id}.3gpp"
+                        if(File(fileName).exists())
+                            File(fileName).delete()
+                    }
+                    Toast.makeText(this@MainActivity, "SnackBar dismissed", Toast.LENGTH_SHORT).show()
+
+                }
+
+            }
+
+        })
+
+
+
+
+        snackBar.show()
+    }
+
+    // Database queries
+
+    // Delete diary
+    private fun deleteDiary(extDiary : ExtendedDiary)
+    {
+        mainViewModel.deleteDiary(extDiary.diary)
+        // SnackBar undo
+        createUndoSnackBar(findViewById(android.R.id.content), extDiary)
+    }
+
+    private fun insertDiary(diary : Diary){
+        mainViewModel.insertDiary(diary)
+    }
+    private fun updateDiary(extDiary: ExtendedDiary){
+        mainViewModel.updateDiary(extDiary.diary)
     }
 }
 

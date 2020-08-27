@@ -82,13 +82,15 @@ class DailyListFragment : Fragment() {
                         )
                 }
                 i.start()
+                // TODO: Изменить текст на строковый ресурс
+                if((listDoneSize * 100) / listSize >= 100) {
+                    Snackbar.make(layout, "You have succeed!", Snackbar.LENGTH_SHORT)
+                        .show()
+                }
             } else
                 layout.progressBar_appbar.progress = 0
-            // TODO: Переделать так чтобы срабатывал только когда нажимают на Checkbox
-            if((listDoneSize * 100) / listSize >= 100) {
-                Snackbar.make(layout, "You have succeed!", Snackbar.LENGTH_LONG)
-                    .show()
-            }
+
+
             // don't need for now
             //layout.recyclerview_list.scrollToPosition(0)
         })
@@ -152,10 +154,12 @@ class DailyListFragment : Fragment() {
                 if (scrollRange + verticalOffset == 0) {
                     isShow = true
                     layout.progress_layout.animate().translationY(scrollRange.toFloat()).start()
+                    layout.progressbar_text.animate().alpha(0f).setDuration(300).start()
                     layout.imageButton_edit_list_name.visibility = GONE
                 } else if (isShow) {
                     isShow = false
                     layout.progress_layout.animate().translationY(0f).start()
+                    layout.progressbar_text.animate().alpha(1f).setDuration(300).start()
                     layout.imageButton_edit_list_name.visibility = VISIBLE
                 }
             }

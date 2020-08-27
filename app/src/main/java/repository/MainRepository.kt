@@ -41,6 +41,10 @@ class MainRepository (private val diaryDao : DiaryDao) {
         diaryDao.insertNote(note)
     }
 
+    suspend fun insertListNote(notes : List<Note>) {
+        diaryDao.insertListNote(notes)
+    }
+
     // удалить заметку
     suspend fun deleteNote(note : Note)
     {
@@ -60,6 +64,10 @@ class MainRepository (private val diaryDao : DiaryDao) {
         diaryDao.insertDailyListItem(dailyListItem)
     }
 
+    suspend fun insertListItems(dailyListItems : List<DailyListItem>) {
+        diaryDao.insertListItems(dailyListItems)
+    }
+
     // удалить заметку
     suspend fun deleteOneDailyListItem(dailyListItem : DailyListItem)
     {
@@ -70,10 +78,4 @@ class MainRepository (private val diaryDao : DiaryDao) {
     suspend fun updateDailyListItem(dailyListItem : DailyListItem){
         diaryDao.updateDailyListItem(dailyListItem)
     }
-
-    suspend fun updateListOfItems(list : List<DailyListItem>) {
-        diaryDao.updateListOfItems(list)
-    }
-
-
 }

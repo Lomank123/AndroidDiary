@@ -1,10 +1,13 @@
 package recyclerviewadapter
 
+import android.Manifest
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
+import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
 import android.net.Uri
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -12,7 +15,10 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.*
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.app.ActivityCompat.requestPermissions
 import androidx.core.content.ContextCompat
+import androidx.core.content.PermissionChecker
+import androidx.core.content.PermissionChecker.checkCallingOrSelfPermission
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -37,6 +43,12 @@ class DiaryListAdapter internal constructor(
     private var diaries = emptyList<ExtendedDiary>()   // Сюда будут сохраняться дневники
 
     private val prefs: SharedPreferences? = PreferenceManager.getDefaultSharedPreferences(mContext)
+
+    private val permissionRequestCode = 11
+    private val permissionsList = arrayOf(
+        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+        Manifest.permission.READ_EXTERNAL_STORAGE
+    )
 
     class DiaryItemDiffCallBack(
         private var oldDiaryList : List<ExtendedDiary>,
@@ -102,16 +114,20 @@ class DiaryListAdapter internal constructor(
             else
                 layoutItemView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white))
 
-            // установка фото
-            if (extDiary.diary.img != null)
-            {
-                diaryImageView.visibility = VISIBLE
-                val uriImage = Uri.parse(extDiary.diary.img)
-                diaryImageView.setImageURI(uriImage)
-            }
-            else
-                diaryImageView.setImageResource(R.drawable.logo)
-                //diaryImageView.visibility = GONE
+            // photo
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                if(checkPermission(mContext, permissionsList)) {
+                    if (extDiary.diary.img != null) {
+                        diaryImageView.visibility = VISIBLE
+                        val uriImage = Uri.parse(extDiary.diary.img)
+                        diaryImageView.setImageURI(uriImage)
+                    }
+                    else
+                        diaryImageView.setImageResource(R.drawable.logo)
+                        //diaryImageView.visibility = GONE
+                } else {
+                    requestPermissions(mContext as Activity,permissionsList, permissionRequestCode)
+                }
             // иконка со звездочкой (избранное)
             if (extDiary.diary.favorite)
                 diaryStarView.visibility = VISIBLE
@@ -207,6 +223,16 @@ class DiaryListAdapter internal constructor(
         }
     }
 
+    private fun checkPermission(context : Context, permissions : Array<String>) : Boolean {
+        var allSuccess = true
+        for(i in permissions.indices) {
+            if(checkCallingOrSelfPermission(context, permissions[i]) == PermissionChecker.PERMISSION_DENIED) {
+                allSuccess = false
+            }
+        }
+        return allSuccess
+    }
+
     // создание ViewHolder (одинаково для всех RecyclerView)
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DiaryViewHolder {
         // добавляет контент(XML) из 1-го аргумента, и помещает во второй (родительский)
@@ -230,14 +256,16 @@ class DiaryListAdapter internal constructor(
         diffResult.dispatchUpdatesTo(this)
         //notifyDataSetChanged()
     }
-    internal fun setFavoriteDiaries(diaries: List<ExtendedDiary>){
-        val oldList = this.diaries
-        val diffResult : DiffUtil.DiffResult = DiffUtil.calculateDiff(
-            DiaryItemDiffCallBack(oldList, diaries.sortedBy { !it.diary.favorite }))
-        this.diaries = diaries.sortedBy { !it.diary.favorite }
-        diffResult.dispatchUpdatesTo(this)
-        //notifyDataSetChanged()
-    }
+
+    // TODO: Убрать если не понадобится
+    //internal fun setFavoriteDiaries(diaries: List<ExtendedDiary>){
+    //    val oldList = this.diaries
+    //    val diffResult : DiffUtil.DiffResult = DiffUtil.calculateDiff(
+    //        DiaryItemDiffCallBack(oldList, diaries.sortedBy { !it.diary.favorite }))
+    //    this.diaries = diaries.sortedBy { !it.diary.favorite }
+    //    diffResult.dispatchUpdatesTo(this)
+    //    //notifyDataSetChanged()
+    //}
 
     override fun getItemCount() = diaries.size // сколько эл-тов будет в списке
 }
