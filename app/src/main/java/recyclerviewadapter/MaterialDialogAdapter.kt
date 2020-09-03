@@ -10,6 +10,7 @@ import com.lomank.diary.R
 import roomdatabase.Diary
 import roomdatabase.ExtendedDiary
 
+// used for Material Dialog when choosing where to put the note
 class MaterialDialogAdapter internal constructor(
     extDiaryList : List<ExtendedDiary>,
     private val listenerSwap : (Diary) -> Unit

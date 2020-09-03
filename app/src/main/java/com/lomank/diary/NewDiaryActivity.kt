@@ -15,6 +15,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.PermissionChecker
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.color.colorChooser
+import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.activity_new_diary.*
 
 class NewDiaryActivity : AppCompatActivity() {
@@ -77,14 +78,16 @@ class NewDiaryActivity : AppCompatActivity() {
         // слушатель для кнопки Choose photo
         photo_button.setOnClickListener{
             // Выбираем фото из галереи
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                if(checkPermission(this, permissionsList)) {
-                    val choosePhotoIntent = Intent(Intent.ACTION_PICK)
-                    choosePhotoIntent.type = "image/*"
-                    startActivityForResult(choosePhotoIntent, choosePhotoRequestCode)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (checkPermission(this, permissionsList)) {
+                    makePhotoChooseIntent()
                 } else {
                     ActivityCompat.requestPermissions(this, permissionsList, permissionRequestCode)
                 }
+            } else {
+                makePhotoChooseIntent()
+            }
+
         }
         // color button
         imageButton_color.setOnClickListener {
@@ -107,6 +110,12 @@ class NewDiaryActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun makePhotoChooseIntent() {
+        val choosePhotoIntent = Intent(Intent.ACTION_OPEN_DOCUMENT)
+        choosePhotoIntent.type = "image/*"
+        startActivityForResult(choosePhotoIntent, choosePhotoRequestCode)
     }
 
     private fun checkPermission(context : Context, permissions : Array<String>) : Boolean {
@@ -155,8 +164,10 @@ class NewDiaryActivity : AppCompatActivity() {
         if (requestCode == choosePhotoRequestCode && resultCode == Activity.RESULT_OK)
         {
             isPhotoExist = true
-            imageView_new_diary.setImageURI(data?.data)
-            replyIntent.putExtra(EXTRA_NEW_DIARY_IMAGE, data?.data.toString())
+            val uriImage = data?.data
+            contentResolver.takePersistableUriPermission(uriImage!!, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            Glide.with(this).load(uriImage).into(imageView_new_diary)
+            replyIntent.putExtra(EXTRA_NEW_DIARY_IMAGE, uriImage.toString())
         }
     }
 
@@ -174,16 +185,14 @@ class NewDiaryActivity : AppCompatActivity() {
                         allSuccess = false
                         val requestAgain = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && shouldShowRequestPermissionRationale(permissions[i])
                         if(requestAgain)
-                            Toast.makeText(this, "permission denied", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, resources.getString(R.string.perm_denied), Toast.LENGTH_SHORT).show()
                         else
-                            Toast.makeText(this, "go to settings and enable the permission", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, resources.getString(R.string.perm_denied_again), Toast.LENGTH_SHORT).show()
                     }
                 }
                 if(allSuccess) {
-                    Toast.makeText(this, "permission granted", Toast.LENGTH_SHORT).show()
-                    val choosePhotoIntent = Intent(Intent.ACTION_PICK)
-                    choosePhotoIntent.type = "image/*"
-                    startActivityForResult(choosePhotoIntent, choosePhotoRequestCode)
+                    Toast.makeText(this, resources.getString(R.string.perm_granted), Toast.LENGTH_SHORT).show()
+                    makePhotoChooseIntent()
                 }
             }
         }

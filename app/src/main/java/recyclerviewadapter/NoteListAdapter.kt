@@ -1,13 +1,9 @@
 package recyclerviewadapter
 
-import android.Manifest
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
-import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
-import android.net.Uri
-import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -15,15 +11,14 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.*
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.content.PermissionChecker
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.list.customListAdapter
+import com.bumptech.glide.Glide
 import com.lomank.diary.R
 import roomdatabase.ExtendedDiary
 import roomdatabase.Note
@@ -47,12 +42,6 @@ class NoteListAdapter internal constructor(
     private var notes = emptyList<Note>()   // Сохраненная копия заметок
 
     private var extDiaryList = emptyList<ExtendedDiary>()
-
-    private val permissionRequestCode = 11
-    private val permissionsList = arrayOf(
-        Manifest.permission.WRITE_EXTERNAL_STORAGE,
-        Manifest.permission.READ_EXTERNAL_STORAGE
-    )
 
     class NoteItemDiffCallBack(
         private var oldNoteList : List<Note>,
@@ -91,6 +80,8 @@ class NoteListAdapter internal constructor(
 
         // эта функция применяется для каждого члена RecyclerView т.к. вызывается в onBindViewHolder
         fun bindView(note: Note) {
+            noteItemView.text = note.name
+            noteDescriptionView.text = cutString(note.content)
             creationDateItemView.text = note.creationDate.toString()
             lastEditDateItemView.text = note.lastEditDate
 
@@ -99,37 +90,14 @@ class NoteListAdapter internal constructor(
             itemView.setOnClickListener {
                 listenerOpen(note)
             }
-            // устанавливаем значения во вью
-            noteItemView.text = note.name // название заметки
-            // Лимит на кол-во символов в тексте заметки для отображения: 12
-            var count = 0
-            var str = ""
-            for(i in note.content) { // записываем в строку первые 12 символов
-                if (count == 12) {
-                    str += ".." // если их > 12, добавляем многоточие и завершаем цикл
-                    break
-                }
-                str += i
-                count++
-            }
-            // в RecyclerView будут видны первые 16 символов текста заметки
-            noteDescriptionView.text = str // текст заметки
 
             // photo
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                if(checkPermission(mContext, permissionsList)) {
-                    if (note.img != null)
-                    {
-                        noteImageView.visibility = VISIBLE
-                        val uriImage = Uri.parse(note.img)
-                        noteImageView.setImageURI(uriImage)
-                    }
-                    else
-                        noteImageView.setImageResource(R.drawable.blank_sheet)
-                        //noteImageView.visibility = GONE
-                } else {
-                    ActivityCompat.requestPermissions(mContext as Activity, permissionsList, permissionRequestCode)
-                }
+            if (note.img != null && note.img != "") {
+                // trying to set an image with Glide
+                Glide.with(mContext).load(note.img).into(noteImageView)
+            } else {
+                noteImageView.setImageResource(R.drawable.blank_sheet)
+            }
 
             // иконка со звездочкой (избранное)
             if (note.favorite)
@@ -137,6 +105,7 @@ class NoteListAdapter internal constructor(
             else
                 noteStarView.visibility = GONE
 
+            // color
             if (note.color != null && prefs!!.getBoolean("color_check_note", false)) {
                 layoutItemView.setBackgroundColor(note.color!!)
             }
@@ -148,20 +117,17 @@ class NoteListAdapter internal constructor(
                 // Устанавливаем контекстное меню
                 val popupMenu = PopupMenu(mContext, it)
                 popupMenu.inflate(R.menu.menu_notes)
+
                 // установка нужной надписи на пункт меню
-                if(note.favorite) {
+                if(note.favorite)
                     popupMenu.menu.findItem(R.id.bookmark).title = mContext.resources.
                     getString(R.string.remove_bookmark)
-                }
-                else {
+                else
                     popupMenu.menu.findItem(R.id.bookmark).title = mContext.resources.
                     getString(R.string.bookmark)
-                }
-                // Делает кнопку избранного невидимой (не нужно)
-                //popupMenu.menu.findItem(R.id.bookmark).isVisible = false
 
                 popupMenu.setOnMenuItemClickListener { item ->
-                    when(item.itemId) {     // сколько пунктов меню - столько и вариантов в when()
+                    when(item.itemId) {
                         R.id.delete -> {
                             val dialog = MaterialDialog(mContext)
                             dialog.show{
@@ -179,7 +145,7 @@ class NoteListAdapter internal constructor(
                             true
                         }
                         R.id.open -> {
-                            listenerOpen(note)  // открытие записи
+                            listenerOpen(note)
                             // Т.к. в этом обработчике нужно вернуть boolean, возвращаем true
                             true
                         }
@@ -221,7 +187,6 @@ class NoteListAdapter internal constructor(
                         R.id.info -> {
                             isExpanded = !isExpanded
                             if(isExpanded) {
-                                //expandableLayoutItemView.visibility = VISIBLE
                                 expandableLayoutItemView.animate()
                                     .alpha(1f).setDuration(500).setListener(object : AnimatorListenerAdapter(){
                                         override fun onAnimationStart(animation: Animator?) {
@@ -229,7 +194,6 @@ class NoteListAdapter internal constructor(
                                         }
                                     }).start()
                             } else {
-                                //expandableLayoutItemView.visibility = GONE
                                 expandableLayoutItemView.animate()
                                     .alpha(0f).setDuration(500).setListener(object : AnimatorListenerAdapter(){
                                         override fun onAnimationEnd(animation: Animator?) {
@@ -246,19 +210,6 @@ class NoteListAdapter internal constructor(
                 popupMenu.show() // показываем меню
             }
         }
-    }
-
-    private fun checkPermission(context : Context, permissions : Array<String>) : Boolean {
-        var allSuccess = true
-        for(i in permissions.indices) {
-            if(PermissionChecker.checkCallingOrSelfPermission(
-                    context,
-                    permissions[i]
-                ) == PermissionChecker.PERMISSION_DENIED) {
-                allSuccess = false
-            }
-        }
-        return allSuccess
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoteViewHolder {
@@ -283,15 +234,24 @@ class NoteListAdapter internal constructor(
         //notifyDataSetChanged()  // даем понять адаптеру, что были внесены изменения
     }
 
-    internal fun setFavoriteNotes(notes: List<Note>, extDiariesList : List<ExtendedDiary>){
-        this.extDiaryList = extDiariesList
-        val oldList = this.notes
-        val diffResult : DiffUtil.DiffResult = DiffUtil.calculateDiff(
-            NoteItemDiffCallBack(oldList, notes.sortedBy { !it.favorite }))
-        this.notes = notes.sortedBy { !it.favorite }
-        diffResult.dispatchUpdatesTo(this)
-        //notifyDataSetChanged()
+    // cuts string to num symbols
+    private fun cutString(str : String, num : Int = NUMBER_OF_SYMBOLS) : String {
+        var count = 0
+        var newStr = ""
+        for(i in str) {
+            if (count == num) {
+                newStr += ".."
+                break
+            }
+            newStr += i
+            count++
+        }
+        return newStr
     }
 
     override fun getItemCount() = notes.size // сколько эл-тов будет в списке
+
+    companion object {
+        const val NUMBER_OF_SYMBOLS = 12
+    }
 }

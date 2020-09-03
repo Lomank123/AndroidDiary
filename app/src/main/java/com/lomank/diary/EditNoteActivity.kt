@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
-import android.net.Uri
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -16,6 +15,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.PermissionChecker
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.color.colorChooser
+import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.activity_new_note.*
 import roomdatabase.Note
 
@@ -43,25 +43,13 @@ class EditNoteActivity : AppCompatActivity() {
         edit_note.setText(note!!.name)
         edit_text_note.setText(note.content)
 
+        // photo
         if (note.img != null && note.img != "") {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                if(checkPermission(this, permissionsList)) {
-                    isPhotoExist = true
-                    val uriImage = Uri.parse(note.img)
-                    imageView_note.setImageURI(uriImage)
-                } else {
-                    ActivityCompat.requestPermissions(this, permissionsList, permissionRequestCode)
-                }
-            else {
-                isPhotoExist = true
-                val uriImage = Uri.parse(note.img)
-                imageView_note.setImageURI(uriImage)
-            }
+            isPhotoExist = true
+            Glide.with(this).load(note.img).into(imageView_note)
         }
         else
             imageView_note.setImageResource(R.drawable.blank_sheet)
-
-
 
         button_save_note.setOnClickListener {
             if (TextUtils.isEmpty(edit_note.text)) {
@@ -85,7 +73,7 @@ class EditNoteActivity : AppCompatActivity() {
             }
         }
         // Кнопка Delete
-        delete_photo_button_note.setOnClickListener{
+        delete_photo_button_note.setOnClickListener {
             if (isPhotoExist) {
                 isPhotoChanged = note.img != null
                 isPhotoExist = false
@@ -94,16 +82,17 @@ class EditNoteActivity : AppCompatActivity() {
                 replyIntent.putExtra(EXTRA_IMAGE_EDIT_NOTE,"")
             }
         }
-        photo_button_note.setOnClickListener{
+        photo_button_note.setOnClickListener {
             // Выбираем фото из галереи
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
                 if(checkPermission(this, permissionsList)) {
-                    val choosePhotoIntent = Intent(Intent.ACTION_PICK)
-                    choosePhotoIntent.type = "image/*"
-                    startActivityForResult(choosePhotoIntent, choosePhotoRequestCode)
+                    makePhotoChooseIntent()
                 } else {
                     ActivityCompat.requestPermissions(this, permissionsList, permissionRequestCode)
                 }
+            } else {
+                makePhotoChooseIntent()
+            }
         }
         // color button
         imageButton_color_note.setOnClickListener {
@@ -125,6 +114,12 @@ class EditNoteActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun makePhotoChooseIntent() {
+        val choosePhotoIntent = Intent(Intent.ACTION_OPEN_DOCUMENT)
+        choosePhotoIntent.type = "image/*"
+        startActivityForResult(choosePhotoIntent, choosePhotoRequestCode)
     }
 
     private fun checkPermission(context : Context, permissions : Array<String>) : Boolean {
@@ -172,10 +167,13 @@ class EditNoteActivity : AppCompatActivity() {
         if (requestCode == choosePhotoRequestCode && resultCode == Activity.RESULT_OK)
         {
             val note = intent.getSerializableExtra("noteSerializableEdit") as? Note
-            imageView_note.setImageURI(data?.data)
-            replyIntent.putExtra(EXTRA_IMAGE_EDIT_NOTE, data?.data.toString())
+            val uriImage = data?.data
 
-            isPhotoChanged = note!!.img != data?.data.toString()
+            contentResolver.takePersistableUriPermission(uriImage!!, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            Glide.with(this).load(uriImage).into(imageView_note)
+
+            replyIntent.putExtra(EXTRA_IMAGE_EDIT_NOTE, uriImage.toString())
+            isPhotoChanged = note!!.img != uriImage.toString()
             isPhotoExist = true
         }
     }
@@ -194,16 +192,14 @@ class EditNoteActivity : AppCompatActivity() {
                         allSuccess = false
                         val requestAgain = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && shouldShowRequestPermissionRationale(permissions[i])
                         if(requestAgain)
-                            Toast.makeText(this, "permission denied", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, resources.getString(R.string.perm_denied), Toast.LENGTH_SHORT).show()
                         else
-                            Toast.makeText(this, "go to settings and enable the permission", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, resources.getString(R.string.perm_denied_again), Toast.LENGTH_SHORT).show()
                     }
                 }
                 if(allSuccess) {
-                    Toast.makeText(this, "permission granted", Toast.LENGTH_SHORT).show()
-                    val choosePhotoIntent = Intent(Intent.ACTION_PICK)
-                    choosePhotoIntent.type = "image/*"
-                    startActivityForResult(choosePhotoIntent, choosePhotoRequestCode)
+                    Toast.makeText(this, resources.getString(R.string.perm_granted), Toast.LENGTH_SHORT).show()
+                    makePhotoChooseIntent()
                 }
             }
         }

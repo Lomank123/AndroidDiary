@@ -1,5 +1,6 @@
 <resources>
 
+    <!-- Main -->
     <string name="hint_diary">Diary…</string>
     <string name="button_save">Save</string>
     <string name="empty_not_saved">Canceled or Diary name is empty</string>
@@ -42,8 +43,6 @@
     <string name="dialog_new_daily_list_hint">Name…</string>
     <string name="dialog_edit_text">Enter a new name</string>
 
-
-
     <!-- Settings -->
     <string name="categoryMainSettings">Main settings</string>
     <string name="font_check">Font style</string>
@@ -81,8 +80,24 @@
     <string name="end_time">-1:11</string>
     <string name="no_voice_note">Tap to start recording</string>
 
-    <!-- Other -->
+    <!-- ProgressBar -->
     <string name="progressbar_progress"> of 100</string>
     <string name="progressbar_progress_full">0 of 100</string>
+
+    <!-- SnackBar -->
+    <string name="snackbar_diary_delete">Diary has been deleted.</string>
+    <string name="snackbar_note_delete">Note has been deleted.</string>
+    <string name="snackbar_daily_list_item_delete">Item has been deleted.</string>
+    <string name="snackbar_undo_btn">UNDO</string>
+    <string name="snackbar_succeed">You have succeed!</string>
+
+    <!-- Fragments -->
+    <string name="fragment_notes">Notes</string>
+    <string name="fragment_daily_list">Daily list</string>
+    
+    <!-- Permissions -->
+    <string name="perm_granted">Permissions granted</string>
+    <string name="perm_denied">Permissions denied</string>
+    <string name="perm_denied_again">Enable the permission in settings</string>
 
 </resources>

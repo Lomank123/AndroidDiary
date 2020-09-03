@@ -82,9 +82,8 @@ class DailyListFragment : Fragment() {
                         )
                 }
                 i.start()
-                // TODO: Изменить текст на строковый ресурс
                 if((listDoneSize * 100) / listSize >= 100) {
-                    Snackbar.make(layout, "You have succeed!", Snackbar.LENGTH_SHORT)
+                    Snackbar.make(layout, resources.getString(R.string.snackbar_succeed), Snackbar.LENGTH_SHORT)
                         .show()
                 }
             } else

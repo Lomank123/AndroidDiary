@@ -1,5 +1,6 @@
 <resources>
 
+    <!-- Главное -->
     <string name="hint_diary">Дневник…</string>
     <string name="button_save">Сохранить</string>
     <string name="empty_not_saved">Отменено или поле с именем пустое</string>
@@ -80,8 +81,24 @@
     <string name="end_time">-1:11</string>
     <string name="no_voice_note">Нажмите для записи</string>
 
-    <!-- Other -->
+    <!-- ProgressBar -->
     <string name="progressbar_progress"> из 100</string>
     <string name="progressbar_progress_full">0 из 100</string>
+
+    <!-- SnackBar -->
+    <string name="snackbar_diary_delete">Дневник был удален.</string>
+    <string name="snackbar_note_delete">Заметка была удалена.</string>
+    <string name="snackbar_daily_list_item_delete">Пункт был удален.</string>
+    <string name="snackbar_undo_btn">ОТМЕНА</string>
+    <string name="snackbar_succeed">Вы успешно справились!</string>
+
+    <!-- Fragments -->
+    <string name="fragment_notes">Заметки</string>
+    <string name="fragment_daily_list">Список дел</string>
+
+    <!-- Permissions -->
+    <string name="perm_granted">Права выданы</string>
+    <string name="perm_denied">Права не выданы</string>
+    <string name="perm_denied_again">Включите право в настройках</string>
 
 </resources>

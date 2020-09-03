@@ -1,14 +1,12 @@
 package com.lomank.diary
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.SharedPreferences
-import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -34,12 +32,6 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
-
-    private val permissionRequestCode = 11
-    private val permissionsList = arrayOf(
-        Manifest.permission.WRITE_EXTERNAL_STORAGE,
-        Manifest.permission.READ_EXTERNAL_STORAGE
-    )
 
     private val newDiaryActivityRequestCode = 1              // для NewWordActivity
     private val editDiaryActivityRequestCode = 2             // для EditActivity
@@ -110,32 +102,6 @@ class MainActivity : AppCompatActivity() {
         fab_favourite.alpha = 0f
         fab_new_diary.translationY = translationY
         fab_favourite.translationY = translationY
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when(requestCode) {
-            permissionRequestCode -> {
-                var allSuccess = true
-                for(i in permissions.indices) {
-                    if (grantResults[i] == PackageManager.PERMISSION_DENIED) {
-                        allSuccess = false
-                        val requestAgain = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && shouldShowRequestPermissionRationale(permissions[i])
-                        if(requestAgain)
-                            Toast.makeText(this, "permission denied", Toast.LENGTH_SHORT).show()
-                        else
-                            Toast.makeText(this, "go to settings and enable the permission", Toast.LENGTH_SHORT).show()
-
-                    }
-                }
-                if(allSuccess)
-                    Toast.makeText(this, "permission granted", Toast.LENGTH_SHORT).show()
-            }
-        }
     }
 
     // TODO: Возможно это не нужно (убрать)
@@ -220,6 +186,7 @@ class MainActivity : AppCompatActivity() {
                 if(diary.color == 0)
                     diary.color = null
                 diary.creationDate = currentDate()
+                Log.e("Photo", "Path of photo: ${diary.img}")
                 mainViewModel.insertDiary(diary) // добавляем запись в БД
             }
         }
@@ -229,7 +196,7 @@ class MainActivity : AppCompatActivity() {
             val colorDiaryEdit = data?.getIntExtra(EditDiaryActivity.EXTRA_EDIT_DIARY_COLOR, 0)
             if (diaryEdit != null)
             {
-                if (imgDiaryEdit != null && imgDiaryEdit != "")
+                if (imgDiaryEdit != null)
                     diaryEdit.img = imgDiaryEdit
                 if (colorDiaryEdit != null && colorDiaryEdit != 0)
                     diaryEdit.color = data.getIntExtra(EditDiaryActivity.EXTRA_EDIT_DIARY_COLOR, 0)
@@ -354,43 +321,30 @@ class MainActivity : AppCompatActivity() {
         fab_new_diary.animate().translationY(0f).alpha(1f).setDuration(300).start()
     }
 
-    // TODO: change to string resources
     // SnackBar creation (with UNDO button)
     private fun createUndoSnackBar(view : View, extDiary : ExtendedDiary){
-        val snackBar = Snackbar.make(view, "diary changed", Snackbar.LENGTH_LONG)
+        val snackBar = Snackbar.make(view, resources.getString(R.string.snackbar_diary_delete), Snackbar.LENGTH_LONG)
         var isUndo = false
-        snackBar.setAction("UNDO"){
+        snackBar.setAction(resources.getString(R.string.snackbar_undo_btn)){
             insertDiary(extDiary.diary)
             mainViewModel.insertListNote(extDiary.notes)
             mainViewModel.insertListItems(extDiary.dailyListItems)
-
             isUndo = true
-
         }
         snackBar.addCallback(object : Snackbar.Callback(){
             override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
                 super.onDismissed(transientBottomBar, event)
                 if(!isUndo) {
-
                     // Удаляем все файлы с голосовыми заметками из дневника
-                    // TODO: EXTERNAL_STORAGE
                     for(note in extDiary.notes)
                     {
                         val fileName = this@MainActivity.getExternalFilesDir(null)!!.absolutePath + "/${note.name}_${note.id}.3gpp"
                         if(File(fileName).exists())
                             File(fileName).delete()
                     }
-                    Toast.makeText(this@MainActivity, "SnackBar dismissed", Toast.LENGTH_SHORT).show()
-
                 }
-
             }
-
         })
-
-
-
-
         snackBar.show()
     }
 

@@ -1,13 +1,9 @@
 package recyclerviewadapter
 
-import android.Manifest
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
-import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
-import android.net.Uri
-import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -15,23 +11,21 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.*
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.app.ActivityCompat.requestPermissions
 import androidx.core.content.ContextCompat
-import androidx.core.content.PermissionChecker
-import androidx.core.content.PermissionChecker.checkCallingOrSelfPermission
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
+import com.bumptech.glide.Glide
 import com.lomank.diary.R
 import roomdatabase.ExtendedDiary
 
 class DiaryListAdapter internal constructor(
     context: Context,
-    private val listenerDeleteDiary : (ExtendedDiary) -> Unit,
-    private val listenerOpenDiary : (ExtendedDiary) -> Unit,
-    private val listenerEditDiary : (ExtendedDiary) -> Unit,
-    private val listenerUpdateDiary : (ExtendedDiary) -> Unit
+    private val listenerDeleteDiary: (ExtendedDiary) -> Unit,
+    private val listenerOpenDiary: (ExtendedDiary) -> Unit,
+    private val listenerEditDiary: (ExtendedDiary) -> Unit,
+    private val listenerUpdateDiary: (ExtendedDiary) -> Unit
 ) : RecyclerView.Adapter<DiaryListAdapter.DiaryViewHolder>() {
 
     // По сути переменная inflater используется как метка на родительский XML,
@@ -44,15 +38,9 @@ class DiaryListAdapter internal constructor(
 
     private val prefs: SharedPreferences? = PreferenceManager.getDefaultSharedPreferences(mContext)
 
-    private val permissionRequestCode = 11
-    private val permissionsList = arrayOf(
-        Manifest.permission.WRITE_EXTERNAL_STORAGE,
-        Manifest.permission.READ_EXTERNAL_STORAGE
-    )
-
     class DiaryItemDiffCallBack(
-        private var oldDiaryList : List<ExtendedDiary>,
-        private var newDiaryList : List<ExtendedDiary>
+        private var oldDiaryList: List<ExtendedDiary>,
+        private var newDiaryList: List<ExtendedDiary>
     ): DiffUtil.Callback() {
         override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
             return (oldDiaryList[oldItemPosition].diary.id == newDiaryList[newItemPosition].diary.id)
@@ -87,26 +75,14 @@ class DiaryListAdapter internal constructor(
 
         // эта функция применяется для каждого члена RecyclerView т.к. вызывается в onBindViewHolder
         fun bindView(extDiary: ExtendedDiary) {
+            diaryItemView.text = extDiary.diary.name
+            diaryDescriptionView.text = cutString(extDiary.diary.content)
             creationDateItemView.text = extDiary.diary.creationDate.toString()
             lastEditDateItemView.text = extDiary.diary.lastEditDate
 
             itemView.setOnClickListener {
                 listenerOpenDiary(extDiary)
             }
-            // устанавливаем значения во вью
-            diaryItemView.text = extDiary.diary.name
-            var count = 0
-            var str = ""
-            for(i in extDiary.diary.content) { // записываем в строку первые 12 символов
-                if (count == 12) {
-                    str += ".." // если их > 12, добавляем многоточие и завершаем цикл
-                    break
-                }
-                str += i
-                count++
-            }
-            // в RecyclerView будут видны первые 16 символов текста заметки
-            diaryDescriptionView.text = str // текст заметки
 
             // color
             if(extDiary.diary.color != null && prefs!!.getBoolean("color_check_diary", false))
@@ -114,32 +90,26 @@ class DiaryListAdapter internal constructor(
             else
                 layoutItemView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white))
 
-            // photo
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                if(checkPermission(mContext, permissionsList)) {
-                    if (extDiary.diary.img != null) {
-                        diaryImageView.visibility = VISIBLE
-                        val uriImage = Uri.parse(extDiary.diary.img)
-                        diaryImageView.setImageURI(uriImage)
-                    }
-                    else
-                        diaryImageView.setImageResource(R.drawable.logo)
-                        //diaryImageView.visibility = GONE
-                } else {
-                    requestPermissions(mContext as Activity,permissionsList, permissionRequestCode)
-                }
             // иконка со звездочкой (избранное)
             if (extDiary.diary.favorite)
                 diaryStarView.visibility = VISIBLE
             else
                 diaryStarView.visibility = GONE
 
+            // photo
+            if (extDiary.diary.img != null && extDiary.diary.img != "") {
+                // trying to set an image with Glide
+                Glide.with(mContext).load(extDiary.diary.img).into(diaryImageView)
+            } else {
+                diaryImageView.setImageResource(R.drawable.logo)
+            }
 
             // обработчик долгих нажатий для вызова контекстного меню
             diaryImageButtonView.setOnClickListener{
                 // Устанавливаем контекстное меню
                 val popupMenu = PopupMenu(mContext, it)
                 popupMenu.inflate(R.menu.menu_notes)
+                // This button never used here
                 popupMenu.menu.findItem(R.id.move).isVisible = false
                 // если избранное - меняется текст кнопки добавить/удалить из избранных
                 if(extDiary.diary.favorite) {
@@ -152,16 +122,19 @@ class DiaryListAdapter internal constructor(
                 }
                 // Устанавливаем обработчик нажатий на пункты контекстного меню
                 popupMenu.setOnMenuItemClickListener { item ->
-                    when(item.itemId) {     // сколько пунктов меню - столько и вариантов в when()
-                        R.id.delete -> {    // удаление дневника
-                            // Диалоговое окно
+                    when(item.itemId) {
+                        R.id.delete -> {
                             val dialog = MaterialDialog(mContext)
-                            dialog.show{
+                            dialog.show {
                                 title(R.string.dialog_delete)
                                 message(R.string.dialog_check_delete)
                                 positiveButton(R.string.dialog_yes) {
                                     listenerDeleteDiary(extDiary)
-                                    Toast.makeText(mContext, mContext.resources.getString(R.string.dialog_deleted), Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(
+                                        mContext,
+                                        mContext.resources.getString(R.string.dialog_deleted),
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                     dialog.dismiss()
                                 }
                                 negativeButton(R.string.dialog_no) {
@@ -170,7 +143,7 @@ class DiaryListAdapter internal constructor(
                             }
                             true
                         }
-                        R.id.open -> { // открытие дневника
+                        R.id.open -> {
                             listenerOpenDiary(extDiary) // listener, описанный в NoteActivity
                             // Т.к. в этом обработчике нужно вернуть boolean, возвращаем true
                             true
@@ -181,32 +154,36 @@ class DiaryListAdapter internal constructor(
                         }
                         R.id.bookmark -> {
                             extDiary.diary.favorite = !extDiary.diary.favorite
-                            if(extDiary.diary.favorite) {
+                            if (extDiary.diary.favorite) {
                                 diaryStarView.visibility = VISIBLE
-                                Toast.makeText(mContext, mContext.resources.getString(R.string.add_favor),
-                                    Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    mContext, mContext.resources.getString(R.string.add_favor),
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             } else {
                                 diaryStarView.visibility = GONE
-                                Toast.makeText(mContext, mContext.resources.getString(R.string.del_favor),
-                                    Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    mContext, mContext.resources.getString(R.string.del_favor),
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
                             listenerUpdateDiary(extDiary)
                             true
                         }
                         R.id.info -> {
                             isExpanded = !isExpanded
-                            if(isExpanded) {
-                                //expandableLayoutItemView.visibility = VISIBLE
+                            if (isExpanded) {
                                 expandableLayoutItemView.animate()
-                                    .alpha(1f).setDuration(500).setListener(object : AnimatorListenerAdapter(){
+                                    .alpha(1f).setDuration(500).setListener(object :
+                                        AnimatorListenerAdapter() {
                                         override fun onAnimationStart(animation: Animator?) {
                                             expandableLayoutItemView.visibility = VISIBLE
                                         }
                                     }).start()
                             } else {
-                                //expandableLayoutItemView.visibility = GONE
                                 expandableLayoutItemView.animate()
-                                    .alpha(0f).setDuration(500).setListener(object : AnimatorListenerAdapter(){
+                                    .alpha(0f).setDuration(500).setListener(object :
+                                        AnimatorListenerAdapter() {
                                         override fun onAnimationEnd(animation: Animator?) {
                                             expandableLayoutItemView.visibility = GONE
                                         }
@@ -223,21 +200,13 @@ class DiaryListAdapter internal constructor(
         }
     }
 
-    private fun checkPermission(context : Context, permissions : Array<String>) : Boolean {
-        var allSuccess = true
-        for(i in permissions.indices) {
-            if(checkCallingOrSelfPermission(context, permissions[i]) == PermissionChecker.PERMISSION_DENIED) {
-                allSuccess = false
-            }
-        }
-        return allSuccess
-    }
-
     // создание ViewHolder (одинаково для всех RecyclerView)
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DiaryViewHolder {
         // добавляет контент(XML) из 1-го аргумента, и помещает во второй (родительский)
-        val itemView = inflater.inflate(R.layout.recyclerview_layout, parent,
-            false)
+        val itemView = inflater.inflate(
+            R.layout.recyclerview_layout, parent,
+            false
+        )
         return DiaryViewHolder(itemView)
     }
 
@@ -251,21 +220,30 @@ class DiaryListAdapter internal constructor(
     internal fun setDiaries(diaries: List<ExtendedDiary>) {
         val oldList = this.diaries
         val diffResult : DiffUtil.DiffResult = DiffUtil.calculateDiff(
-            DiaryItemDiffCallBack(oldList, diaries))
+            DiaryItemDiffCallBack(oldList, diaries)
+        )
         this.diaries = diaries      // обновляем внутренний список
         diffResult.dispatchUpdatesTo(this)
         //notifyDataSetChanged()
     }
 
-    // TODO: Убрать если не понадобится
-    //internal fun setFavoriteDiaries(diaries: List<ExtendedDiary>){
-    //    val oldList = this.diaries
-    //    val diffResult : DiffUtil.DiffResult = DiffUtil.calculateDiff(
-    //        DiaryItemDiffCallBack(oldList, diaries.sortedBy { !it.diary.favorite }))
-    //    this.diaries = diaries.sortedBy { !it.diary.favorite }
-    //    diffResult.dispatchUpdatesTo(this)
-    //    //notifyDataSetChanged()
-    //}
+    private fun cutString(str : String, num : Int = NUMBER_OF_SYMBOLS) : String {
+        var count = 0
+        var newStr = ""
+        for(i in str) {
+            if (count == num) {
+                newStr += ".."
+                break
+            }
+            newStr += i
+            count++
+        }
+        return newStr
+    }
 
     override fun getItemCount() = diaries.size // сколько эл-тов будет в списке
+
+    companion object {
+        const val NUMBER_OF_SYMBOLS = 12
+    }
 }

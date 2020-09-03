@@ -34,6 +34,7 @@
             android:label="@string/notes_btn" />
         <activity
             android:name="com.lomank.diary.ClickedActivity"
+            android:windowSoftInputMode="adjustResize"
             android:label="@string/clicked_note" />
         <activity
             android:name="com.lomank.diary.NewDiaryActivity"

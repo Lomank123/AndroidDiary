@@ -62,12 +62,12 @@ class NoteFragment : Fragment() {
 
         if (mainViewModel.allExtendedDiaries.hasActiveObservers())
             mainViewModel.allExtendedDiaries.removeObservers(requireActivity())
-        mainViewModel.allExtendedDiaries.observe(viewLifecycleOwner, Observer {
-            mainNoteList = findListOfNotes(it, extDiaryParent)
+        mainViewModel.allExtendedDiaries.observe(viewLifecycleOwner, Observer { obj ->
+            mainNoteList = findListOfNotes(obj, extDiaryParent)
             if (prefs.getBoolean("sorted_notes", false))
-                adapter.setFavoriteNotes(mainNoteList, it)
+                adapter.setNotes(mainNoteList.sortedBy { !it.favorite }, obj)
             else
-                adapter.setNotes(mainNoteList, it)
+                adapter.setNotes(mainNoteList, obj)
 
         })
 
@@ -91,7 +91,7 @@ class NoteFragment : Fragment() {
                 adapter.setNotes(mainNoteList, mainViewModel.allExtendedDiaries.value!!)
             } else {
                 prefs.edit().putBoolean("sorted_notes", true).apply()
-                adapter.setFavoriteNotes(mainNoteList, mainViewModel.allExtendedDiaries.value!!)
+                adapter.setNotes(mainNoteList.sortedBy { !it.favorite }, mainViewModel.allExtendedDiaries.value!!)
             }
             layout.recyclerview_note.scrollToPosition(0)
         }
@@ -215,7 +215,7 @@ class NoteFragment : Fragment() {
                 noteEdit.lastEditDate = currentDate()
                 if (colorNoteEdit != null && colorNoteEdit != 0)
                     noteEdit.color = colorNoteEdit
-                if (imgNoteEdit != null && imgNoteEdit != "")
+                if (imgNoteEdit != null)
                     noteEdit.img = imgNoteEdit
                 mainViewModel.updateNote(noteEdit)
             }
@@ -290,13 +290,13 @@ class NoteFragment : Fragment() {
             }
             mainNoteList = noteList
             if (prefs!!.getBoolean("sorted_notes", false))
-                adapter.setFavoriteNotes(mainNoteList, extDiaries)
+                adapter.setNotes(mainNoteList.sortedBy { !it.favorite }, extDiaries)
             else
                 adapter.setNotes(mainNoteList, extDiaries)
         } else { // Если строка поиска пуста
             mainNoteList = findListOfNotes(extDiaries, extDiaryParent)
             if (prefs!!.getBoolean("sorted_notes", false))
-                adapter.setFavoriteNotes(mainNoteList, extDiaries)
+                adapter.setNotes(mainNoteList.sortedBy { !it.favorite }, extDiaries)
             else
                 adapter.setNotes(mainNoteList, extDiaries)
         }

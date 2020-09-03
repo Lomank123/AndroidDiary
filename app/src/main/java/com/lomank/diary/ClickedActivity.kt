@@ -9,7 +9,6 @@ import android.content.pm.PackageManager
 import android.graphics.Typeface
 import android.media.MediaPlayer
 import android.media.MediaRecorder
-import android.net.Uri
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -24,6 +23,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.PermissionChecker
 import androidx.preference.PreferenceManager
 import com.afollestad.materialdialogs.MaterialDialog
+import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.activity_clicked.*
 import roomdatabase.Note
 import java.io.File
@@ -95,9 +95,7 @@ class ClickedActivity : AppCompatActivity() {
                     }
                 }
             )
-        }
-        else
-        {
+        } else {
             record_time_dis.text = this.resources.getString(R.string.no_voice_note)
         }
 
@@ -193,7 +191,6 @@ class ClickedActivity : AppCompatActivity() {
         fab_save.setOnClickListener{
             saveNote(note)
         }
-        layout_voice.translationY = 0f
     }
 
     private fun checkPermission(context : Context, permissions : Array<String>) : Boolean {
@@ -264,22 +261,17 @@ class ClickedActivity : AppCompatActivity() {
     {
         super.onResume()
         val note = intent.getSerializableExtra("noteSerializable") as? Note
-
-        // получаем наши настройки
         val prefs: SharedPreferences? = PreferenceManager.getDefaultSharedPreferences(this)
 
-        if (prefs!!.getBoolean("img_check", false))
-        {
-            if (note!!.img != null)
-            {
-                val uriImage = Uri.parse(note.img)
-                imageView_clicked.setImageURI(uriImage)
+        if (prefs!!.getBoolean("img_check", false)) {
+            if (note?.img != null && note.img != ""){
+                Glide.with(this).load(note.img).into(imageView_clicked)
             }
             else
                 imageView_clicked.setImageResource(R.drawable.blank_sheet)
-                //imageView_clicked.alpha = 0.1f
         }
 
+        // TODO: change this to materialDialog choose
         when(prefs.getString("list_preference_1", "0"))
         {
             "Default" ->
