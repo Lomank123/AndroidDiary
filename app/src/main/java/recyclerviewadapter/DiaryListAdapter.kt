@@ -65,7 +65,8 @@ class DiaryListAdapter internal constructor(
         private val diaryDescriptionView: TextView = itemView.findViewById(R.id.textView_content)
         private val diaryImageView: ImageView = itemView.findViewById(R.id.imageView)
         private val diaryStarView: ImageView = itemView.findViewById(R.id.imageView_star)
-        private val diaryImageButtonView : ImageButton = itemView.findViewById(R.id.imageButtonOptions)
+        private val diaryImageButtonViewOptions : ImageButton = itemView.findViewById(R.id.imageButton_options)
+        private val diaryImageButtonViewDelete : ImageButton = itemView.findViewById(R.id.imageButton_delete)
         // expandable layout
         private val expandableLayoutItemView : ConstraintLayout = itemView.findViewById(R.id.expandable_layout)
         private val creationDateItemView : TextView = itemView.findViewById(R.id.creation_date_text2)
@@ -104,8 +105,22 @@ class DiaryListAdapter internal constructor(
                 diaryImageView.setImageResource(R.drawable.logo)
             }
 
-            // обработчик долгих нажатий для вызова контекстного меню
-            diaryImageButtonView.setOnClickListener{
+            diaryImageButtonViewDelete.setOnClickListener {
+                val dialog = MaterialDialog(mContext)
+                dialog.show {
+                    title(R.string.dialog_delete)
+                    message(R.string.dialog_check_delete)
+                    positiveButton(R.string.dialog_yes) {
+                        listenerDeleteDiary(extDiary)
+                        dialog.dismiss()
+                    }
+                    negativeButton(R.string.dialog_no) {
+                        dialog.dismiss()
+                    }
+                }
+            }
+
+            diaryImageButtonViewOptions.setOnClickListener{
                 // Устанавливаем контекстное меню
                 val popupMenu = PopupMenu(mContext, it)
                 popupMenu.inflate(R.menu.menu_notes)
@@ -123,26 +138,6 @@ class DiaryListAdapter internal constructor(
                 // Устанавливаем обработчик нажатий на пункты контекстного меню
                 popupMenu.setOnMenuItemClickListener { item ->
                     when(item.itemId) {
-                        R.id.delete -> {
-                            val dialog = MaterialDialog(mContext)
-                            dialog.show {
-                                title(R.string.dialog_delete)
-                                message(R.string.dialog_check_delete)
-                                positiveButton(R.string.dialog_yes) {
-                                    listenerDeleteDiary(extDiary)
-                                    Toast.makeText(
-                                        mContext,
-                                        mContext.resources.getString(R.string.dialog_deleted),
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                    dialog.dismiss()
-                                }
-                                negativeButton(R.string.dialog_no) {
-                                    dialog.dismiss()
-                                }
-                            }
-                            true
-                        }
                         R.id.open -> {
                             listenerOpenDiary(extDiary) // listener, описанный в NoteActivity
                             // Т.к. в этом обработчике нужно вернуть boolean, возвращаем true

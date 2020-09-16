@@ -42,6 +42,8 @@
     <string name="dialog_new_daily_list_text">Input Daily List name</string>
     <string name="dialog_new_daily_list_hint">Name…</string>
     <string name="dialog_edit_text">Enter a new name</string>
+    <string name="dialog_clear_list">Do you want to clear the list?</string>
+    <string name="dialog_clear_list_title">Clearing the list</string>
 
     <!-- Settings -->
     <string name="categoryMainSettings">Main settings</string>
@@ -87,6 +89,7 @@
     <!-- SnackBar -->
     <string name="snackbar_diary_delete">Diary has been deleted.</string>
     <string name="snackbar_note_delete">Note has been deleted.</string>
+    <string name="snackbar_clear_list">List cleared.</string>
     <string name="snackbar_daily_list_item_delete">Item has been deleted.</string>
     <string name="snackbar_undo_btn">UNDO</string>
     <string name="snackbar_succeed">You have succeed!</string>

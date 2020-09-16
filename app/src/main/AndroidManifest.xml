@@ -16,9 +16,11 @@
 
         <activity
             android:name="com.lomank.diary.EditNoteActivity"
+            android:theme="@style/AppThemeAdditional"
             android:label="@string/edit_note" />
         <activity
             android:name="com.lomank.diary.EditDiaryActivity"
+            android:theme="@style/AppThemeAdditional"
             android:label="@string/edit_diary" />
         <activity
             android:name="com.lomank.diary.SettingsHolderActivity"
@@ -28,6 +30,7 @@
             android:label="@string/about_btn" />
         <activity
             android:name="com.lomank.diary.NewNoteActivity"
+            android:theme="@style/AppThemeAdditional"
             android:label="@string/new_note" />
         <activity
             android:name="com.lomank.diary.NoteActivity"
@@ -38,6 +41,7 @@
             android:label="@string/clicked_note" />
         <activity
             android:name="com.lomank.diary.NewDiaryActivity"
+            android:theme="@style/AppThemeAdditional"
             android:label="@string/new_diary" />
         <activity
             android:name="com.lomank.diary.MainActivity"

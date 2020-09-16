@@ -9,7 +9,8 @@
         android:title="@string/edit_btn" />
     <item
         android:id="@+id/delete"
-        android:title="@string/delete_btn"/>
+        android:title="@string/delete_btn"
+        android:visible="false" />
     <item
         android:id="@+id/bookmark"
         android:title="@string/bookmark"/>

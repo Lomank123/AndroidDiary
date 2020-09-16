@@ -26,11 +26,22 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|end"
-                android:layout_marginEnd="24dp"
+                android:layout_marginEnd="72dp"
                 android:layout_marginBottom="24dp"
                 android:background="@null"
                 android:contentDescription="@string/sample"
                 android:src="@android:drawable/ic_menu_edit" />
+
+            <ImageButton
+                android:id="@+id/imageButton_clear_list"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="24dp"
+                android:background="@null"
+                android:contentDescription="@string/sample"
+                android:src="@android:drawable/ic_menu_delete" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/progress_layout"

@@ -81,6 +81,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         repository.deleteOneDailyListItem(dailyListItem)
     }
 
+    fun deleteDailyList(id : Long) = viewModelScope.launch {
+        repository.deleteDailyList(id)
+    }
+
     // обновить заметку
     fun updateDailyListItem(dailyListItem : DailyListItem) = viewModelScope.launch{
         repository.updateDailyListItem(dailyListItem)

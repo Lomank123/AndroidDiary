@@ -70,7 +70,8 @@ class NoteListAdapter internal constructor(
         private val noteDescriptionView : TextView = itemView.findViewById(R.id.textView_content)
         private val noteImageView : ImageView = itemView.findViewById(R.id.imageView)
         private val noteStarView : ImageView = itemView.findViewById(R.id.imageView_star)
-        private val noteImageButtonView : ImageButton = itemView.findViewById(R.id.imageButtonOptions)
+        private val noteImageButtonViewOptions : ImageButton = itemView.findViewById(R.id.imageButton_options)
+        private val noteImageButtonViewDelete : ImageButton = itemView.findViewById(R.id.imageButton_delete)
         // expandable layout
         private val expandableLayoutItemView : ConstraintLayout = itemView.findViewById(R.id.expandable_layout)
         private val creationDateItemView : TextView = itemView.findViewById(R.id.creation_date_text2)
@@ -112,8 +113,22 @@ class NoteListAdapter internal constructor(
             else
                 layoutItemView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white))
 
-            // обработчик долгих нажатий для вызова контекстного меню
-            noteImageButtonView.setOnClickListener{
+            noteImageButtonViewDelete.setOnClickListener {
+                val dialog = MaterialDialog(mContext)
+                dialog.show{
+                    title(R.string.dialog_delete)
+                    message(R.string.dialog_check_delete_note)
+                    positiveButton(R.string.dialog_yes) {
+                        listenerDelete(note)
+                        dialog.dismiss()
+                    }
+                    negativeButton(R.string.dialog_no) {
+                        dialog.dismiss()
+                    }
+                }
+            }
+
+            noteImageButtonViewOptions.setOnClickListener{
                 // Устанавливаем контекстное меню
                 val popupMenu = PopupMenu(mContext, it)
                 popupMenu.inflate(R.menu.menu_notes)
@@ -128,22 +143,6 @@ class NoteListAdapter internal constructor(
 
                 popupMenu.setOnMenuItemClickListener { item ->
                     when(item.itemId) {
-                        R.id.delete -> {
-                            val dialog = MaterialDialog(mContext)
-                            dialog.show{
-                                title(R.string.dialog_delete)
-                                message(R.string.dialog_check_delete)
-                                positiveButton(R.string.dialog_yes) {
-                                    listenerDelete(note)
-                                    Toast.makeText(mContext, mContext.resources.getString(R.string.dialog_deleted), Toast.LENGTH_SHORT).show()
-                                    dialog.dismiss()
-                                }
-                                negativeButton(R.string.dialog_no) {
-                                    dialog.dismiss()
-                                }
-                            }
-                            true
-                        }
                         R.id.open -> {
                             listenerOpen(note)
                             // Т.к. в этом обработчике нужно вернуть boolean, возвращаем true

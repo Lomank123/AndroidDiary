@@ -5,13 +5,10 @@ import android.app.Activity
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
@@ -37,10 +34,7 @@ class MainActivity : AppCompatActivity() {
     private val editDiaryActivityRequestCode = 2             // для EditActivity
 
     private lateinit var mainViewModel: MainViewModel        // добавляем ViewModel
-    private var isFabOpen : Boolean = false                  // по умолч. меню закрыто
     private lateinit var extDiaryList : List<ExtendedDiary>
-
-    private val translationY = 100f
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,37 +65,11 @@ class MainActivity : AppCompatActivity() {
                 adapter.setDiaries(extDiaryList)
         })
 
-        // Кнопки
-        // Кнопка вызова выдвиг. меню
-        fab_menu.setOnClickListener {
-            if (!isFabOpen)
-                showFabMenu()
-            else
-                closeFabMenu()
-        }
         // Кнопка для добавления записи
         fab_new_diary.setOnClickListener {
-            closeFabMenu()
             val intent = Intent(this, NewDiaryActivity::class.java)
-            // 2-ой аргумент это requestCode по которому определяется откуда был запрос
             startActivityForResult(intent, newDiaryActivityRequestCode)
         }
-        // Кнопка сортировки по избранным
-        fab_favourite.setOnClickListener {
-            closeFabMenu()
-            if (prefs.getBoolean("sorted", false)) {
-                prefs.edit().putBoolean("sorted", false).apply()
-                adapter.setDiaries(extDiaryList)
-            } else {
-                prefs.edit().putBoolean("sorted", true).apply()
-                adapter.setDiaries(extDiaryList.sortedBy { !it.diary.favorite })
-            }
-            recyclerview.scrollToPosition(0)
-        }
-        fab_new_diary.alpha = 0f
-        fab_favourite.alpha = 0f
-        fab_new_diary.translationY = translationY
-        fab_favourite.translationY = translationY
     }
 
     // TODO: Возможно это не нужно (убрать)
@@ -217,10 +185,10 @@ class MainActivity : AppCompatActivity() {
         menuInflater.inflate(R.menu.actionbar_menu, menu)
 
         val prefs: SharedPreferences? = PreferenceManager.getDefaultSharedPreferences(this)
-        val searchItem = menu!!.findItem(R.id.search_view)
+        val starItem = menu!!.findItem(R.id.star)
+        val searchItem = menu.findItem(R.id.search_view)
 
-        if (searchItem != null)
-        {
+        if (searchItem != null) {
             val searchView = searchItem.actionView as SearchView
             searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
                 override fun onQueryTextSubmit(query: String?): Boolean {
@@ -242,6 +210,15 @@ class MainActivity : AppCompatActivity() {
                 }
             })
         }
+
+        if(starItem != null){
+            if (prefs!!.getBoolean("sorted", false)) {
+                starItem.setIcon(android.R.drawable.btn_star_big_on)
+            } else {
+                starItem.setIcon(android.R.drawable.btn_star_big_off)
+            }
+        }
+
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -275,55 +252,39 @@ class MainActivity : AppCompatActivity() {
 
     // когда выбираешь элемент меню
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val prefs: SharedPreferences? = PreferenceManager.getDefaultSharedPreferences(this)
         when(item.itemId){
             R.id.settings -> {
                 // открытие окна "Настройки"
                 val intentSettings = Intent(this, SettingsHolderActivity::class.java)
                 startActivity(intentSettings)
-                return super.onOptionsItemSelected(item)
             }
             R.id.about -> {
                 // открытие окна "О нас"
-                val aboutIntent = Intent(this, AboutActivity::class.java)
-                startActivity(aboutIntent)
-                return super.onOptionsItemSelected(item)
+                val intentAbout = Intent(this, AboutActivity::class.java)
+                startActivity(intentAbout)
+            }
+            R.id.star -> {
+                val adapter = recyclerview.adapter as DiaryListAdapter
+                if (prefs!!.getBoolean("sorted", false)) {
+                    prefs.edit().putBoolean("sorted", false).apply()
+                    adapter.setDiaries(extDiaryList)
+                    item.setIcon(android.R.drawable.btn_star_big_off)
+                } else {
+                    prefs.edit().putBoolean("sorted", true).apply()
+                    adapter.setDiaries(extDiaryList.sortedBy { !it.diary.favorite })
+                    item.setIcon(android.R.drawable.btn_star_big_on)
+                }
+                recyclerview.scrollToPosition(0)
             }
         }
         return super.onOptionsItemSelected(item)
     }
 
-    // закрывает меню
-    private fun closeFabMenu() {
-        isFabOpen = !isFabOpen
-
-        // возвращает элементы на исходные позиции
-        fab_menu.animate().rotation(0f).setDuration(300).start()
-
-
-        fab_favourite.animate().translationY(translationY).alpha(0f).setDuration(300).start()
-        fab_new_diary.animate().translationY(translationY).alpha(0f).setDuration(300).start()
-        Handler().postDelayed({
-            fab_new_diary.visibility = GONE
-            fab_favourite.visibility = GONE
-        }, 300)
-
-    }
-
-    // открывает выдвиг. меню
-    private fun showFabMenu() {
-        isFabOpen = !isFabOpen
-
-        fab_menu.animate().rotation(90f).setDuration(300).start()
-
-        fab_new_diary.visibility = VISIBLE
-        fab_favourite.visibility = VISIBLE
-        fab_favourite.animate().translationY(0f).alpha(1f).setDuration(300).start()
-        fab_new_diary.animate().translationY(0f).alpha(1f).setDuration(300).start()
-    }
-
     // SnackBar creation (with UNDO button)
     private fun createUndoSnackBar(view : View, extDiary : ExtendedDiary){
         val snackBar = Snackbar.make(view, resources.getString(R.string.snackbar_diary_delete), Snackbar.LENGTH_LONG)
+        snackBar.setAnchorView(R.id.fab_new_diary)
         var isUndo = false
         snackBar.setAction(resources.getString(R.string.snackbar_undo_btn)){
             insertDiary(extDiary.diary)

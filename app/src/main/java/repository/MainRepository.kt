@@ -74,6 +74,10 @@ class MainRepository (private val diaryDao : DiaryDao) {
         diaryDao.deleteOneDailyListItem(dailyListItem.id)
     }
 
+    suspend fun deleteDailyList(id : Long){
+        diaryDao.deleteItemsFromDailyList(id)
+    }
+
     // обновить заметку
     suspend fun updateDailyListItem(dailyListItem : DailyListItem){
         diaryDao.updateDailyListItem(dailyListItem)

@@ -36,6 +36,7 @@
 
             <Button
                 android:id="@+id/photo_button"
+                style="@android:style/Widget.Material.Light.Button"
                 android:layout_width="145dp"
                 android:layout_height="47dp"
                 android:layout_marginTop="20dp"

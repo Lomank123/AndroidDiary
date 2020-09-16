@@ -5,7 +5,6 @@ import android.app.Activity
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.os.Handler
 import android.view.*
 import androidx.fragment.app.Fragment
 import android.widget.Toast
@@ -14,6 +13,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import com.lomank.diary.*
 import kotlinx.android.synthetic.main.fragment_note.*
 import kotlinx.android.synthetic.main.fragment_note.view.*
@@ -33,9 +33,6 @@ class NoteFragment : Fragment() {
     private lateinit var mainViewModel: MainViewModel       // добавляем ViewModel
     private lateinit var mainNoteList : List<Note>
 
-    private var isFabOpen : Boolean = false                 // по умолч. меню закрыто
-    private val translationY = 100f
-
     override fun onCreate(savedInstanceState: Bundle?) {
         setHasOptionsMenu(true)
         super.onCreate(savedInstanceState)
@@ -53,7 +50,7 @@ class NoteFragment : Fragment() {
         if (!(prefs!!.contains("sorted_notes")))
             prefs.edit().putBoolean("sorted_notes", false).apply()
 
-        val adapter = newNoteAdapter()
+        val adapter = newNoteAdapter(layout)
         layout.recyclerview_note.adapter = adapter
         layout.recyclerview_note.layoutManager = LinearLayoutManager(activity)
         layout.recyclerview_note.addItemDecoration(TopSpacingItemDecoration(20))       // Отступы
@@ -70,34 +67,8 @@ class NoteFragment : Fragment() {
                 adapter.setNotes(mainNoteList, obj)
 
         })
-
-        // Кнопки
-        layout.fab_new_note.alpha = 0f
-        layout.fab_favourite_note.alpha = 0f
-        layout.fab_new_note.translationY = translationY
-        layout.fab_favourite_note.translationY = translationY
-        // Кнопка вызова меню
-        layout.fab_menu_note.setOnClickListener {
-            if (!isFabOpen)
-                showFabMenu()
-            else
-                closeFabMenu()
-        }
-        // обработчик нажатий на 1-ую кнопку
-        layout.fab_favourite_note.setOnClickListener {
-            closeFabMenu()
-            if(prefs.getBoolean("sorted_notes", false)) {
-                prefs.edit().putBoolean("sorted_notes", false).apply()
-                adapter.setNotes(mainNoteList, mainViewModel.allExtendedDiaries.value!!)
-            } else {
-                prefs.edit().putBoolean("sorted_notes", true).apply()
-                adapter.setNotes(mainNoteList.sortedBy { !it.favorite }, mainViewModel.allExtendedDiaries.value!!)
-            }
-            layout.recyclerview_note.scrollToPosition(0)
-        }
         // обработчик нажатий на 2-ую кнопку (вызывает NewNoteActivity для создания заметки)
         layout.fab_new_note.setOnClickListener {
-            closeFabMenu()
             val intent = Intent(activity, NewNoteActivity::class.java)
             // 2-ой аргумент это requestCode по которому определяется откуда был запрос
             startActivityForResult(intent, newNoteActivityRequestCode)
@@ -124,7 +95,7 @@ class NoteFragment : Fragment() {
         recyclerview_note.adapter!!.notifyDataSetChanged()
     }
 
-    private fun newNoteAdapter() : NoteListAdapter
+    private fun newNoteAdapter(view : View) : NoteListAdapter
     {
         return NoteListAdapter(requireActivity(), {
             // listenerOpen
@@ -135,7 +106,7 @@ class NoteFragment : Fragment() {
             startActivityForResult(intent, clickedActivityRequestCode)
         }, {
             // второй listener, нужен для удаления заметки
-            deleteNote(it)
+            deleteNote(view, it)
         }, {
             // listenerEdit
             val intent = Intent(activity, EditNoteActivity::class.java)
@@ -143,18 +114,10 @@ class NoteFragment : Fragment() {
             startActivityForResult(intent, editNoteActivityRequestCode)
         }, {
             // listenerUpdate
-            mainViewModel.updateNote(it)
+            updateNote(it)
         })
     }
 
-    // Удаление записи
-    private fun deleteNote(note : Note)
-    {
-        val fileName = requireActivity().getExternalFilesDir(null)!!.absolutePath + "/${note.name}_${note.id}.3gpp"
-        if (File(fileName).exists())
-            File(fileName).delete()
-        mainViewModel.deleteNote(note)
-    }
     // Возвращает текущую дату
     @SuppressLint("SimpleDateFormat")
     private fun currentDate() : String
@@ -185,7 +148,7 @@ class NoteFragment : Fragment() {
                     newNote.color = null
                 newNote.img = imgNote
                 newNote.creationDate = currentDate()
-                mainViewModel.insertNote(newNote)
+                insertNote(newNote)
             }
         }
         if ((requestCode == newNoteActivityRequestCode || requestCode == editNoteActivityRequestCode) &&
@@ -201,7 +164,7 @@ class NoteFragment : Fragment() {
             val note = data?.getSerializableExtra(ClickedActivity.EXTRA_REPLY_EDIT) as? Note
             if (note != null) {
                 note.lastEditDate = currentDate()   // обновляем дату
-                mainViewModel.updateNote(note)  // обновляем заметку
+                updateNote(note)  // обновляем заметку
             }
         }
         // Результат изменения заметки
@@ -217,7 +180,7 @@ class NoteFragment : Fragment() {
                     noteEdit.color = colorNoteEdit
                 if (imgNoteEdit != null)
                     noteEdit.img = imgNoteEdit
-                mainViewModel.updateNote(noteEdit)
+                updateNote(noteEdit)
             }
         }
     }
@@ -228,8 +191,9 @@ class NoteFragment : Fragment() {
 
         val prefs: SharedPreferences? = PreferenceManager.getDefaultSharedPreferences(activity)
         val extDiaryParent = requireActivity().intent.getSerializableExtra("extDiaryParent") as? ExtendedDiary
-
+        val starItem = menu.findItem(R.id.star)
         val searchItem = menu.findItem(R.id.search_view)
+
         if (searchItem != null) {
             val searchView = searchItem.actionView as SearchView
             searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -252,11 +216,21 @@ class NoteFragment : Fragment() {
                 }
             })
         }
+
+        if(starItem != null){
+            if (prefs!!.getBoolean("sorted_notes", false)) {
+                starItem.setIcon(android.R.drawable.btn_star_big_on)
+            } else {
+                starItem.setIcon(android.R.drawable.btn_star_big_off)
+            }
+        }
+
         super.onCreateOptionsMenu(menu, inflater)
     }
 
     // когда выбираешь элемент меню
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val prefs: SharedPreferences? = PreferenceManager.getDefaultSharedPreferences(activity)
         when(item.itemId){
             R.id.settings -> {
                 // открытие окна "Настройки"
@@ -269,6 +243,19 @@ class NoteFragment : Fragment() {
                 val aboutIntent = Intent(activity, AboutActivity::class.java)
                 startActivity(aboutIntent)
                 return super.onOptionsItemSelected(item)
+            }
+            R.id.star -> {
+                val adapter = recyclerview_note.adapter as NoteListAdapter
+                if (prefs!!.getBoolean("sorted_notes", false)) {
+                    prefs.edit().putBoolean("sorted_notes", false).apply()
+                    adapter.setNotes(mainNoteList, mainViewModel.allExtendedDiaries.value!!)
+                    item.setIcon(android.R.drawable.btn_star_big_off)
+                } else {
+                    prefs.edit().putBoolean("sorted_notes", true).apply()
+                    adapter.setNotes(mainNoteList.sortedBy { !it.favorite }, mainViewModel.allExtendedDiaries.value!!)
+                    item.setIcon(android.R.drawable.btn_star_big_on)
+                }
+                recyclerview_note.scrollToPosition(0)
             }
         }
         return super.onOptionsItemSelected(item)
@@ -303,30 +290,40 @@ class NoteFragment : Fragment() {
         recyclerview_note.scrollToPosition(0)
     }
 
-
-    // закрывает выдвиг. меню
-    private fun closeFabMenu() {
-        isFabOpen = !isFabOpen
-
-        fab_menu_note.animate().rotation(0f).setDuration(300).start()
-
-        fab_favourite_note.animate().translationY(translationY).alpha(0f).setDuration(300).start()
-        fab_new_note.animate().translationY(translationY).alpha(0f).setDuration(300).start()
-        Handler().postDelayed({
-            fab_favourite_note.visibility = View.GONE
-            fab_new_note.visibility = View.GONE
-        }, 300)
+    // SnackBar creation (with UNDO button)
+    private fun createUndoSnackBar(view : View, note : Note){
+        val snackBar = Snackbar.make(view, resources.getString(R.string.snackbar_note_delete), Snackbar.LENGTH_LONG)
+        snackBar.setAnchorView(R.id.fab_new_note)
+        var isUndo = false
+        snackBar.setAction(resources.getString(R.string.snackbar_undo_btn)){
+            insertNote(note)
+            isUndo = true
+        }
+        snackBar.addCallback(object : Snackbar.Callback(){
+            override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
+                super.onDismissed(transientBottomBar, event)
+                if(!isUndo) {
+                    // Удаляем все файлы с голосовыми заметками из дневника
+                    val fileName = requireActivity().getExternalFilesDir(null)!!.absolutePath + "/${note.name}_${note.id}.3gpp"
+                    if (File(fileName).exists())
+                        File(fileName).delete()
+                }
+            }
+        })
+        snackBar.show()
     }
 
-    // открывает выдвиг. меню
-    private fun showFabMenu() {
-        isFabOpen = !isFabOpen
-
-        fab_menu_note.animate().rotation(90f).setDuration(300).start()
-
-        fab_favourite_note.visibility = View.VISIBLE
-        fab_new_note.visibility = View.VISIBLE
-        fab_favourite_note.animate().translationY(0f).alpha(1f).setDuration(300).start()
-        fab_new_note.animate().translationY(0f).alpha(1f).setDuration(300).start()
+    // Удаление записи
+    private fun deleteNote(view : View, note : Note)
+    {
+        mainViewModel.deleteNote(note)
+        // Creating undo snackBar
+        createUndoSnackBar(view, note)
+    }
+    private fun insertNote(note : Note){
+        mainViewModel.insertNote(note)
+    }
+    private fun updateNote(note: Note){
+        mainViewModel.updateNote(note)
     }
 }

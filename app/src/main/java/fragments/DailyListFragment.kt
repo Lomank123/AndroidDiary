@@ -25,13 +25,17 @@ import kotlinx.android.synthetic.main.fragment_daily_list.view.*
 import recyclerviewadapter.DailyListAdapter
 import roomdatabase.DailyListItem
 import roomdatabase.ExtendedDiary
+import roomdatabase.Note
 import viewmodel.MainViewModel
+import java.io.File
 
 class DailyListFragment : Fragment() {
 
     private lateinit var mainViewModel: MainViewModel       // добавляем ViewModel
 
     private lateinit var allDailyListItems : List<DailyListItem>
+
+    private var isComplete = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setHasOptionsMenu(true)
@@ -83,12 +87,15 @@ class DailyListFragment : Fragment() {
                 }
                 i.start()
                 if((listDoneSize * 100) / listSize >= 100) {
-                    Snackbar.make(layout, resources.getString(R.string.snackbar_succeed), Snackbar.LENGTH_SHORT)
-                        .show()
+                    // появляется всего 1 раз когда отмечены все пункты
+                    if(!isComplete)
+                        Snackbar.make(layout, resources.getString(R.string.snackbar_succeed), Snackbar.LENGTH_SHORT).show()
+                    isComplete = true
                 }
-            } else
+            } else {
                 layout.progressBar_appbar.progress = 0
-
+                layout.progressbar_text.text = resources.getString(R.string.progressbar_progress_full)
+            }
 
             // don't need for now
             //layout.recyclerview_list.scrollToPosition(0)
@@ -97,6 +104,7 @@ class DailyListFragment : Fragment() {
         layout.collapsing_toolbar_layout.title = extDiaryParent!!.diary.listName
         layout.progressbar_text.text = resources.getString(R.string.progressbar_progress_full)
 
+        // TODO: Maybe delete this
         // Setting Touch helper
         val itemTouchHelper = ItemTouchHelper(itemTouchHelperCallback)
         itemTouchHelper.attachToRecyclerView(layout.recyclerview_list)
@@ -142,12 +150,27 @@ class DailyListFragment : Fragment() {
             }
         }
 
+        layout.imageButton_clear_list.setOnClickListener {
+            val dialog = MaterialDialog(requireActivity())
+            dialog.show{
+                title(R.string.dialog_clear_list_title)
+                message(R.string.dialog_clear_list)
+                positiveButton(R.string.dialog_yes) {
+                    // deleting all list items
+                    deleteDailyList(extDiaryParent.diary.id, layout)
+                    dialog.dismiss()
+                }
+                negativeButton(R.string.dialog_no) {
+                    dialog.dismiss()
+                }
+            }
+        }
+
         layout.appbar_layout.addOnOffsetChangedListener(object :
             AppBarLayout.OnOffsetChangedListener {
             var isShow = false
             var scrollRange: Int = -1
             override fun onOffsetChanged(appBarLayout: AppBarLayout?, verticalOffset: Int) {
-
                 if (scrollRange == -1)
                     scrollRange = appBarLayout!!.totalScrollRange
                 if (scrollRange + verticalOffset == 0) {
@@ -155,15 +178,16 @@ class DailyListFragment : Fragment() {
                     layout.progress_layout.animate().translationY(scrollRange.toFloat()).start()
                     layout.progressbar_text.animate().alpha(0f).setDuration(300).start()
                     layout.imageButton_edit_list_name.visibility = GONE
+                    layout.imageButton_clear_list.visibility = GONE
                 } else if (isShow) {
                     isShow = false
                     layout.progress_layout.animate().translationY(0f).start()
                     layout.progressbar_text.animate().alpha(1f).setDuration(300).start()
                     layout.imageButton_edit_list_name.visibility = VISIBLE
+                    layout.imageButton_clear_list.visibility = VISIBLE
                 }
             }
         })
-
         return layout
     }
 
@@ -179,6 +203,7 @@ class DailyListFragment : Fragment() {
             })
     }
 
+    //TODO: Maybe delete this
     private val itemTouchHelperCallback=
         object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT)
         {
@@ -210,6 +235,7 @@ class DailyListFragment : Fragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.actionbar_menu, menu)
         menu.findItem(R.id.search_view).isVisible = false
+        menu.findItem(R.id.star).isVisible = false
         super.onCreateOptionsMenu(menu, inflater)
     }
 
@@ -231,6 +257,16 @@ class DailyListFragment : Fragment() {
         return super.onOptionsItemSelected(item)
     }
 
+    // SnackBar creation (with UNDO button)
+    private fun createUndoSnackBar(view : View, list : List<DailyListItem>){
+        val snackBar = Snackbar.make(view, resources.getString(R.string.snackbar_clear_list), Snackbar.LENGTH_LONG)
+        snackBar.setAnchorView(R.id.fab_new_item)
+        snackBar.setAction(resources.getString(R.string.snackbar_undo_btn)){
+            insertDailyList(list)
+        }
+        snackBar.show()
+    }
+
     // mainViewModel DailyListItem methods
 
     private fun deleteDailyListItem(item: DailyListItem){
@@ -241,8 +277,18 @@ class DailyListFragment : Fragment() {
         mainViewModel.insertDailyListItem(item)
     }
 
+    private fun insertDailyList(list : List<DailyListItem>){
+        mainViewModel.insertListItems(list)
+    }
+
     private fun updateDailyListItem(item: DailyListItem){
         mainViewModel.updateDailyListItem(item)
+    }
+
+    private fun deleteDailyList(id : Long, view : View){
+        val oldDailyList = allDailyListItems
+        mainViewModel.deleteDailyList(id)
+        createUndoSnackBar(view, oldDailyList)
     }
 
 }

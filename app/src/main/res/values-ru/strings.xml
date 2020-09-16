@@ -42,6 +42,8 @@
     <string name="dialog_new_daily_list_text">Введите название для списка дел</string>
     <string name="dialog_new_daily_list_hint">Название…</string>
     <string name="dialog_edit_text">Введите новое название</string>
+    <string name="dialog_clear_list">Вы хотите полностью очистить список?</string>
+    <string name="dialog_clear_list_title">Очистка списка</string>
 
 
     <!-- Настройки -->
@@ -88,6 +90,7 @@
     <!-- SnackBar -->
     <string name="snackbar_diary_delete">Дневник был удален.</string>
     <string name="snackbar_note_delete">Заметка была удалена.</string>
+    <string name="snackbar_clear_list">Список очищен.</string>
     <string name="snackbar_daily_list_item_delete">Пункт был удален.</string>
     <string name="snackbar_undo_btn">ОТМЕНА</string>
     <string name="snackbar_succeed">Вы успешно справились!</string>
