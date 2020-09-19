@@ -519,14 +519,13 @@ class ClickedActivity : AppCompatActivity() {
         releaseRecorder()
     }
 
+    // TODO: change to string resources
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String>,
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        //val prefs: SharedPreferences? = PreferenceManager.getDefaultSharedPreferences(this)
-
         when(requestCode) {
             permissionRequestCode -> {
                 var allSuccess = true

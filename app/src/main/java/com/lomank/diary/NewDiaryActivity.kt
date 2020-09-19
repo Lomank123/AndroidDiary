@@ -10,12 +10,14 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.TextUtils
+import android.view.View
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.PermissionChecker
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.color.colorChooser
 import com.bumptech.glide.Glide
+import com.google.android.material.card.MaterialCardView
 import kotlinx.android.synthetic.main.activity_new_diary.*
 
 class NewDiaryActivity : AppCompatActivity() {
@@ -37,6 +39,8 @@ class NewDiaryActivity : AppCompatActivity() {
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_new_diary)
+
+        val colorChoose = findViewById<MaterialCardView>(R.id.color_change_view)
 
         imageView_new_diary.setImageResource(R.drawable.logo)
         // обработчик нажатий на кнопку Save
@@ -90,7 +94,7 @@ class NewDiaryActivity : AppCompatActivity() {
 
         }
         // color button
-        imageButton_color.setOnClickListener {
+        change_color_button.setOnClickListener {
             val colorDialog = MaterialDialog(this)
             colorDialog.show {
                 title(R.string.dialog_item_name)
@@ -100,6 +104,7 @@ class NewDiaryActivity : AppCompatActivity() {
                     showAlphaSelector = true
                 ) { _, color ->
                     replyIntent.putExtra(EXTRA_NEW_DIARY_COLOR, color)
+                    colorChoose.setCardBackgroundColor(color)
                 }
                 positiveButton(R.string.dialog_yes) {
                     colorDialog.dismiss()
@@ -109,6 +114,7 @@ class NewDiaryActivity : AppCompatActivity() {
                     colorDialog.dismiss()
                 }
             }
+
         }
     }
 

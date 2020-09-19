@@ -12,7 +12,8 @@
     <string name="cancel_btn">Cancel</string>
     <string name="hint_note">Note…</string>
     <string name="hint_text_note">Text…</string>
-    <string name="photo_choose">Choose photo</string>
+    <string name="photo_choose">Photo</string>
+    <string name="color_choose">Color</string>
     <string name="search">Search</string>
     <string name="saved">Saved</string>
     <string name="canceled">Canceled</string>

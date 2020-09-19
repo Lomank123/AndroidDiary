@@ -143,7 +143,6 @@ class MainActivity : AppCompatActivity() {
 
         if (requestCode == newDiaryActivityRequestCode && resultCode == Activity.RESULT_OK) {
             data?.getStringArrayListExtra(NewDiaryActivity.EXTRA_NEW_DIARY)?.let {
-                // получаем из экстра данных нашу строку и создаем объект Word с той же строкой
                 val diary = Diary(it[0], it[1], currentDate())
                 val diaryImg = data.getStringExtra(NewDiaryActivity.EXTRA_NEW_DIARY_IMAGE)
                 if (diaryImg != null && diaryImg != "")
@@ -154,7 +153,9 @@ class MainActivity : AppCompatActivity() {
                 if(diary.color == 0)
                     diary.color = null
                 diary.creationDate = currentDate()
+
                 Log.e("Photo", "Path of photo: ${diary.img}")
+
                 mainViewModel.insertDiary(diary) // добавляем запись в БД
             }
         }
@@ -162,19 +163,17 @@ class MainActivity : AppCompatActivity() {
             val diaryEdit = data?.getSerializableExtra(EditDiaryActivity.EXTRA_EDIT_DIARY) as? Diary
             val imgDiaryEdit = data?.getStringExtra(EditDiaryActivity.EXTRA_EDIT_DIARY_IMAGE)
             val colorDiaryEdit = data?.getIntExtra(EditDiaryActivity.EXTRA_EDIT_DIARY_COLOR, 0)
-            if (diaryEdit != null)
-            {
+            if (diaryEdit != null) {
                 if (imgDiaryEdit != null)
                     diaryEdit.img = imgDiaryEdit
                 if (colorDiaryEdit != null && colorDiaryEdit != 0)
-                    diaryEdit.color = data.getIntExtra(EditDiaryActivity.EXTRA_EDIT_DIARY_COLOR, 0)
+                    diaryEdit.color = colorDiaryEdit
                 diaryEdit.lastEditDate = currentDate()
                 mainViewModel.updateDiary(diaryEdit) // обновляем запись в БД
             }
         }
         if ((requestCode == newDiaryActivityRequestCode || requestCode == editDiaryActivityRequestCode) &&
-            resultCode == Activity.RESULT_CANCELED)
-        {
+            resultCode == Activity.RESULT_CANCELED) {
             Toast.makeText(this, resources.getString(R.string.empty_not_saved),
                 Toast.LENGTH_SHORT).show()
         }

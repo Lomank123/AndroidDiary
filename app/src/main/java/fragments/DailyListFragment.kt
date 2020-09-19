@@ -25,9 +25,7 @@ import kotlinx.android.synthetic.main.fragment_daily_list.view.*
 import recyclerviewadapter.DailyListAdapter
 import roomdatabase.DailyListItem
 import roomdatabase.ExtendedDiary
-import roomdatabase.Note
 import viewmodel.MainViewModel
-import java.io.File
 
 class DailyListFragment : Fragment() {
 

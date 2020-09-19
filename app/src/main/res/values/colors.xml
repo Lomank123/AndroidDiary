@@ -17,6 +17,8 @@
 
     <!-- colors for diaries and notes -->
 
+    <color name="normal_green">#25A13D</color>
+    <color name="red">#B0303C</color>
     <color name="pink">#FF7369</color>
     <color name="green">#95FF78</color>
     <color name="yellow">#F3FF6E</color>

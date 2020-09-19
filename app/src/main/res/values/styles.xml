@@ -11,7 +11,7 @@
         <item name="android:windowBackground">@color/white</item>
         <item name="android:navigationBarColor">@color/primary_color1</item>
         <item name="android:textColorPrimary">@color/black</item>
-        <item name="android:windowAnimationStyle">@style/CustomActivityAnimation</item>
+
     </style>
 
     <style name="AppThemeAdditional" parent="Theme.AppCompat.Light.DarkActionBar">

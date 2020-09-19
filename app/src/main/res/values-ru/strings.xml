@@ -12,7 +12,8 @@
     <string name="cancel_btn">Отмена</string>
     <string name="hint_note">Заметка…</string>
     <string name="hint_text_note">Текст…</string>
-    <string name="photo_choose">Выберите фото</string>
+    <string name="photo_choose">Фото</string>
+    <string name="color_choose">Цвет</string>
     <string name="search">Поиск</string>
     <string name="saved">Сохранено</string>
     <string name="canceled">Отменено</string>

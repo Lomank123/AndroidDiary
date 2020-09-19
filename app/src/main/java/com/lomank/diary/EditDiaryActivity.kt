@@ -16,6 +16,7 @@ import androidx.core.content.PermissionChecker
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.color.colorChooser
 import com.bumptech.glide.Glide
+import com.google.android.material.card.MaterialCardView
 import kotlinx.android.synthetic.main.activity_new_diary.*
 import roomdatabase.Diary
 
@@ -40,7 +41,12 @@ class EditDiaryActivity : AppCompatActivity() {
 
         val diary = intent.getSerializableExtra("diaryEdit") as? Diary
 
-        edit_diary.setText(diary!!.name)
+        val colorChoose = findViewById<MaterialCardView>(R.id.color_change_view)
+
+        if(diary!!.color != null && diary.color != 0)
+            colorChoose.setCardBackgroundColor(diary.color!!)
+
+        edit_diary.setText(diary.name)
         edit_content.setText(diary.content)
 
         // photo
@@ -96,7 +102,7 @@ class EditDiaryActivity : AppCompatActivity() {
             }
         }
         // color button
-        imageButton_color.setOnClickListener {
+        change_color_button.setOnClickListener {
             val colorDialog = MaterialDialog(this)
             colorDialog.show {
                 title(R.string.dialog_item_name)
@@ -106,6 +112,7 @@ class EditDiaryActivity : AppCompatActivity() {
                     showAlphaSelector = true
                 ) { _, color ->
                     replyIntent.putExtra(EXTRA_EDIT_DIARY_COLOR, color)
+                    colorChoose.setCardBackgroundColor(color)
                 }
                 positiveButton(R.string.dialog_yes) {
                     colorDialog.dismiss()
