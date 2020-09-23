@@ -61,7 +61,7 @@ class DiaryListAdapter internal constructor(
     inner class DiaryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         // default layout
         private val layoutItemView : ConstraintLayout = itemView.findViewById(R.id.constraint_layout)
-        private val diaryItemView: TextView = itemView.findViewById(R.id.textView_name)
+        private val diaryItemView: TextView = itemView.findViewById(R.id.editText_name)
         private val diaryDescriptionView: TextView = itemView.findViewById(R.id.textView_content)
         private val diaryImageView: ImageView = itemView.findViewById(R.id.imageView)
         private val diaryStarView: ImageView = itemView.findViewById(R.id.imageView_star)

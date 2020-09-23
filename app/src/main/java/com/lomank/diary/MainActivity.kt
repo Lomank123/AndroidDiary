@@ -12,7 +12,6 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -57,7 +56,7 @@ class MainActivity : AppCompatActivity() {
         itemTouchHelper.attachToRecyclerView(recyclerview)
 
         // Следит за изменением списка записей(дневников) и обновляет данные в RecyclerView
-        mainViewModel.allExtendedDiaries.observe(this, Observer { objects ->
+        mainViewModel.allExtendedDiaries.observe(this, { objects ->
             extDiaryList = objects
             if (prefs.getBoolean("sorted", false))
                 adapter.setDiaries(extDiaryList.sortedBy { !it.diary.favorite })
@@ -119,10 +118,10 @@ class MainActivity : AppCompatActivity() {
     {
         return DiaryListAdapter(this,
             {
-                // listenerOpen
+                // listenerDelete
                 deleteDiary(it)
             }, {
-                // listenerDelete
+                // listenerOpen
                 val intent = Intent(this, NoteActivity::class.java)
                 intent.putExtra("extDiaryParent", it) // Передаем ExtendedDiary
                 startActivity(intent)
@@ -199,7 +198,7 @@ class MainActivity : AppCompatActivity() {
                     // чтобы избежать мигания элементов списка
                     if (mainViewModel.allExtendedDiaries.hasActiveObservers())
                         mainViewModel.allExtendedDiaries.removeObservers(this@MainActivity)
-                    mainViewModel.allExtendedDiaries.observe(this@MainActivity, Observer {
+                    mainViewModel.allExtendedDiaries.observe(this@MainActivity, {
                         extDiaryList = it
                         setDiariesForSearch(recyclerview.adapter as DiaryListAdapter, prefs,
                             newText)
@@ -298,7 +297,7 @@ class MainActivity : AppCompatActivity() {
                     // Удаляем все файлы с голосовыми заметками из дневника
                     for(note in extDiary.notes)
                     {
-                        val fileName = this@MainActivity.getExternalFilesDir(null)!!.absolutePath + "/${note.name}_${note.id}.3gpp"
+                        val fileName = this@MainActivity.getExternalFilesDir(null)!!.absolutePath + "/voice_note_${note.id}.3gpp"
                         if(File(fileName).exists())
                             File(fileName).delete()
                     }

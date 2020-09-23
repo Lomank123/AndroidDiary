@@ -7,9 +7,7 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
-import android.widget.Toast
 import androidx.appcompat.widget.SearchView
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -27,11 +25,13 @@ import java.util.*
 
 class NoteFragment : Fragment() {
 
-    private val newNoteActivityRequestCode = 1              // для NewWordActivity (requestCode)
-    private val clickedActivityRequestCode = 2              // для ClickedActivity (requestCode)
-    private val editNoteActivityRequestCode = 3
+    private val newNoteRequestCode = 111
+    private val openNoteRequestCode = 222
+
     private lateinit var mainViewModel: MainViewModel       // добавляем ViewModel
     private lateinit var mainNoteList : List<Note>
+
+    private lateinit var extDiaryParent : ExtendedDiary
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setHasOptionsMenu(true)
@@ -44,7 +44,7 @@ class NoteFragment : Fragment() {
     ): View? {
         val layout = inflater.inflate(R.layout.fragment_note, container, false)
 
-        val extDiaryParent = requireActivity().intent.getSerializableExtra("extDiaryParent") as? ExtendedDiary
+        extDiaryParent = requireActivity().intent.getSerializableExtra("extDiaryParent") as ExtendedDiary
 
         val prefs: SharedPreferences? = PreferenceManager.getDefaultSharedPreferences(activity)
         if (!(prefs!!.contains("sorted_notes")))
@@ -59,20 +59,37 @@ class NoteFragment : Fragment() {
 
         if (mainViewModel.allExtendedDiaries.hasActiveObservers())
             mainViewModel.allExtendedDiaries.removeObservers(requireActivity())
-        mainViewModel.allExtendedDiaries.observe(viewLifecycleOwner, Observer { obj ->
+        mainViewModel.allExtendedDiaries.observe(viewLifecycleOwner, { obj->
+            // getting list of notes
             mainNoteList = findListOfNotes(obj, extDiaryParent)
+
+            // renaming voice note filename of a new note
+            if(mainNoteList.lastOrNull() != null) {
+                val oldFilename = requireActivity().getExternalFilesDir(null)!!.absolutePath + "/voice_note_empty.3gpp"
+                val newFilename = requireActivity().getExternalFilesDir(null)!!.absolutePath + "/voice_note_${mainNoteList.last().id}.3gpp"
+                if(File(oldFilename).exists()) {
+                    File(oldFilename).renameTo(File(newFilename))
+                }
+            }
+
+            // setting notes in the adapter
             if (prefs.getBoolean("sorted_notes", false))
                 adapter.setNotes(mainNoteList.sortedBy { !it.favorite }, obj)
             else
                 adapter.setNotes(mainNoteList, obj)
-
         })
-        // обработчик нажатий на 2-ую кнопку (вызывает NewNoteActivity для создания заметки)
+
+        // FAB new note
         layout.fab_new_note.setOnClickListener {
-            val intent = Intent(activity, NewNoteActivity::class.java)
+
+            val intent = Intent(activity, ClickedActivity::class.java)
+            intent.putExtra("requestCode", newNoteRequestCode)
+            intent.putExtra("diaryParent", extDiaryParent)
+
             // 2-ой аргумент это requestCode по которому определяется откуда был запрос
-            startActivityForResult(intent, newNoteActivityRequestCode)
+            startActivityForResult(intent, newNoteRequestCode)
         }
+
         return layout
     }
 
@@ -101,23 +118,20 @@ class NoteFragment : Fragment() {
             // listenerOpen
             val intent = Intent(activity, ClickedActivity::class.java)
             // передаем необходимые данные в ClickedActivity
-            intent.putExtra("noteSerializable", it)
-            // запускает ClickedActivity из MainActivity путем нажатия на элемент RecyclerView
-            startActivityForResult(intent, clickedActivityRequestCode)
+            intent.putExtra("openNote", it)
+            intent.putExtra("requestCode", openNoteRequestCode)
+            intent.putExtra("diaryParent", extDiaryParent)
+            startActivityForResult(intent, openNoteRequestCode)
         }, {
-            // второй listener, нужен для удаления заметки
+            // listenerDelete
             deleteNote(view, it)
-        }, {
-            // listenerEdit
-            val intent = Intent(activity, EditNoteActivity::class.java)
-            intent.putExtra("noteSerializableEdit", it)
-            startActivityForResult(intent, editNoteActivityRequestCode)
         }, {
             // listenerUpdate
             updateNote(it)
         })
     }
 
+    // TODO: maybe move this to ClickedActivity
     // Возвращает текущую дату
     @SuppressLint("SimpleDateFormat")
     private fun currentDate() : String
@@ -131,57 +145,41 @@ class NoteFragment : Fragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        val extDiaryParent = requireActivity().intent.getSerializableExtra("extDiaryParent") as? ExtendedDiary
-
         // Результат для добавления заметки
-        if (requestCode == newNoteActivityRequestCode && resultCode == Activity.RESULT_OK)
+        if (requestCode == newNoteRequestCode && resultCode == Activity.RESULT_OK)
         {
-            data?.getStringArrayListExtra(NewNoteActivity.EXTRA_NEW_NOTE)?.let {
-                // Из data достаем информацию о картинке, была ли она
-                // Если картинку не выбрали, установится та, что была на "обложке" дневника
-                var imgNote = data.getStringExtra(NewNoteActivity.EXTRA_NEW_NOTE_IMAGE)
-                if (imgNote == null || imgNote == "")
-                    imgNote = extDiaryParent!!.diary.img
-                val newNote = Note(it[0], it[1], extDiaryParent!!.diary.id, currentDate())
-                newNote.color = data.getIntExtra(NewNoteActivity.EXTRA_NEW_NOTE_COLOR, 0)
-                if (newNote.color == 0)
-                    newNote.color = null
-                newNote.img = imgNote
-                newNote.creationDate = currentDate()
-                insertNote(newNote)
-            }
-        }
-        if ((requestCode == newNoteActivityRequestCode || requestCode == editNoteActivityRequestCode) &&
-            resultCode == Activity.RESULT_CANCELED)
-        {
-            Toast.makeText(activity, resources.getString(R.string.empty_not_saved_note),
-                Toast.LENGTH_SHORT).show()
+            //data?.getStringArrayListExtra(NewNoteActivity.EXTRA_NEW_NOTE)?.let {
+            //    // Из data достаем информацию о картинке, была ли она
+            //    // Если картинку не выбрали, установится та, что была на "обложке" дневника
+            //    var imgNote = data.getStringExtra(NewNoteActivity.EXTRA_NEW_NOTE_IMAGE)
+            //    if (imgNote == null || imgNote == "")
+            //        imgNote = extDiaryParent!!.diary.img
+            //    val newNote = Note(it[0])
+            //    newNote.content = it[1]
+            //    newNote.parentId = extDiaryParent!!.diary.id
+            //    newNote.lastEditDate = currentDate()
+            //    newNote.color = data.getIntExtra(NewNoteActivity.EXTRA_NEW_NOTE_COLOR, 0)
+            //    if (newNote.color == 0)
+            //        newNote.color = null
+            //    newNote.img = imgNote
+            //    newNote.creationDate = currentDate()
+            //    insertNote(newNote)
+            //}
+            val newNote = data?.getSerializableExtra(ClickedActivity.EXTRA_REPLY_EDIT) as Note
+            newNote.lastEditDate = currentDate()
+            newNote.creationDate = currentDate()
+            insertNote(newNote)
         }
         // Результат для обновления заметки
-        if (requestCode == clickedActivityRequestCode && resultCode == Activity.RESULT_OK)
+        if (requestCode == openNoteRequestCode && resultCode == Activity.RESULT_OK)
         {
-            // получаем с помощью Serializable наш объект класса Note из ClickedActivity
-            val note = data?.getSerializableExtra(ClickedActivity.EXTRA_REPLY_EDIT) as? Note
-            if (note != null) {
-                note.lastEditDate = currentDate()   // обновляем дату
-                updateNote(note)  // обновляем заметку
-            }
+            val note = data?.getSerializableExtra(ClickedActivity.EXTRA_REPLY_EDIT) as Note
+            note.lastEditDate = currentDate()   // обновляем дату
+            updateNote(note)                    // обновляем заметку
         }
-        // Результат изменения заметки
-        if (requestCode == editNoteActivityRequestCode && resultCode == Activity.RESULT_OK)
-        {
-            val noteEdit = data?.getSerializableExtra(EditNoteActivity.EXTRA_EDIT_NOTE) as? Note
-            val imgNoteEdit = data?.getStringExtra(EditNoteActivity.EXTRA_IMAGE_EDIT_NOTE)
-            val colorNoteEdit = data?.getIntExtra(EditNoteActivity.EXTRA_COLOR_EDIT_NOTE, 0)
-            if (noteEdit != null)
-            {
-                noteEdit.lastEditDate = currentDate()
-                if (colorNoteEdit != null && colorNoteEdit != 0)
-                    noteEdit.color = colorNoteEdit
-                if (imgNoteEdit != null)
-                    noteEdit.img = imgNoteEdit
-                updateNote(noteEdit)
-            }
+        // TODO: rework this
+        if ((requestCode == newNoteRequestCode || requestCode == openNoteRequestCode) && resultCode == Activity.RESULT_CANCELED) {
+            //Toast.makeText(activity, resources.getString(R.string.empty_not_saved_note), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -190,7 +188,6 @@ class NoteFragment : Fragment() {
         inflater.inflate(R.menu.actionbar_menu, menu)
 
         val prefs: SharedPreferences? = PreferenceManager.getDefaultSharedPreferences(activity)
-        val extDiaryParent = requireActivity().intent.getSerializableExtra("extDiaryParent") as? ExtendedDiary
         val starItem = menu.findItem(R.id.star)
         val searchItem = menu.findItem(R.id.search_view)
 
@@ -205,7 +202,7 @@ class NoteFragment : Fragment() {
                     if (mainViewModel.allExtendedDiaries.hasActiveObservers())
                         mainViewModel.allExtendedDiaries.removeObservers(activity!!)
 
-                    mainViewModel.allExtendedDiaries.observe(activity!!, Observer {
+                    mainViewModel.allExtendedDiaries.observe(activity!!, {
                         mainNoteList = findListOfNotes(it, extDiaryParent)
                         setNotesForSearch((recyclerview_note.adapter as NoteListAdapter), prefs,
                             it, newText)
@@ -265,7 +262,6 @@ class NoteFragment : Fragment() {
     private fun setNotesForSearch(adapter : NoteListAdapter, prefs : SharedPreferences?,
                                   extDiaries : List<ExtendedDiary>, newText : String?)
     {
-        val extDiaryParent = requireActivity().intent.getSerializableExtra("extDiaryParent") as? ExtendedDiary
         val noteList = mutableListOf<Note>()
 
         if (newText!!.isNotEmpty()) {
@@ -304,7 +300,7 @@ class NoteFragment : Fragment() {
                 super.onDismissed(transientBottomBar, event)
                 if(!isUndo) {
                     // Удаляем все файлы с голосовыми заметками из дневника
-                    val fileName = requireActivity().getExternalFilesDir(null)!!.absolutePath + "/${note.name}_${note.id}.3gpp"
+                    val fileName = requireActivity().getExternalFilesDir(null)!!.absolutePath + "/voice_note_${note.id}.3gpp"
                     if (File(fileName).exists())
                         File(fileName).delete()
                 }

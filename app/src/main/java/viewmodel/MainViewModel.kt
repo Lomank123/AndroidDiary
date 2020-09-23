@@ -47,8 +47,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     // Notes:
 
     // добавляет запись, вызывая функцию в репозитории
-    fun insertNote(note: Note) = viewModelScope.launch {
-        repository.insertNote(note)
+    fun insertNote(note: Note) {
+        viewModelScope.launch {
+              repository.insertNote(note)
+        }
     }
 
     fun insertListNote(notes: List<Note>) = viewModelScope.launch {

@@ -14,6 +14,7 @@
     <string name="hint_text_note">Текст…</string>
     <string name="photo_choose">Фото</string>
     <string name="color_choose">Цвет</string>
+    <string name="photo_reset">Сброс</string>
     <string name="search">Поиск</string>
     <string name="saved">Сохранено</string>
     <string name="canceled">Отменено</string>

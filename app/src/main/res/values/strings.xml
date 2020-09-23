@@ -14,6 +14,7 @@
     <string name="hint_text_note">Text…</string>
     <string name="photo_choose">Photo</string>
     <string name="color_choose">Color</string>
+    <string name="photo_reset">Reset</string>
     <string name="search">Search</string>
     <string name="saved">Saved</string>
     <string name="canceled">Canceled</string>

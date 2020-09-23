@@ -27,7 +27,6 @@ class NoteListAdapter internal constructor(
     context: Context,
     private val listenerOpen : (Note) -> Unit,
     private val listenerDelete : (Note) -> Unit,
-    private val listenerEdit : (Note) -> Unit,
     private val listenerUpdate : (Note) -> Unit
 ) : RecyclerView.Adapter<NoteListAdapter.NoteViewHolder>() {
 
@@ -66,7 +65,7 @@ class NoteListAdapter internal constructor(
     inner class NoteViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         private val layoutItemView : ConstraintLayout = itemView.findViewById(R.id.constraint_layout)
-        private val noteItemView : TextView = itemView.findViewById(R.id.textView_name)
+        private val noteItemView : TextView = itemView.findViewById(R.id.editText_name)
         private val noteDescriptionView : TextView = itemView.findViewById(R.id.textView_content)
         private val noteImageView : ImageView = itemView.findViewById(R.id.imageView)
         private val noteStarView : ImageView = itemView.findViewById(R.id.imageView_star)
@@ -140,16 +139,12 @@ class NoteListAdapter internal constructor(
                 else
                     popupMenu.menu.findItem(R.id.bookmark).title = mContext.resources.
                     getString(R.string.bookmark)
-
+                popupMenu.menu.findItem(R.id.edit).isVisible = false
                 popupMenu.setOnMenuItemClickListener { item ->
                     when(item.itemId) {
                         R.id.open -> {
                             listenerOpen(note)
                             // Т.к. в этом обработчике нужно вернуть boolean, возвращаем true
-                            true
-                        }
-                        R.id.edit -> {
-                            listenerEdit(note)
                             true
                         }
                         R.id.bookmark -> {

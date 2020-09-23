@@ -12,11 +12,9 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:allowBackup="true">
 
-        <activity
-            android:name="com.lomank.diary.EditNoteActivity"
-            android:label="@string/edit_note" />
         <activity
             android:name="com.lomank.diary.EditDiaryActivity"
             android:label="@string/edit_diary" />
@@ -26,9 +24,6 @@
         <activity
             android:name="com.lomank.diary.AboutActivity"
             android:label="@string/about_btn" />
-        <activity
-            android:name="com.lomank.diary.NewNoteActivity"
-            android:label="@string/new_note" />
         <activity
             android:name="com.lomank.diary.NoteActivity"
             android:label="@string/notes_btn" />

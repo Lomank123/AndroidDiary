@@ -8,9 +8,10 @@
     tools:context=".ClickedActivity">
 
     <ImageView
-        android:id="@+id/imageView_clicked"
+        android:id="@+id/imageView_background"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:alpha="0.1"
         android:contentDescription="@string/sample"
         android:scaleType="centerCrop"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -19,38 +20,53 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0"
-        app:srcCompat="@color/white"
-        android:alpha="0.1"/>
+        app:srcCompat="@color/white" />
 
     <EditText
-        android:id="@+id/editText1"
-        android:layout_width="0dp"
+        android:id="@+id/editText_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="16dp"
+        android:autofillHints="text"
+        android:hint="@string/sample"
+        android:inputType="textMultiLine"
+        android:textColor="@color/black"
+        android:textSize="26sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/editText_content"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="10dp"
         android:autofillHints="text"
         android:backgroundTint="@android:color/transparent"
         android:ems="10"
         android:gravity="start|top"
         android:hint="@string/hint_text_note"
         android:inputType="textMultiLine"
-        app:layout_constraintBottom_toTopOf="@+id/layout_voice"
+        app:layout_constraintBottom_toTopOf="@+id/view"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView_name" />
+        app:layout_constraintTop_toBottomOf="@+id/editText_name" />
 
-    <TextView
-        android:id="@+id/textView_name"
-        android:layout_width="199dp"
-        android:layout_height="36dp"
-        android:layout_marginTop="28dp"
-        android:gravity="center_horizontal"
-        android:text="@string/sample"
-        android:textAlignment="center"
-        android:textColor="@color/black"
-        android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="parent"
+    <View
+        android:id="@+id/color_indicator"
+        android:layout_width="5dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="10dp"
+        android:background="@color/primary_color1"
+        app:layout_constraintBottom_toBottomOf="@+id/editText_content"
+        app:layout_constraintTop_toTopOf="@+id/editText_content"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_voice"
@@ -58,21 +74,19 @@
         android:layout_height="wrap_content"
         android:background="#9195F1DC"
         android:padding="15dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView_clicked"
-        app:layout_constraintVertical_bias="1.0">
+        app:layout_constraintTop_toTopOf="@+id/panel_layout">
 
         <ImageButton
             android:id="@+id/delete_btn_active"
             android:layout_width="50dp"
-            android:layout_height="45dp"
+            android:layout_height="50dp"
             android:background="@drawable/custom_button_cancel1"
             android:contentDescription="@string/sample"
-            android:visibility="gone"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -82,11 +96,11 @@
         <ImageButton
             android:id="@+id/play_btn_active"
             android:layout_width="50dp"
-            android:layout_height="45dp"
+            android:layout_height="50dp"
             android:layout_marginStart="4dp"
-            android:background="@drawable/custom_button_rainbow1"
+            android:background="@drawable/button_click_effect1"
             android:contentDescription="@string/sample"
-            android:visibility="gone"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -95,9 +109,11 @@
 
         <SeekBar
             android:id="@+id/seekBar_active"
-            android:layout_width="235dp"
-            android:layout_height="31dp"
-            android:visibility="gone"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/delete_btn_active"
             app:layout_constraintHorizontal_bias="0.492"
@@ -110,7 +126,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:text="@string/start_time"
-            android:visibility="gone"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/play_btn_active"
             app:layout_constraintTop_toBottomOf="@+id/seekBar_active"
@@ -122,7 +138,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="20dp"
             android:text="@string/end_time"
-            android:visibility="gone"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/delete_btn_active"
             app:layout_constraintTop_toBottomOf="@+id/seekBar_active"
@@ -130,32 +146,32 @@
 
         <ImageButton
             android:id="@+id/stop_recording_voice_dis"
-            android:layout_width="59dp"
-            android:layout_height="58dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:background="@drawable/button_click_effect_cancel1"
             android:contentDescription="@string/sample"
-            android:visibility="gone"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.011"
+            app:layout_constraintHorizontal_bias="0.01"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.466"
+            app:layout_constraintVertical_bias="0.53"
             app:srcCompat="@android:drawable/ic_media_pause" />
 
         <ImageButton
             android:id="@+id/record_voice_dis"
-            android:layout_width="59dp"
-            android:layout_height="58dp"
-            android:background="@drawable/button_click_effect_photo1"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/custom_button_save1"
             android:contentDescription="@string/sample"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.008"
+            app:layout_constraintHorizontal_bias="0.013"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="1.0"
+            app:layout_constraintVertical_bias="0.518"
             app:srcCompat="@android:drawable/ic_btn_speak_now" />
 
         <TextView
@@ -174,14 +190,131 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/photo_choose_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#9195F1DC"
+        android:visibility="invisible"
+        app:layout_constraintTop_toTopOf="@+id/panel_layout">
+
+        <Button
+            android:id="@+id/button_choose_photo"
+            android:layout_width="100dp"
+            android:layout_height="44dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="80dp"
+            android:layout_marginBottom="32dp"
+            android:background="@drawable/button_click_effect1"
+            android:text="@string/photo_choose"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/button_reset_photo"
+            app:layout_constraintTop_toBottomOf="@+id/imageView_photo"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <Button
+            android:id="@+id/button_reset_photo"
+            android:layout_width="100dp"
+            android:layout_height="44dp"
+            android:layout_marginStart="80dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="26dp"
+            android:layout_marginBottom="32dp"
+            android:background="@drawable/button_click_effect1"
+            android:text="@string/photo_reset"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/button_choose_photo"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imageView_photo"
+            app:layout_constraintVertical_bias="1.0" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/imageView_photo"
+            android:layout_width="125dp"
+            android:layout_height="125dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="30dp"
+            android:contentDescription="@string/description"
+            android:src="@mipmap/ic_launcher_round"
+            app:civ_border_color="#DD8D15"
+            app:civ_border_width="2dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        app:layout_constraintBottom_toTopOf="@+id/layout_voice" />
+
+    <LinearLayout
+        android:id="@+id/panel_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@color/white"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ImageButton
+            android:id="@+id/photo_choose_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="12dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="8dp"
+            android:src="@drawable/ic_baseline_image_24">
+
+        </ImageButton>
+
+        <ImageButton
+            android:id="@+id/color_choose_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="12dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="8dp"
+            android:src="@drawable/ic_baseline_color_lens_24">
+
+        </ImageButton>
+
+        <ImageButton
+            android:id="@+id/mic_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="12dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="8dp"
+            android:src="@drawable/ic_baseline_mic_24">
+
+        </ImageButton>
+
+    </LinearLayout>
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_save"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
         android:src="@drawable/icon_checkmark_white"
-        app:layout_constraintBottom_toTopOf="@+id/layout_voice"
-        app:layout_constraintEnd_toEndOf="parent" />
+        android:layout_marginEnd="24dp"
+        app:layout_constraintBottom_toTopOf="@+id/panel_layout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/panel_layout" />
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

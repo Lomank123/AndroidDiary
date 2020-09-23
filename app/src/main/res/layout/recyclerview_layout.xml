@@ -39,10 +39,10 @@
             android:textColor="#939596"
             android:textSize="16sp"
             app:layout_constraintStart_toEndOf="@+id/imageView"
-            app:layout_constraintTop_toBottomOf="@+id/textView_name" />
+            app:layout_constraintTop_toBottomOf="@+id/editText_name" />
 
         <TextView
-            android:id="@+id/textView_name"
+            android:id="@+id/editText_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"

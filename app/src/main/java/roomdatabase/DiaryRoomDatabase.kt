@@ -8,7 +8,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-@Database(entities = [Diary::class, Note::class, DailyListItem::class], version = 1, exportSchema = false)
+@Database(entities = [Diary::class, Note::class, DailyListItem::class], version = 2, exportSchema = false)
 abstract class DiaryRoomDatabase : RoomDatabase() {
 
     abstract fun diaryDao(): DiaryDao

@@ -8,7 +8,6 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.fragment.app.Fragment
 import androidx.interpolator.view.animation.FastOutLinearInInterpolator
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -57,7 +56,7 @@ class DailyListFragment : Fragment() {
 
         if (mainViewModel.allExtendedDiaries.hasActiveObservers())
             mainViewModel.allExtendedDiaries.removeObservers(requireActivity())
-        mainViewModel.allExtendedDiaries.observe(viewLifecycleOwner, Observer {
+        mainViewModel.allExtendedDiaries.observe(viewLifecycleOwner, {
             allDailyListItems = findDailyListItems(it, extDiaryParent)
             adapter.setDailyListItems(allDailyListItems)
             layout.recyclerview_list.setHasFixedSize(true)

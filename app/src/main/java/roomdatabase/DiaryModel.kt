@@ -10,6 +10,8 @@ import java.io.Serializable
 /**
  * Модель дневника
  */
+
+// TODO: оставить в обязательных полях только имя
 @Entity(tableName = "diary_table")                                        // название таблицы
 data class Diary(@ColumnInfo(name = "diary_name") var name: String,       // название дневника
                  @ColumnInfo(name = "diary_content") var content: String, // описание
@@ -70,25 +72,32 @@ data class Diary(@ColumnInfo(name = "diary_name") var name: String,       // н�
  * Модель заметки. Заметки хранятся в дневнике. К одному дневнику может быть привязано несколько
  * заметок (связь один-ко-многим)
  */
+// TODO: оставить в обязательных полях только имя
 @Entity(tableName = "note_table")                                           // Название таблицы
 data class Note(@ColumnInfo(name = "note_name") var name : String,          // Название
-                @ColumnInfo(name = "note_content") var content : String,    // Текст
-                @ColumnInfo(name = "note_parent_id") var parentId : Long,   // id дневника, к к-му привязана
-                @ColumnInfo(name = "note_date") var lastEditDate : String           // Дата последнего изменения
 ) : Serializable
 {
     // Первичный ключ - id с авто-генерацией ключей
     @PrimaryKey(autoGenerate = true)
     var id : Long = 0                               // id заметки
 
+    @ColumnInfo(name = "note_content")
+    var content : String = ""                       // содержимое
+
+    @ColumnInfo(name = "note_parent_id")
+    var parentId : Long? = null                     // id дневника, к к-му привязана
+
     @ColumnInfo(name = "note_img")
     var img : String? = null                        // картинка
 
     @ColumnInfo(name = "note_color")
-    var color : Int? = null                      // цвет
+    var color : Int? = null                         // цвет
 
     @ColumnInfo(name = "note_is_favorite")
     var favorite : Boolean = false                  // является ли избранным
+
+    @ColumnInfo(name = "note_date")
+    var lastEditDate : String? = null               // Дата последнего изменения
 
     @ColumnInfo(name = "note_creation_date")
     var creationDate : String? = null               // Дата создания
@@ -121,6 +130,7 @@ data class Note(@ColumnInfo(name = "note_name") var name : String,          // �
     }
 }
 
+// TODO: оставить в обязательных полях только имя
 @Entity(tableName = "daily_list_item_table")                                           // Название таблицы
 data class DailyListItem(@ColumnInfo(name = "daily_list_item_name") var name : String,          // Название
                          @ColumnInfo(name = "daily_list_item_parent_id") val parentId : Long   // id дневника, к к-му привязана
