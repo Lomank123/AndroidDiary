@@ -75,6 +75,8 @@ class NoteListAdapter internal constructor(
         private val expandableLayoutItemView : ConstraintLayout = itemView.findViewById(R.id.expandable_layout)
         private val creationDateItemView : TextView = itemView.findViewById(R.id.creation_date_text2)
         private val lastEditDateItemView : TextView = itemView.findViewById(R.id.last_edit_date_text2)
+        private val fullDescriptionItemView : TextView = itemView.findViewById(R.id.full_description_text)
+        private val imageViewMic : ImageView = itemView.findViewById(R.id.imageView_mic)
 
         private var isExpanded = false
 
@@ -84,6 +86,7 @@ class NoteListAdapter internal constructor(
             noteDescriptionView.text = cutString(note.content)
             creationDateItemView.text = note.creationDate.toString()
             lastEditDateItemView.text = note.lastEditDate
+            fullDescriptionItemView.text = note.content
 
             // Устанавливаем обработчик нажатий на элемент RecyclerView, при нажатии
             // будет вызываться первый listener (listenerOpen), который открывает заметку
@@ -104,6 +107,12 @@ class NoteListAdapter internal constructor(
                 noteStarView.visibility = VISIBLE
             else
                 noteStarView.visibility = GONE
+
+            // if there is a voice note inside
+            if(note.voice)
+                imageViewMic.visibility = VISIBLE
+            else
+                imageViewMic.visibility = GONE
 
             // color
             if (note.color != null && prefs!!.getBoolean("color_check_note", false)) {

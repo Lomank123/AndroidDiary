@@ -11,11 +11,8 @@ import java.io.Serializable
  * Модель дневника
  */
 
-// TODO: оставить в обязательных полях только имя
 @Entity(tableName = "diary_table")                                        // название таблицы
-data class Diary(@ColumnInfo(name = "diary_name") var name: String,       // название дневника
-                 @ColumnInfo(name = "diary_content") var content: String, // описание
-                 @ColumnInfo(name = "diary_date") var lastEditDate : String       // дата последнего изменения
+data class Diary(@ColumnInfo(name = "diary_name") var name: String        // название дневника
 ) : Serializable
 {
     // Первичный ключ - id с авто-генерацией ключей
@@ -26,7 +23,7 @@ data class Diary(@ColumnInfo(name = "diary_name") var name: String,       // н�
     var img : String? = null                       // картинка
 
     @ColumnInfo(name = "diary_color")
-    var color : Int? = null                     // цвет
+    var color : Int? = null                        // цвет
 
     @ColumnInfo(name = "diary_is_favorite")
     var favorite : Boolean = false                 // является ли избранным
@@ -36,6 +33,12 @@ data class Diary(@ColumnInfo(name = "diary_name") var name: String,       // н�
 
     @ColumnInfo(name = "diary_list_name")
     var listName : String = "List name"            // Название списка дел
+
+    @ColumnInfo(name = "diary_date")
+    var lastEditDate : String? = null              // дата последнего изменения
+
+    @ColumnInfo(name = "diary_content")
+    var content: String? = null                    // описание
 
     override fun equals(other: Any?): Boolean {
 
@@ -72,7 +75,6 @@ data class Diary(@ColumnInfo(name = "diary_name") var name: String,       // н�
  * Модель заметки. Заметки хранятся в дневнике. К одному дневнику может быть привязано несколько
  * заметок (связь один-ко-многим)
  */
-// TODO: оставить в обязательных полях только имя
 @Entity(tableName = "note_table")                                           // Название таблицы
 data class Note(@ColumnInfo(name = "note_name") var name : String,          // Название
 ) : Serializable
@@ -92,6 +94,9 @@ data class Note(@ColumnInfo(name = "note_name") var name : String,          // �
 
     @ColumnInfo(name = "note_color")
     var color : Int? = null                         // цвет
+
+    @ColumnInfo(name = "note_is_voice")
+    var voice : Boolean = false                     // есть ли голосовая заметка
 
     @ColumnInfo(name = "note_is_favorite")
     var favorite : Boolean = false                  // является ли избранным
@@ -125,12 +130,13 @@ data class Note(@ColumnInfo(name = "note_name") var name : String,          // �
             return false
         if(favorite != other.favorite)
             return false
+        if(voice != other.voice)
+            return false
 
         return true
     }
 }
 
-// TODO: оставить в обязательных полях только имя
 @Entity(tableName = "daily_list_item_table")                                           // Название таблицы
 data class DailyListItem(@ColumnInfo(name = "daily_list_item_name") var name : String,          // Название
                          @ColumnInfo(name = "daily_list_item_parent_id") val parentId : Long   // id дневника, к к-му привязана

@@ -71,15 +71,18 @@ class DiaryListAdapter internal constructor(
         private val expandableLayoutItemView : ConstraintLayout = itemView.findViewById(R.id.expandable_layout)
         private val creationDateItemView : TextView = itemView.findViewById(R.id.creation_date_text2)
         private val lastEditDateItemView : TextView = itemView.findViewById(R.id.last_edit_date_text2)
+        private val fullDescriptionItemView : TextView = itemView.findViewById(R.id.full_description_text)
 
         private var isExpanded = false
 
         // эта функция применяется для каждого члена RecyclerView т.к. вызывается в onBindViewHolder
         fun bindView(extDiary: ExtendedDiary) {
             diaryItemView.text = extDiary.diary.name
-            diaryDescriptionView.text = cutString(extDiary.diary.content)
+            if (extDiary.diary.content != null)
+                diaryDescriptionView.text = cutString(extDiary.diary.content!!)
             creationDateItemView.text = extDiary.diary.creationDate.toString()
             lastEditDateItemView.text = extDiary.diary.lastEditDate
+            fullDescriptionItemView.text = extDiary.diary.content
 
             itemView.setOnClickListener {
                 listenerOpenDiary(extDiary)
@@ -239,6 +242,6 @@ class DiaryListAdapter internal constructor(
     override fun getItemCount() = diaries.size // сколько эл-тов будет в списке
 
     companion object {
-        const val NUMBER_OF_SYMBOLS = 12
+        const val NUMBER_OF_SYMBOLS = 18
     }
 }

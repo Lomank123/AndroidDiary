@@ -9,7 +9,6 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Color
-import android.graphics.Typeface
 import android.media.MediaPlayer
 import android.media.MediaRecorder
 import android.os.Build
@@ -39,17 +38,9 @@ import java.lang.Exception
 class ClickedActivity : AppCompatActivity() {
 
     private val permissionRequestCode = 145
-    private val permissionsList = arrayOf(
-        Manifest.permission.WRITE_EXTERNAL_STORAGE,
-        Manifest.permission.READ_EXTERNAL_STORAGE,
-        Manifest.permission.RECORD_AUDIO,
-        Manifest.permission.CAMERA
-    )
-
+    private val choosePhotoRequestCode = 12
     private val newNoteRequestCode = 111
     private val openNoteRequestCode = 222
-
-    private val choosePhotoRequestCode = 12
 
     private var primalColor : Int? = null
     private var primalPhoto : String? = null
@@ -58,13 +49,11 @@ class ClickedActivity : AppCompatActivity() {
     private var isPhotoExist = false
 
     private var isVoiceLayoutOpen = false // for layout
-    private var isVoiceExist = false
     private var isRecording = false // for counting seconds
 
     private var mediaRecorder : MediaRecorder? = MediaRecorder()    // Запись
     private var mediaPlayer : MediaPlayer? = MediaPlayer()          // Воспроизведение
     private var fileName : String = ""                              // Имя файла
-    private val replyIntent = Intent()
 
     // Пустышка, которая в завимимости от requestCode будет изменена
     // ВАЖНО!!! Эта заметка еще не в базе данных
@@ -78,7 +67,7 @@ class ClickedActivity : AppCompatActivity() {
         setContentView(R.layout.activity_clicked)
 
         // prefs
-        val prefs: SharedPreferences? = PreferenceManager.getDefaultSharedPreferences(this)
+        //val prefs: SharedPreferences? = PreferenceManager.getDefaultSharedPreferences(this)
 
         // getting the request code from parent activity
         requestCode = intent.getIntExtra("requestCode", 0)
@@ -93,15 +82,14 @@ class ClickedActivity : AppCompatActivity() {
         {
             // setting filename template
             fileName = this.getExternalFilesDir(null)!!.absolutePath + "/voice_note_empty.3gpp"
+            if (File(fileName).exists())
+                File(fileName).delete()
 
             // parentId for new note
             note.parentId = extDiaryParent.diary.id
             // setting photo of a diary
             note.img = extDiaryParent.diary.img
             primalPhoto = note.img
-            
-            // setting image
-            setImage(prefs!!)
         }
         else if(requestCode == openNoteRequestCode) // request for open existing note
         {
@@ -116,15 +104,14 @@ class ClickedActivity : AppCompatActivity() {
 
             // Voice note
             if(File(fileName).exists()) {
-                isVoiceExist = true
+                note.voice = true
                 playStart()
                 setProgressBar()
                 showProgressBar()
             } else {
                 record_time_dis.text = this.resources.getString(R.string.no_voice_note)
             }
-            // Image
-            setImage(prefs!!)
+            // image
             primalPhoto = note.img
             // color
             primalColor = note.color
@@ -190,11 +177,10 @@ class ClickedActivity : AppCompatActivity() {
         button_reset_photo.setOnClickListener {
             if (isPhotoExist) {
                 isPhotoExist = false
-                imageView_background.setImageResource(R.drawable.blank_sheet)
                 imageView_photo.setImageResource(R.drawable.blank_sheet)
+                imageView_background.setImageDrawable(null)
                 note.img = null
             }
-
         }
 
         // VOICE BUTTONS
@@ -243,7 +229,7 @@ class ClickedActivity : AppCompatActivity() {
 
         // слушатель на кнопку остановки записи голоса
         stop_recording_voice_dis.setOnClickListener {
-            isVoiceExist = true
+            note.voice = true
             isRecording = false
             recordStop()
             playStart()
@@ -255,7 +241,7 @@ class ClickedActivity : AppCompatActivity() {
     // Back button
     override fun onBackPressed() {
         if(requestCode == newNoteRequestCode) {
-            if (!TextUtils.isEmpty(editText_name.text) || !TextUtils.isEmpty(editText_content.text) || isVoiceExist ||
+            if (!TextUtils.isEmpty(editText_name.text) || !TextUtils.isEmpty(editText_content.text) || note.voice ||
                 (note.img != primalPhoto) || (note.color != null)) {
                 saveDialogShow(requestCode)
             } else {
@@ -283,12 +269,13 @@ class ClickedActivity : AppCompatActivity() {
         note.content = editText_content.text.toString()
 
         // Проверяем голосовую заметку
-        if(!isVoiceExist) {
+        if(!note.voice) {
             val outFile = File(fileName)
             if (outFile.exists())
                 outFile.delete()
         }
 
+        val replyIntent = Intent()
         replyIntent.putExtra(EXTRA_REPLY_EDIT, note)
         setResult(Activity.RESULT_OK, replyIntent) // resultCode будет RESULT_OK
         Toast.makeText(this, resources.getString(R.string.saved), Toast.LENGTH_SHORT).show()
@@ -347,16 +334,18 @@ class ClickedActivity : AppCompatActivity() {
     }
 
     private fun setImage(prefs : SharedPreferences){
-        if (prefs.getBoolean("img_check", false)) {
-            if (note.img != null && note.img != ""){
-                isPhotoExist = true
+        if (note.img != null && note.img != "") {
+            isPhotoExist = true
+            Glide.with(this).load(note.img).into(imageView_photo)
+            if (prefs.getBoolean("img_check", false)) {
                 Glide.with(this).load(note.img).into(imageView_background)
-                Glide.with(this).load(note.img).into(imageView_photo)
             } else {
-                imageView_background.setImageResource(R.drawable.blank_sheet)
-                imageView_photo.setImageResource(R.drawable.blank_sheet)
+                imageView_background.setImageDrawable(null)
             }
+        } else {
+            imageView_photo.setImageResource(R.drawable.blank_sheet)
         }
+
     }
 
     override fun onResume() {
@@ -369,41 +358,9 @@ class ClickedActivity : AppCompatActivity() {
         // resetting progressBar and media player
         seekBar_active.progress = 0
         start_time_active.text = this.resources.getString(R.string.start_time)
-        end_time_active.text = createTimeLabel(seekBar_active.max)
         play_btn_active.setImageResource(android.R.drawable.ic_media_play)
 
         playStart()
-
-        // setting font
-        // TODO: change this to materialDialog choose
-        when(prefs.getString("list_preference_1", "0"))
-        {
-            "Default" ->
-            {
-                editText_name.typeface = Typeface.DEFAULT
-                editText_content.typeface = Typeface.DEFAULT
-            }
-            "Serif" ->
-            {
-                editText_name.typeface = Typeface.SERIF
-                editText_content.typeface = Typeface.SERIF
-            }
-            "Sans Serif" ->
-            {
-                editText_name.typeface = Typeface.SANS_SERIF
-                editText_content.typeface = Typeface.SANS_SERIF
-            }
-            "Default Bald" ->
-            {
-                editText_name.typeface = Typeface.DEFAULT_BOLD
-                editText_content.typeface = Typeface.DEFAULT_BOLD
-            }
-            "Monospace" ->
-            {
-                editText_name.typeface = Typeface.MONOSPACE
-                editText_content.typeface = Typeface.MONOSPACE
-            }
-        }
     }
 
 
@@ -413,6 +370,10 @@ class ClickedActivity : AppCompatActivity() {
     }
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
+            R.id.note_settings -> {
+                val intentSettings = Intent(this, SettingsHolderActivity::class.java)
+                startActivity(intentSettings)
+            }
             R.id.share_btn_edit -> {
                 val sendIntent = Intent().apply {
                     action = Intent.ACTION_SEND
@@ -422,24 +383,9 @@ class ClickedActivity : AppCompatActivity() {
                 val shareIntent = Intent.createChooser(sendIntent, null)
                 startActivity(shareIntent)
             }
-            // TODO: delete or change this
-            //R.id.cancel_btn_edit -> { // Кнопка Cancel
-            //    if (note!!.content != editText_content.text.toString())
-            //        saveDialogShow()
-            //    else {
-            //        setResult(Activity.RESULT_CANCELED)
-            //        Toast.makeText(
-            //            this, resources.getString(R.string.canceled), Toast.LENGTH_SHORT).show()
-            //        finish()
-            //    }
-            //}
         }
         return super.onOptionsItemSelected(item)
     }
-
-
-
-
 
 
     // Below is media player code, animation and permission check
@@ -448,8 +394,6 @@ class ClickedActivity : AppCompatActivity() {
         // Устанавливаем время начала и конца
         val elapsedTime1 = createTimeLabel(0)
         start_time_active.text = elapsedTime1
-        val remainingTime1 = createTimeLabel(mediaPlayer!!.duration)
-        end_time_active.text = remainingTime1
         // seekBar
         seekBar_active.visibility = VISIBLE
         seekBar_active.max = mediaPlayer!!.duration
@@ -462,8 +406,6 @@ class ClickedActivity : AppCompatActivity() {
 
                         val elapsedTime = createTimeLabel(progress)
                         start_time_active.text = elapsedTime
-                        val remainingTime = createTimeLabel(mediaPlayer!!.duration - progress)
-                        end_time_active.text = remainingTime
                     }
                 }
                 override fun onStartTrackingTouch(p0: SeekBar?) {
@@ -482,7 +424,6 @@ class ClickedActivity : AppCompatActivity() {
         play_btn_active.setImageResource(android.R.drawable.ic_media_play)
         play_btn_active.visibility = VISIBLE
         delete_btn_active.visibility = VISIBLE
-        end_time_active.visibility = VISIBLE
         start_time_active.visibility = VISIBLE
     }
 
@@ -493,6 +434,13 @@ class ClickedActivity : AppCompatActivity() {
             layout_voice.alpha = 0.0f
             layout_voice.animate().translationY(-layout_voice.height.toFloat()).alpha(1.0f).setListener(null).start()
         } else {
+            // stop playing voice note
+            if(mediaPlayer != null)
+                if (mediaPlayer!!.isPlaying) {
+                    pausePlay()
+                    play_btn_active.setImageResource(android.R.drawable.ic_media_play)
+                }
+
             layout_voice.animate().translationY(0f).alpha(0.0f).setListener(object :
                 AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator?) {
@@ -532,13 +480,18 @@ class ClickedActivity : AppCompatActivity() {
     }
 
     private fun requestForCheckPermission(){
+        val permissionsList = arrayOf(
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.CAMERA
+        )
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
             if(!checkPermission(this, permissionsList)) {
                 ActivityCompat.requestPermissions(this, permissionsList, permissionRequestCode)
             }
     }
 
-    // TODO: change to string resources
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String>,
@@ -553,13 +506,13 @@ class ClickedActivity : AppCompatActivity() {
                         allSuccess = false
                         val requestAgain = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && shouldShowRequestPermissionRationale(permissions[i])
                         if(requestAgain)
-                            Toast.makeText(this, "permission denied", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, resources.getString(R.string.perm_denied), Toast.LENGTH_SHORT).show()
                         else
-                            Toast.makeText(this, "go to settings and enable the permission", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, resources.getString(R.string.perm_denied_again), Toast.LENGTH_SHORT).show()
                     }
                 }
                 if(allSuccess)
-                    Toast.makeText(this, "permission granted", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, resources.getString(R.string.perm_granted), Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -572,14 +525,12 @@ class ClickedActivity : AppCompatActivity() {
 
             val elapsedTime = createTimeLabel(mediaPlayer!!.currentPosition)
             start_time_active.text = elapsedTime
-            val remainingTime = createTimeLabel(mediaPlayer!!.duration - mediaPlayer!!.currentPosition)
-            end_time_active.text = remainingTime
 
             if (mediaPlayer!!.isPlaying) {
                 val notify = Runnable {
                     progressUpdater()
                 }
-                Handler().postDelayed(notify, 200)
+                Handler().postDelayed(notify, 0)
             }
             else {
                 play_btn_active.setImageResource(android.R.drawable.ic_media_play)
@@ -619,7 +570,7 @@ class ClickedActivity : AppCompatActivity() {
     {
         releaseRecorder()
         releasePlayer()
-        isVoiceExist = false
+        note.voice = false
         val outFile = File(fileName)
         if (outFile.exists())
             outFile.delete()
@@ -633,7 +584,6 @@ class ClickedActivity : AppCompatActivity() {
         play_btn_active.setImageResource(android.R.drawable.ic_media_pause)
         delete_btn_active.visibility = INVISIBLE
         start_time_active.visibility = INVISIBLE
-        end_time_active.visibility = INVISIBLE
         seekBar_active.visibility = INVISIBLE
     }
 

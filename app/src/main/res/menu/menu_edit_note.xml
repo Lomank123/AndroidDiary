@@ -7,17 +7,9 @@
         android:icon="@android:drawable/ic_menu_share"
         android:title="@string/sample"
         app:showAsAction="ifRoom" />
-
     <item
-        android:id="@+id/cancel_btn_edit"
-        android:title="@string/cancel_btn"
-        android:visible="false"
-        app:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/save_btn_edit"
-        android:title="@string/button_save"
-        android:visible="false"
-        app:showAsAction="ifRoom" />
-
-
+        android:id="@+id/note_settings"
+        android:icon="@drawable/ic_baseline_settings_32"
+        android:title="@string/settings_btn"
+        app:showAsAction="ifRoom"/>
 </menu>

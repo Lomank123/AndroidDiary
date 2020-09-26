@@ -34,6 +34,7 @@
         android:inputType="textMultiLine"
         android:textColor="@color/black"
         android:textSize="26sp"
+        android:fontFamily="@font/ubuntu_regular"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -52,6 +53,7 @@
         android:gravity="start|top"
         android:hint="@string/hint_text_note"
         android:inputType="textMultiLine"
+        android:fontFamily="@font/ubuntu_regular"
         app:layout_constraintBottom_toTopOf="@+id/view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -78,7 +80,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/panel_layout">
+        app:layout_constraintTop_toTopOf="@+id/photo_choose_layout">
 
         <ImageButton
             android:id="@+id/delete_btn_active"
@@ -124,23 +126,11 @@
             android:id="@+id/start_time_active"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
             android:text="@string/start_time"
             android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/play_btn_active"
-            app:layout_constraintTop_toBottomOf="@+id/seekBar_active"
-            app:layout_constraintVertical_bias="0.066" />
-
-        <TextView
-            android:id="@+id/end_time_active"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="20dp"
-            android:text="@string/end_time"
-            android:visibility="invisible"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/delete_btn_active"
+            app:layout_constraintEnd_toEndOf="@+id/seekBar_active"
+            app:layout_constraintStart_toStartOf="@+id/seekBar_active"
             app:layout_constraintTop_toBottomOf="@+id/seekBar_active"
             app:layout_constraintVertical_bias="0.066" />
 
@@ -163,12 +153,11 @@
             android:id="@+id/record_voice_dis"
             android:layout_width="50dp"
             android:layout_height="50dp"
+            android:layout_marginStart="10dp"
             android:background="@drawable/custom_button_save1"
             android:contentDescription="@string/sample"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.013"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.518"
@@ -186,6 +175,7 @@
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/play_btn_active"
             app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -196,6 +186,8 @@
         android:layout_height="wrap_content"
         android:background="#9195F1DC"
         android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/panel_layout">
 
         <Button
@@ -240,7 +232,7 @@
             android:layout_marginTop="24dp"
             android:layout_marginBottom="30dp"
             android:contentDescription="@string/description"
-            android:src="@mipmap/ic_launcher_round"
+            android:src="@drawable/blank_sheet"
             app:civ_border_color="#DD8D15"
             app:civ_border_width="2dp"
             app:layout_constraintBottom_toBottomOf="parent"

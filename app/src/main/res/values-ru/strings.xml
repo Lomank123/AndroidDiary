@@ -8,6 +8,7 @@
     <string name="image">Image Text</string>
     <string name="sample">Sample Text</string>
     <string name="description">Описание…</string>
+    <string name="description_full">Описание:</string>
     <string name="back_btn">Назад</string>
     <string name="cancel_btn">Отмена</string>
     <string name="hint_note">Заметка…</string>

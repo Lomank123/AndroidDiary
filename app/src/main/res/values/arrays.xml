@@ -4,12 +4,4 @@
         <item>Reply</item>
         <item>Reply to all</item>
     </string-array>
-
-    <string-array name="font_values">
-        <item>Default</item>
-        <item>Serif</item>
-        <item>Sans Serif</item>
-        <item>Default Bald</item>
-        <item>Monospace</item>
-    </string-array>
 </resources>

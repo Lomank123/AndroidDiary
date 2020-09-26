@@ -4,9 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="match_parent">
 
-    android:orientation="vertical">
 
     <ScrollView
         android:id="@+id/scrollView2"
@@ -16,7 +15,7 @@
         app:layout_constraintBottom_toTopOf="@+id/button_save"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/adView3">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -31,12 +30,12 @@
                 android:layout_marginEnd="64dp"
                 app:cardBackgroundColor="@color/white"
                 app:cardCornerRadius="25dp"
-                app:strokeColor="@color/black"
-                app:strokeWidth="3dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.941"
                 app:layout_constraintStart_toEndOf="@+id/change_color_button"
-                app:layout_constraintTop_toBottomOf="@+id/delete_photo_button" />
+                app:layout_constraintTop_toBottomOf="@+id/delete_photo_button"
+                app:strokeColor="@color/black"
+                app:strokeWidth="3dp" />
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/imageView_new_diary"
@@ -44,7 +43,7 @@
                 android:layout_height="200dp"
                 android:layout_marginTop="40dp"
                 android:contentDescription="@string/description"
-                android:src="@mipmap/ic_launcher_round"
+                android:src="@drawable/logo"
                 app:civ_border_color="#DD8D15"
                 app:civ_border_width="2dp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -119,15 +118,28 @@
                 android:layout_marginStart="32dp"
                 android:layout_marginTop="32dp"
                 android:layout_marginEnd="16dp"
-                android:textSize="16sp"
                 android:background="@drawable/color_choose_button"
                 android:contentDescription="@string/sample"
                 android:text="@string/color_choose"
+                android:textSize="16sp"
                 app:layout_constraintEnd_toStartOf="@+id/color_change_view"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/photo_button" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
+
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/adView3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:visibility="visible"
+        app:adSize="BANNER"
+        app:adUnitId="ca-app-pub-3940256099942544/6300978111"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/button_save"

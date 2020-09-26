@@ -70,8 +70,9 @@
                     android:text="@string/sample"
                     android:textAlignment="center"
                     android:textColor="#000"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="12dp"
                     android:textSize="13sp"
+                    android:fontFamily="@font/ubuntu_regular"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/progressBar_appbar" />

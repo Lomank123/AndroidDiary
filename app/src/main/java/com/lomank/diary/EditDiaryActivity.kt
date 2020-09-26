@@ -16,6 +16,8 @@ import androidx.core.content.PermissionChecker
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.color.colorChooser
 import com.bumptech.glide.Glide
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.MobileAds
 import com.google.android.material.card.MaterialCardView
 import kotlinx.android.synthetic.main.activity_new_diary.*
 import roomdatabase.Diary
@@ -38,6 +40,9 @@ class EditDiaryActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_new_diary)
+
+        MobileAds.initialize(this)
+        adView3.loadAd(AdRequest.Builder().build())
 
         val diary = intent.getSerializableExtra("diaryEdit") as? Diary
 

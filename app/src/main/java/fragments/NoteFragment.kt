@@ -131,7 +131,6 @@ class NoteFragment : Fragment() {
         })
     }
 
-    // TODO: maybe move this to ClickedActivity
     // Возвращает текущую дату
     @SuppressLint("SimpleDateFormat")
     private fun currentDate() : String
@@ -146,40 +145,17 @@ class NoteFragment : Fragment() {
         super.onActivityResult(requestCode, resultCode, data)
 
         // Результат для добавления заметки
-        if (requestCode == newNoteRequestCode && resultCode == Activity.RESULT_OK)
-        {
-            //data?.getStringArrayListExtra(NewNoteActivity.EXTRA_NEW_NOTE)?.let {
-            //    // Из data достаем информацию о картинке, была ли она
-            //    // Если картинку не выбрали, установится та, что была на "обложке" дневника
-            //    var imgNote = data.getStringExtra(NewNoteActivity.EXTRA_NEW_NOTE_IMAGE)
-            //    if (imgNote == null || imgNote == "")
-            //        imgNote = extDiaryParent!!.diary.img
-            //    val newNote = Note(it[0])
-            //    newNote.content = it[1]
-            //    newNote.parentId = extDiaryParent!!.diary.id
-            //    newNote.lastEditDate = currentDate()
-            //    newNote.color = data.getIntExtra(NewNoteActivity.EXTRA_NEW_NOTE_COLOR, 0)
-            //    if (newNote.color == 0)
-            //        newNote.color = null
-            //    newNote.img = imgNote
-            //    newNote.creationDate = currentDate()
-            //    insertNote(newNote)
-            //}
+        if (requestCode == newNoteRequestCode && resultCode == Activity.RESULT_OK) {
             val newNote = data?.getSerializableExtra(ClickedActivity.EXTRA_REPLY_EDIT) as Note
             newNote.lastEditDate = currentDate()
             newNote.creationDate = currentDate()
             insertNote(newNote)
         }
         // Результат для обновления заметки
-        if (requestCode == openNoteRequestCode && resultCode == Activity.RESULT_OK)
-        {
+        if (requestCode == openNoteRequestCode && resultCode == Activity.RESULT_OK) {
             val note = data?.getSerializableExtra(ClickedActivity.EXTRA_REPLY_EDIT) as Note
             note.lastEditDate = currentDate()   // обновляем дату
             updateNote(note)                    // обновляем заметку
-        }
-        // TODO: rework this
-        if ((requestCode == newNoteRequestCode || requestCode == openNoteRequestCode) && resultCode == Activity.RESULT_CANCELED) {
-            //Toast.makeText(activity, resources.getString(R.string.empty_not_saved_note), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -198,7 +174,6 @@ class NoteFragment : Fragment() {
                     return true
                 }
                 override fun onQueryTextChange(newText: String?): Boolean {
-                    // Удаляем лишние обсерверы для плавной анимации
                     if (mainViewModel.allExtendedDiaries.hasActiveObservers())
                         mainViewModel.allExtendedDiaries.removeObservers(activity!!)
 
@@ -233,13 +208,11 @@ class NoteFragment : Fragment() {
                 // открытие окна "Настройки"
                 val intentSettings = Intent(activity, SettingsHolderActivity::class.java)
                 startActivity(intentSettings)
-                return super.onOptionsItemSelected(item)
             }
             R.id.about -> {
                 // открытие окна "О нас"
                 val aboutIntent = Intent(activity, AboutActivity::class.java)
                 startActivity(aboutIntent)
-                return super.onOptionsItemSelected(item)
             }
             R.id.star -> {
                 val adapter = recyclerview_note.adapter as NoteListAdapter
@@ -262,28 +235,23 @@ class NoteFragment : Fragment() {
     private fun setNotesForSearch(adapter : NoteListAdapter, prefs : SharedPreferences?,
                                   extDiaries : List<ExtendedDiary>, newText : String?)
     {
-        val noteList = mutableListOf<Note>()
-
-        if (newText!!.isNotEmpty()) {
+        mainNoteList = if (newText!!.isNotEmpty()) {
+            val noteList = mutableListOf<Note>()
             val search = newText.toLowerCase(Locale.ROOT)
-
             mainNoteList.forEach{notes ->
                 if(notes.name.toLowerCase(Locale.ROOT).contains(search))
                     noteList.add(notes)
             }
-            mainNoteList = noteList
-            if (prefs!!.getBoolean("sorted_notes", false))
-                adapter.setNotes(mainNoteList.sortedBy { !it.favorite }, extDiaries)
-            else
-                adapter.setNotes(mainNoteList, extDiaries)
+            noteList
         } else { // Если строка поиска пуста
-            mainNoteList = findListOfNotes(extDiaries, extDiaryParent)
-            if (prefs!!.getBoolean("sorted_notes", false))
-                adapter.setNotes(mainNoteList.sortedBy { !it.favorite }, extDiaries)
-            else
-                adapter.setNotes(mainNoteList, extDiaries)
+            findListOfNotes(extDiaries, extDiaryParent)
         }
-        recyclerview_note.scrollToPosition(0)
+        if (prefs!!.getBoolean("sorted_notes", false)) {
+            adapter.setNotes(mainNoteList.sortedBy { !it.favorite }, extDiaries)
+            recyclerview_note.scrollToPosition(0)
+        }
+        else
+            adapter.setNotes(mainNoteList, extDiaries)
     }
 
     // SnackBar creation (with UNDO button)

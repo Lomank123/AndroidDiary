@@ -8,6 +8,7 @@
     <string name="image">Image Text</string>
     <string name="sample">Sample Text</string>
     <string name="description">Description…</string>
+    <string name="description_full">Description:</string>
     <string name="back_btn">Back</string>
     <string name="cancel_btn">Cancel</string>
     <string name="hint_note">Note…</string>

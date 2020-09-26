@@ -14,9 +14,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.MobileAds
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 import recyclerviewadapter.DiaryListAdapter
@@ -39,6 +39,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        MobileAds.initialize(this)
+        adView.loadAd(AdRequest.Builder().build())
+
         val prefs: SharedPreferences? = PreferenceManager.getDefaultSharedPreferences(this)
         if (!(prefs!!.contains("sorted")))
             prefs.edit().putBoolean("sorted", false).apply()
@@ -50,10 +53,6 @@ class MainActivity : AppCompatActivity() {
         recyclerview.adapter = adapter
         recyclerview.layoutManager = LinearLayoutManager(this)
         recyclerview.addItemDecoration(TopSpacingItemDecoration(20)) // отступы
-
-        // TODO: Возможно это не нужно (убрать)
-        val itemTouchHelper = ItemTouchHelper(itemTouchHelperCallback)
-        itemTouchHelper.attachToRecyclerView(recyclerview)
 
         // Следит за изменением списка записей(дневников) и обновляет данные в RecyclerView
         mainViewModel.allExtendedDiaries.observe(this, { objects ->
@@ -70,30 +69,6 @@ class MainActivity : AppCompatActivity() {
             startActivityForResult(intent, newDiaryActivityRequestCode)
         }
     }
-
-    // TODO: Возможно это не нужно (убрать)
-    // Реализует удаление свайпом вправо
-    private val itemTouchHelperCallback=
-        object :
-            ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT){
-            override fun onMove(
-                recyclerView: RecyclerView,
-                viewHolder: RecyclerView.ViewHolder,
-                target: RecyclerView.ViewHolder
-            ): Boolean {
-                return true
-            }
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                val prefs: SharedPreferences? = PreferenceManager.getDefaultSharedPreferences(this@MainActivity)
-                val objToDelete : ExtendedDiary
-                objToDelete = if (prefs!!.getBoolean("sorted", false))
-                    extDiaryList.sortedBy{ !it.diary.favorite }[viewHolder.adapterPosition]
-                else {
-                    extDiaryList[viewHolder.adapterPosition]
-                }
-                deleteDiary(objToDelete)
-            }
-        }
 
     override fun onResume()
     {
@@ -142,7 +117,7 @@ class MainActivity : AppCompatActivity() {
 
         if (requestCode == newDiaryActivityRequestCode && resultCode == Activity.RESULT_OK) {
             data?.getStringArrayListExtra(NewDiaryActivity.EXTRA_NEW_DIARY)?.let {
-                val diary = Diary(it[0], it[1], currentDate())
+                val diary = Diary(it[0])
                 val diaryImg = data.getStringExtra(NewDiaryActivity.EXTRA_NEW_DIARY_IMAGE)
                 if (diaryImg != null && diaryImg != "")
                     diary.img = diaryImg
@@ -152,6 +127,8 @@ class MainActivity : AppCompatActivity() {
                 if(diary.color == 0)
                     diary.color = null
                 diary.creationDate = currentDate()
+                diary.lastEditDate = currentDate()
+                diary.content = it[1]
 
                 Log.e("Photo", "Path of photo: ${diary.img}")
 
@@ -223,29 +200,24 @@ class MainActivity : AppCompatActivity() {
     // Функция для вывода поискового запроса (используется только в SearchView)
     private fun setDiariesForSearch(adapter : DiaryListAdapter, prefs : SharedPreferences?, newText : String?)
     {
-        // diariesSearchList - список записей, удовлетворяющих поисковому запросу
-        val diariesSearchList = mutableListOf<ExtendedDiary>()
-
-        if (newText!!.isNotEmpty())
-        {
+        extDiaryList = if (newText!!.isNotEmpty()) {
+            // diariesSearchList - список записей, удовлетворяющих поисковому запросу
+            val diariesSearchList = mutableListOf<ExtendedDiary>()
             val search = newText.toLowerCase(Locale.ROOT)
             mainViewModel.allExtendedDiaries.value!!.forEach{
                 if(it.diary.name.toLowerCase(Locale.ROOT).contains(search))
                     diariesSearchList.add(it)
             }
-            extDiaryList = diariesSearchList
-            if (prefs!!.getBoolean("sorted", false))
-                adapter.setDiaries(extDiaryList.sortedBy { !it.diary.favorite })
-            else
-                adapter.setDiaries(extDiaryList)
+            diariesSearchList
         } else { // Если строка поиска пуста
-            extDiaryList = mainViewModel.allExtendedDiaries.value!!
-            if (prefs!!.getBoolean("sorted", false))
-                adapter.setDiaries(extDiaryList.sortedBy { !it.diary.favorite })
-            else
-                adapter.setDiaries(extDiaryList)
+            mainViewModel.allExtendedDiaries.value!!
         }
-        recyclerview.scrollToPosition(0)
+        if (prefs!!.getBoolean("sorted", false)) {
+            adapter.setDiaries(extDiaryList.sortedBy { !it.diary.favorite })
+            recyclerview.scrollToPosition(0)
+        }
+        else
+            adapter.setDiaries(extDiaryList)
     }
 
     // когда выбираешь элемент меню

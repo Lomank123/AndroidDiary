@@ -9,9 +9,7 @@ import android.view.View.VISIBLE
 import androidx.fragment.app.Fragment
 import androidx.interpolator.view.animation.FastOutLinearInInterpolator
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.input.input
 import com.lomank.diary.AboutActivity
@@ -101,11 +99,6 @@ class DailyListFragment : Fragment() {
         layout.collapsing_toolbar_layout.title = extDiaryParent!!.diary.listName
         layout.progressbar_text.text = resources.getString(R.string.progressbar_progress_full)
 
-        // TODO: Maybe delete this
-        // Setting Touch helper
-        val itemTouchHelper = ItemTouchHelper(itemTouchHelperCallback)
-        itemTouchHelper.attachToRecyclerView(layout.recyclerview_list)
-
         // Buttons
         // New item button
         layout.fab_new_item.setOnClickListener{
@@ -138,7 +131,6 @@ class DailyListFragment : Fragment() {
                     layout.collapsing_toolbar_layout.title = text.toString()
                 }
                 positiveButton(R.string.dialog_yes) {
-
                     dialog.dismiss()
                 }
                 negativeButton(R.string.dialog_no) {
@@ -199,20 +191,6 @@ class DailyListFragment : Fragment() {
                 deleteDailyListItem(it)
             })
     }
-
-    //TODO: Maybe delete this
-    private val itemTouchHelperCallback=
-        object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT)
-        {
-            override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
-                return true
-            }
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                val extDiaryParent = requireActivity().intent.getSerializableExtra("extDiaryParent") as? ExtendedDiary
-                val dailyListItems = findDailyListItems(mainViewModel.allExtendedDiaries.value!!, extDiaryParent)
-                deleteDailyListItem(dailyListItems[viewHolder.adapterPosition])
-            }
-        }
 
     // Finding list of DailyListItem items
     private fun findDailyListItems(

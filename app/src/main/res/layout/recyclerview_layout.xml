@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -16,11 +17,25 @@
         android:background="#FFFFFF"
         android:padding="15dp">
 
+        <ImageView
+            android:id="@+id/imageView_mic"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_below="@+id/imageView"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="4dp"
+            android:layout_toEndOf="@+id/imageView"
+            android:contentDescription="@string/sample"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imageButton_delete"
+            app:srcCompat="@android:drawable/ic_btn_speak_now" />
+
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/imageView"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:src="@mipmap/ic_launcher_round"
+            android:src="@drawable/logo"
             android:visibility="visible"
             app:civ_border_color="#DD8D15"
             app:civ_border_width="2dp"
@@ -33,10 +48,11 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="12dp"
             android:layout_toEndOf="@+id/imageView"
             android:text="@string/description"
             android:textColor="#939596"
+            android:fontFamily="@font/ubuntu_regular"
             android:textSize="16sp"
             app:layout_constraintStart_toEndOf="@+id/imageView"
             app:layout_constraintTop_toBottomOf="@+id/editText_name" />
@@ -50,6 +66,7 @@
             android:layout_marginTop="12dp"
             android:layout_toEndOf="@+id/imageView"
             android:text="@string/sample"
+            android:fontFamily="@font/ubuntu_regular"
             android:textColor="#000"
             android:textSize="17sp"
             app:layout_constraintStart_toEndOf="@+id/imageView"
@@ -80,7 +97,7 @@
             android:contentDescription="@string/sample"
             app:layout_constraintEnd_toStartOf="@+id/imageButton_delete"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/baseline_miscellaneous_services_black_24dp" />
+            app:srcCompat="@drawable/ic_baseline_settings_24" />
 
         <ImageButton
             android:id="@+id/imageButton_delete"
@@ -105,33 +122,56 @@
             app:layout_constraintTop_toBottomOf="@+id/imageView">
 
             <TextView
+                android:id="@+id/full_description_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:text="@string/sample"
+                android:textColor="#000"
+                android:textSize="13sp"
+                app:layout_constraintStart_toEndOf="@+id/full_description"
+                app:layout_constraintTop_toBottomOf="@+id/last_edit_date_text2" />
+
+            <TextView
+                android:id="@+id/full_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="16dp"
+                android:text="@string/description_full"
+                android:textColor="#000"
+                android:textSize="13sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/last_edit_date_text" />
+
+            <TextView
                 android:id="@+id/creation_date_text2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
-                android:layout_marginBottom="16dp"
                 android:text="@string/sample"
                 android:textColor="#000"
                 android:textSize="13sp"
-                app:layout_constraintBottom_toTopOf="@+id/last_edit_date_text"
                 app:layout_constraintStart_toEndOf="@+id/creation_date_text"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.0" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/last_edit_date_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
-                android:layout_marginStart="16dp"
-                android:layout_marginBottom="16dp"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="16dp"
                 android:text="@string/last_edit_date"
                 android:textColor="#000"
                 android:textSize="13sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/creation_date_text" />
 
             <TextView
                 android:id="@+id/last_edit_date_text2"
@@ -139,28 +179,25 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_marginStart="16dp"
-                android:layout_marginBottom="16dp"
+                android:layout_marginTop="16dp"
                 android:text="@string/sample"
                 android:textColor="#000"
                 android:textSize="13sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/last_edit_date_text" />
+                app:layout_constraintStart_toEndOf="@+id/last_edit_date_text"
+                app:layout_constraintTop_toBottomOf="@+id/creation_date_text2" />
 
             <TextView
                 android:id="@+id/creation_date_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
-                android:layout_marginStart="16dp"
+                android:layout_marginStart="12dp"
                 android:layout_marginTop="16dp"
-                android:layout_marginBottom="16dp"
                 android:text="@string/creation_date"
                 android:textColor="#000"
                 android:textSize="13sp"
-                app:layout_constraintBottom_toTopOf="@+id/last_edit_date_text"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.0" />
+                app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
