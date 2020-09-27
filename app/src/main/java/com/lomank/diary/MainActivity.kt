@@ -218,7 +218,7 @@ class MainActivity : AppCompatActivity() {
         }
         if (prefs!!.getBoolean("sorted", false)) {
             adapter.setDiaries(extDiaryList.sortedBy { !it.diary.favorite })
-            recyclerview.scrollToPosition(0)
+
         }
         else
             adapter.setDiaries(extDiaryList)
@@ -248,8 +248,8 @@ class MainActivity : AppCompatActivity() {
                     prefs.edit().putBoolean("sorted", true).apply()
                     adapter.setDiaries(extDiaryList.sortedBy { !it.diary.favorite })
                     item.setIcon(android.R.drawable.btn_star_big_on)
+                    recyclerview.scrollToPosition(0)
                 }
-                recyclerview.scrollToPosition(0)
             }
         }
         return super.onOptionsItemSelected(item)

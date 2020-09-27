@@ -230,8 +230,8 @@ class NoteFragment : Fragment() {
                     prefs.edit().putBoolean("sorted_notes", true).apply()
                     adapter.setNotes(mainNoteList.sortedBy { !it.favorite }, mainViewModel.allExtendedDiaries.value!!)
                     item.setIcon(android.R.drawable.btn_star_big_on)
+                    recyclerview_note.scrollToPosition(0)
                 }
-                recyclerview_note.scrollToPosition(0)
             }
         }
         return super.onOptionsItemSelected(item)
@@ -254,7 +254,7 @@ class NoteFragment : Fragment() {
         }
         if (prefs!!.getBoolean("sorted_notes", false)) {
             adapter.setNotes(mainNoteList.sortedBy { !it.favorite }, extDiaries)
-            recyclerview_note.scrollToPosition(0)
+
         }
         else
             adapter.setNotes(mainNoteList, extDiaries)
