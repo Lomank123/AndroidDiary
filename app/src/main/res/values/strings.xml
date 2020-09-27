@@ -50,6 +50,7 @@
     <string name="dialog_clear_list_title">Clearing the list</string>
     <string name="dialog_delete_voice_title">Delete voice note</string>
     <string name="dialog_delete_voice_message">Do you want to delete voice note? This cannot be undone.</string>
+    <string name="dialog_color_choose_title">Choose color</string>
 
     <!-- Settings -->
     <string name="categoryMainSettings">Main settings</string>

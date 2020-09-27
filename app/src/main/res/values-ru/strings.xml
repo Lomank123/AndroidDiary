@@ -50,6 +50,7 @@
     <string name="dialog_clear_list_title">Очистка списка</string>
     <string name="dialog_delete_voice_title">Удаление голосовой заметки</string>
     <string name="dialog_delete_voice_message">Вы хотите удалить голосовую заметку? Вернуть ее будет уже нельзя.</string>
+    <string name="dialog_color_choose_title">Выберите цвет</string>
 
 
     <!-- Настройки -->

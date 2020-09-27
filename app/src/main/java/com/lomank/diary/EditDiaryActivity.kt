@@ -110,7 +110,7 @@ class EditDiaryActivity : AppCompatActivity() {
         change_color_button.setOnClickListener {
             val colorDialog = MaterialDialog(this)
             colorDialog.show {
-                title(R.string.dialog_item_name)
+                title(R.string.dialog_color_choose_title)
                 colorChooser(
                     colors = colorArray,
                     allowCustomArgb = true,

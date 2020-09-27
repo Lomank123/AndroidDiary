@@ -132,7 +132,7 @@ class ClickedActivity : AppCompatActivity() {
             val colorArray = intArrayOf(Color.RED, Color.BLUE, Color.GREEN, colorPrimaryOrange, colorWhite)
             val colorDialog = MaterialDialog(this)
             colorDialog.show {
-                title(R.string.dialog_item_name)
+                title(R.string.dialog_color_choose_title)
                 colorChooser(
                     colors = colorArray,
                     allowCustomArgb = true,
@@ -521,10 +521,8 @@ class ClickedActivity : AppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when(requestCode) {
             permissionRequestCode -> {
-                var allSuccess = true
                 for(i in permissions.indices) {
                     if (grantResults[i] == PackageManager.PERMISSION_DENIED) {
-                        allSuccess = false
                         val requestAgain = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && shouldShowRequestPermissionRationale(permissions[i])
                         if(requestAgain)
                             Toast.makeText(this, resources.getString(R.string.perm_denied), Toast.LENGTH_SHORT).show()
@@ -532,8 +530,6 @@ class ClickedActivity : AppCompatActivity() {
                             Toast.makeText(this, resources.getString(R.string.perm_denied_again), Toast.LENGTH_SHORT).show()
                     }
                 }
-                if(allSuccess)
-                    Toast.makeText(this, resources.getString(R.string.perm_granted), Toast.LENGTH_SHORT).show()
             }
         }
     }
