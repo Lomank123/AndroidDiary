@@ -325,6 +325,8 @@ class ClickedActivity : AppCompatActivity() {
     private fun checkVoiceNote(){
         val oldNote = intent.getSerializableExtra("openNote") as Note
         oldNote.voice = File(fileName).exists()
+        oldNote.color = primalColor
+        oldNote.img = primalPhoto
         val replyIntent = Intent()
         replyIntent.putExtra(EXTRA_REPLY_CANCELED, oldNote)
         setResult(Activity.RESULT_CANCELED, replyIntent)
