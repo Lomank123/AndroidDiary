@@ -14,7 +14,7 @@
 
     </style>
 
-    <style name="AppThemeAdditional" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppThemeAdditional" parent="Theme.MaterialComponents.DayNight">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/primary_color1</item>
         <item name="colorPrimaryDark">@color/primary_color_dark1</item>
@@ -51,6 +51,8 @@ The margin is a simple delimiter between the words. -->
         <item name="android:activityCloseEnterAnimation">@anim/slide_in_left</item>
         <item name="android:activityCloseExitAnimation">@anim/slide_out_right</item>
     </style>
+
+
 
     <!-- SnackBar style -->
     <style name="MySnackbar" parent="Widget.MaterialComponents.Snackbar">

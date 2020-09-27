@@ -20,6 +20,7 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.list.customListAdapter
 import com.bumptech.glide.Glide
 import com.lomank.diary.R
+import other.MaterialDialogAdapter
 import roomdatabase.ExtendedDiary
 import roomdatabase.Note
 
@@ -99,7 +100,7 @@ class NoteListAdapter internal constructor(
                 // trying to set an image with Glide
                 Glide.with(mContext).load(note.img).into(noteImageView)
             } else {
-                noteImageView.setImageResource(R.drawable.blank_sheet)
+                noteImageView.setImageResource(R.drawable.empty_note_photo)
             }
 
             // иконка со звездочкой (избранное)
@@ -139,7 +140,7 @@ class NoteListAdapter internal constructor(
             noteImageButtonViewOptions.setOnClickListener{
                 // Устанавливаем контекстное меню
                 val popupMenu = PopupMenu(mContext, it)
-                popupMenu.inflate(R.menu.menu_notes)
+                popupMenu.inflate(R.menu.menu_context)
 
                 // установка нужной надписи на пункт меню
                 if(note.favorite)
@@ -217,7 +218,7 @@ class NoteListAdapter internal constructor(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoteViewHolder {
         // добавляет контент(XML) из 1-го аргумента, и помещает во второй (родительский)
-        val itemView = inflater.inflate(R.layout.recyclerview_layout, parent,
+        val itemView = inflater.inflate(R.layout.recyclerview_layout_main, parent,
             false)
         return NoteViewHolder(itemView)
     }

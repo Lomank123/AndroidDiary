@@ -177,7 +177,7 @@ class ClickedActivity : AppCompatActivity() {
         button_reset_photo.setOnClickListener {
             if (isPhotoExist) {
                 isPhotoExist = false
-                imageView_photo.setImageResource(R.drawable.blank_sheet)
+                imageView_photo.setImageResource(R.drawable.empty_note_photo)
                 imageView_background.setImageDrawable(null)
                 note.img = null
             }
@@ -211,7 +211,18 @@ class ClickedActivity : AppCompatActivity() {
         }
 
         delete_btn_active.setOnClickListener {
-            recordDelete()
+            val dialog = MaterialDialog(this)
+            dialog.show {
+                title(R.string.dialog_delete_voice_title)
+                message(R.string.dialog_delete_voice_message)
+                positiveButton(R.string.dialog_yes) {
+                    recordDelete()
+                    dialog.dismiss()
+                }
+                negativeButton(R.string.dialog_no) {
+                    dialog.dismiss()
+                }
+            }
         }
 
         // if voice note doesn't exist
@@ -253,7 +264,7 @@ class ClickedActivity : AppCompatActivity() {
                 (note.img != primalPhoto)) {
                 saveDialogShow(requestCode)
             } else {
-                super.onBackPressed()
+                checkVoiceNote()
             }
         }
         else {
@@ -303,13 +314,21 @@ class ClickedActivity : AppCompatActivity() {
                 }
             } else if (code == openNoteRequestCode) {
                 negativeButton(R.string.dialog_no) {
-                    setResult(Activity.RESULT_CANCELED)
                     dialog.dismiss()
-                    finish()
+                    checkVoiceNote()
                 }
             }
 
         }
+    }
+
+    private fun checkVoiceNote(){
+        val oldNote = intent.getSerializableExtra("openNote") as Note
+        oldNote.voice = File(fileName).exists()
+        val replyIntent = Intent()
+        replyIntent.putExtra(EXTRA_REPLY_CANCELED, oldNote)
+        setResult(Activity.RESULT_CANCELED, replyIntent)
+        finish()
     }
 
     private fun makePhotoChooseIntent() {
@@ -343,7 +362,7 @@ class ClickedActivity : AppCompatActivity() {
                 imageView_background.setImageDrawable(null)
             }
         } else {
-            imageView_photo.setImageResource(R.drawable.blank_sheet)
+            imageView_photo.setImageResource(R.drawable.empty_note_photo)
         }
 
     }
@@ -365,7 +384,7 @@ class ClickedActivity : AppCompatActivity() {
 
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_edit_note, menu)
+        menuInflater.inflate(R.menu.menu_opened_note, menu)
         return super.onCreateOptionsMenu(menu)
     }
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -676,5 +695,6 @@ class ClickedActivity : AppCompatActivity() {
     // тег для распознавания именно этого запроса
     companion object {
         const val EXTRA_REPLY_EDIT = "EXTRA_REPLY_CLICKED_ACTIVITY"
+        const val EXTRA_REPLY_CANCELED = "EXTRA_REPLY_CLICKED_CANCELED"
     }
 }

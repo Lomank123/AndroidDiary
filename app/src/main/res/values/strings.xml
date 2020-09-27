@@ -26,6 +26,7 @@
     <string name="del_favor">Removed from Favorites</string>
     <string name="creation_date">Creation date: </string>
     <string name="last_edit_date">Last edit date: </string>
+    <string name="title">Title</string>
 
     <!-- Dialog screen -->
     <string name="dialog_yes">Yes</string>
@@ -47,6 +48,8 @@
     <string name="dialog_edit_text">Enter a new name</string>
     <string name="dialog_clear_list">Do you want to clear the list?</string>
     <string name="dialog_clear_list_title">Clearing the list</string>
+    <string name="dialog_delete_voice_title">Delete voice note</string>
+    <string name="dialog_delete_voice_message">Do you want to delete voice note? This cannot be undone.</string>
 
     <!-- Settings -->
     <string name="categoryMainSettings">Main settings</string>
@@ -76,14 +79,14 @@
     <string name="remove_bookmark">Remove star</string>
 
     <!-- Creators -->
-    <string name="creators">Creators</string>
+    <string name="creators">Creator</string>
     <string name="robert">Robert Khakimov</string>
     <string name="app_ver">App version: 1.0</string>
 
     <!-- Voice -->
     <string name="start_time">0:00</string>
     <string name="end_time">-1:11</string>
-    <string name="no_voice_note">Tap to start recording</string>
+    <string name="no_voice_note">Tap on mic to start recording</string>
 
     <!-- ProgressBar -->
     <string name="progressbar_progress"> of 100</string>

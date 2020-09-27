@@ -1,4 +1,4 @@
-package recyclerviewadapter
+package other
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager

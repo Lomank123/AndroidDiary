@@ -15,6 +15,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.lomank.diary.*
 import kotlinx.android.synthetic.main.fragment_note.*
 import kotlinx.android.synthetic.main.fragment_note.view.*
+import other.TopSpacingItemDecoration
 import recyclerviewadapter.NoteListAdapter
 import roomdatabase.ExtendedDiary
 import roomdatabase.Note
@@ -157,11 +158,16 @@ class NoteFragment : Fragment() {
             note.lastEditDate = currentDate()   // обновляем дату
             updateNote(note)                    // обновляем заметку
         }
+        if(requestCode == openNoteRequestCode && resultCode == Activity.RESULT_CANCELED){
+            val note = data?.getSerializableExtra(ClickedActivity.EXTRA_REPLY_CANCELED) as? Note
+            if(note != null)
+                updateNote(note)
+        }
     }
 
     // создает OptionsMenu
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.actionbar_menu, menu)
+        inflater.inflate(R.menu.menu_main, menu)
 
         val prefs: SharedPreferences? = PreferenceManager.getDefaultSharedPreferences(activity)
         val starItem = menu.findItem(R.id.star)
@@ -255,7 +261,7 @@ class NoteFragment : Fragment() {
     }
 
     // SnackBar creation (with UNDO button)
-    private fun createUndoSnackBar(view : View, note : Note){
+    private fun createUndoSnackBar(view : View, note : Note, fileName : String){
         val snackBar = Snackbar.make(view, resources.getString(R.string.snackbar_note_delete), Snackbar.LENGTH_LONG)
         snackBar.setAnchorView(R.id.fab_new_note)
         var isUndo = false
@@ -268,7 +274,6 @@ class NoteFragment : Fragment() {
                 super.onDismissed(transientBottomBar, event)
                 if(!isUndo) {
                     // Удаляем все файлы с голосовыми заметками из дневника
-                    val fileName = requireActivity().getExternalFilesDir(null)!!.absolutePath + "/voice_note_${note.id}.3gpp"
                     if (File(fileName).exists())
                         File(fileName).delete()
                 }
@@ -277,12 +282,15 @@ class NoteFragment : Fragment() {
         snackBar.show()
     }
 
+
+
     // Удаление записи
     private fun deleteNote(view : View, note : Note)
     {
         mainViewModel.deleteNote(note)
         // Creating undo snackBar
-        createUndoSnackBar(view, note)
+        val fileName = requireActivity().getExternalFilesDir(null)!!.absolutePath + "/voice_note_${note.id}.3gpp"
+        createUndoSnackBar(view, note, fileName)
     }
     private fun insertNote(note : Note){
         mainViewModel.insertNote(note)

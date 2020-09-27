@@ -19,6 +19,7 @@ import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.MobileAds
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
+import other.TopSpacingItemDecoration
 import recyclerviewadapter.DiaryListAdapter
 import roomdatabase.Diary
 import roomdatabase.ExtendedDiary
@@ -36,13 +37,16 @@ class MainActivity : AppCompatActivity() {
     private lateinit var extDiaryList : List<ExtendedDiary>
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        val prefs: SharedPreferences? = PreferenceManager.getDefaultSharedPreferences(this)
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         MobileAds.initialize(this)
         adView.loadAd(AdRequest.Builder().build())
 
-        val prefs: SharedPreferences? = PreferenceManager.getDefaultSharedPreferences(this)
+
         if (!(prefs!!.contains("sorted")))
             prefs.edit().putBoolean("sorted", false).apply()
 
@@ -157,7 +161,7 @@ class MainActivity : AppCompatActivity() {
 
     // создает OptionsMenu
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.actionbar_menu, menu)
+        menuInflater.inflate(R.menu.menu_main, menu)
 
         val prefs: SharedPreferences? = PreferenceManager.getDefaultSharedPreferences(this)
         val starItem = menu!!.findItem(R.id.star)
@@ -267,8 +271,7 @@ class MainActivity : AppCompatActivity() {
                 super.onDismissed(transientBottomBar, event)
                 if(!isUndo) {
                     // Удаляем все файлы с голосовыми заметками из дневника
-                    for(note in extDiary.notes)
-                    {
+                    for(note in extDiary.notes) {
                         val fileName = this@MainActivity.getExternalFilesDir(null)!!.absolutePath + "/voice_note_${note.id}.3gpp"
                         if(File(fileName).exists())
                             File(fileName).delete()

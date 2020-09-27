@@ -10,7 +10,7 @@ import com.google.android.gms.ads.MobileAds
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.android.synthetic.main.activity_note.*
-import recyclerviewadapter.ViewPagerStatesAdapter
+import other.ViewPagerStatesAdapter
 
 class NoteActivity : AppCompatActivity() {
 

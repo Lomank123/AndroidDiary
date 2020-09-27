@@ -1,4 +1,4 @@
-package com.lomank.diary
+package other
 
 import android.graphics.Rect
 import android.view.View

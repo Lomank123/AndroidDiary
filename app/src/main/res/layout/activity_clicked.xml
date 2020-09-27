@@ -30,11 +30,11 @@
         android:layout_marginTop="10dp"
         android:layout_marginEnd="16dp"
         android:autofillHints="text"
-        android:hint="@string/sample"
+        android:fontFamily="@font/ubuntu_regular"
+        android:hint="@string/title"
         android:inputType="textMultiLine"
         android:textColor="@color/black"
         android:textSize="26sp"
-        android:fontFamily="@font/ubuntu_regular"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -74,19 +74,20 @@
         android:id="@+id/layout_voice"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#9195F1DC"
+        android:background="@color/layout_color_light_blue"
         android:padding="15dp"
         android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/photo_choose_layout">
+        app:layout_constraintTop_toTopOf="@+id/panel_layout">
 
         <ImageButton
             android:id="@+id/delete_btn_active"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:background="@drawable/custom_button_cancel1"
+            android:layout_marginEnd="4dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/sample"
             android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -100,7 +101,7 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginStart="4dp"
-            android:background="@drawable/button_click_effect1"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/sample"
             android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -138,29 +139,29 @@
             android:id="@+id/stop_recording_voice_dis"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:background="@drawable/button_click_effect_cancel1"
+            android:layout_marginStart="10dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/sample"
             android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.01"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.53"
-            app:srcCompat="@android:drawable/ic_media_pause" />
+            app:layout_constraintVertical_bias="0.489"
+            app:srcCompat="@drawable/ic_baseline_stop_40" />
 
         <ImageButton
             android:id="@+id/record_voice_dis"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginStart="10dp"
-            android:background="@drawable/custom_button_save1"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/sample"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.518"
             app:srcCompat="@android:drawable/ic_btn_speak_now" />
 
         <TextView
@@ -175,7 +176,7 @@
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/play_btn_active"
+            app:layout_constraintStart_toEndOf="@+id/record_voice_dis"
             app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -184,9 +185,10 @@
         android:id="@+id/photo_choose_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#9195F1DC"
+        android:background="@color/layout_color_light_blue"
         android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/panel_layout">
 
@@ -232,7 +234,7 @@
             android:layout_marginTop="24dp"
             android:layout_marginBottom="30dp"
             android:contentDescription="@string/description"
-            android:src="@drawable/blank_sheet"
+            android:src="@drawable/empty_note_photo"
             app:civ_border_color="#DD8D15"
             app:civ_border_width="2dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -269,7 +271,8 @@
             android:layout_margin="12dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:padding="8dp"
-            android:src="@drawable/ic_baseline_image_24">
+            android:src="@drawable/ic_baseline_image_24"
+            android:contentDescription="@string/sample">
 
         </ImageButton>
 
@@ -280,7 +283,8 @@
             android:layout_margin="12dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:padding="8dp"
-            android:src="@drawable/ic_baseline_color_lens_24">
+            android:src="@drawable/ic_baseline_color_lens_24"
+            android:contentDescription="@string/sample">
 
         </ImageButton>
 
@@ -291,7 +295,8 @@
             android:layout_margin="12dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:padding="8dp"
-            android:src="@drawable/ic_baseline_mic_24">
+            android:src="@drawable/ic_baseline_mic_24"
+            android:contentDescription="@string/sample">
 
         </ImageButton>
 

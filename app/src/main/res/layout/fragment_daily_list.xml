@@ -17,6 +17,7 @@
             android:id="@+id/collapsing_toolbar_layout"
             android:layout_width="match_parent"
             android:layout_height="115dp"
+            app:expandedTitleMargin="24dp"
             app:layout_scrollFlags="scroll|snap|exitUntilCollapsed"
             app:title="@string/sample">
 
@@ -26,8 +27,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|end"
                 android:layout_marginEnd="72dp"
-                android:layout_marginBottom="24dp"
-                android:background="@null"
+                android:layout_marginBottom="18dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/sample"
                 android:src="@android:drawable/ic_menu_edit" />
 
@@ -37,8 +38,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|end"
                 android:layout_marginEnd="24dp"
-                android:layout_marginBottom="24dp"
-                android:background="@null"
+                android:layout_marginBottom="18dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/sample"
                 android:src="@android:drawable/ic_menu_delete" />
 
@@ -55,7 +56,9 @@
                     android:layout_gravity="center_horizontal"
                     android:max="100"
                     android:progress="0"
-                    android:progressDrawable="@drawable/progressbar_states_2"
+                    android:paddingStart="5dp"
+                    android:paddingEnd="5dp"
+                    android:progressDrawable="@drawable/progressbar_states"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -67,12 +70,12 @@
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
                     android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="12dp"
+                    android:fontFamily="@font/ubuntu_regular"
                     android:text="@string/sample"
                     android:textAlignment="center"
                     android:textColor="#000"
-                    android:layout_marginTop="12dp"
                     android:textSize="13sp"
-                    android:fontFamily="@font/ubuntu_regular"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/progressBar_appbar" />
@@ -83,8 +86,7 @@
                 android:id="@+id/toolbar_list"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Dark" >
-            </androidx.appcompat.widget.Toolbar>
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"/>
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -107,8 +109,10 @@
         android:background="@color/colorBackground"
         android:visibility="visible"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        tools:listitem="@layout/recyclerview_layout_list"
+        tools:listitem="@layout/recyclerview_layout_daily_list"
         android:layout_gravity="top"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp"
         android:paddingBottom="64dp"
         android:clipToPadding="false">
     </androidx.recyclerview.widget.RecyclerView>

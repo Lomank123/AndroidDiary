@@ -26,6 +26,7 @@
     <string name="del_favor">Удалено из Избранных</string>
     <string name="creation_date">Дата создания: </string>
     <string name="last_edit_date">Дата последнего изменения: </string>
+    <string name="title">Заголовок</string>
 
     <!-- Диалоговое окно -->
     <string name="dialog_yes">Да</string>
@@ -47,6 +48,8 @@
     <string name="dialog_edit_text">Введите новое название</string>
     <string name="dialog_clear_list">Вы хотите полностью очистить список?</string>
     <string name="dialog_clear_list_title">Очистка списка</string>
+    <string name="dialog_delete_voice_title">Удаление голосовой заметки</string>
+    <string name="dialog_delete_voice_message">Вы хотите удалить голосовую заметку? Вернуть ее будет уже нельзя.</string>
 
 
     <!-- Настройки -->
@@ -77,14 +80,14 @@
     <string name="remove_bookmark">Убрать звезду</string>
 
     <!-- Создатели -->
-    <string name="creators">Создатели</string>
+    <string name="creators">Создатель</string>
     <string name="robert">Роберт Хакимов</string>
     <string name="app_ver">Версия приложения: 1.0</string>
 
     <!-- Voice -->
     <string name="start_time">0:00</string>
     <string name="end_time">-1:11</string>
-    <string name="no_voice_note">Нажмите для записи</string>
+    <string name="no_voice_note">Нажмите на микрофон для записи</string>
 
     <!-- ProgressBar -->
     <string name="progressbar_progress"> из 100</string>

@@ -1,4 +1,4 @@
-package recyclerviewadapter
+package other
 
 import android.view.LayoutInflater
 import android.view.View
@@ -31,12 +31,12 @@ class MaterialDialogAdapter internal constructor(
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MaterialDialogAdapter.ItemViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.recyclerview_layout_dialog, parent, false)
         return ItemViewHolder(v)
     }
 
-    override fun onBindViewHolder(holder: MaterialDialogAdapter.ItemViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         holder.bindView(diaryList[position].diary)
     }
 

@@ -1,34 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+<layer-list xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@android:id/background">
-        <shape android:shape="oval">
+        <shape>
+            <corners android:radius="10dip" />
+            <gradient
+                android:startColor="@color/cardview_light_background"
+                android:centerColor="@color/cardview_light_background"
+                android:centerY="1.0"
+                android:endColor="@color/cardview_light_background"
+                android:angle="180"
+                tools:ignore="PrivateResource" />
             <stroke
                 android:width="4dp"
-                android:color="@color/colorPrimary" />
-            <solid android:color="@android:color/white" />
+                android:color="@color/colorAccent">
+            </stroke>
         </shape>
     </item>
-    <item android:id="@android:id/secondaryProgress">
-        <clip
-            android:clipOrientation="vertical"
-            android:gravity="bottom">
-            <shape android:shape="oval">
-                <stroke
-                    android:width="4dp"
-                    android:color="@android:color/black" />
-                <solid android:color="@android:color/white" />
-            </shape>
-        </clip>
-    </item>
     <item android:id="@android:id/progress">
-        <clip
-            android:clipOrientation="vertical"
-            android:gravity="bottom">
-            <shape android:shape="oval">
+        <clip>
+            <shape>
+                <corners android:radius="10dip" />
                 <stroke
                     android:width="4dp"
-                    android:color="@color/colorPrimary" />
-                <solid android:color="#F288F8" />
+                    android:color="@color/colorAccent">
+                </stroke>
+                <solid android:color="@color/green" />
             </shape>
         </clip>
     </item>

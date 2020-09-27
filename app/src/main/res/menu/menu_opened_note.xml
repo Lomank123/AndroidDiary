@@ -4,12 +4,12 @@
 
     <item
         android:id="@+id/share_btn_edit"
-        android:icon="@android:drawable/ic_menu_share"
+        android:icon="@drawable/ic_outline_share_32"
         android:title="@string/sample"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/note_settings"
-        android:icon="@drawable/ic_baseline_settings_32"
+        android:icon="@drawable/ic_outline_settings_32"
         android:title="@string/settings_btn"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="ifRoom" />
 </menu>

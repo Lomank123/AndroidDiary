@@ -126,7 +126,7 @@ class DiaryListAdapter internal constructor(
             diaryImageButtonViewOptions.setOnClickListener{
                 // Устанавливаем контекстное меню
                 val popupMenu = PopupMenu(mContext, it)
-                popupMenu.inflate(R.menu.menu_notes)
+                popupMenu.inflate(R.menu.menu_context)
                 // This button never used here
                 popupMenu.menu.findItem(R.id.move).isVisible = false
                 // если избранное - меняется текст кнопки добавить/удалить из избранных
@@ -202,7 +202,7 @@ class DiaryListAdapter internal constructor(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DiaryViewHolder {
         // добавляет контент(XML) из 1-го аргумента, и помещает во второй (родительский)
         val itemView = inflater.inflate(
-            R.layout.recyclerview_layout, parent,
+            R.layout.recyclerview_layout_main, parent,
             false
         )
         return DiaryViewHolder(itemView)

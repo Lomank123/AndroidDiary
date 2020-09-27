@@ -96,7 +96,7 @@ class DailyListAdapter internal constructor(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DailyListAdapter.DailyListViewHolder {
-        val itemView = inflater.inflate(R.layout.recyclerview_layout_list, parent,
+        val itemView = inflater.inflate(R.layout.recyclerview_layout_daily_list, parent,
             false)
         return DailyListViewHolder(itemView)
     }

@@ -15,7 +15,7 @@ import com.afollestad.materialdialogs.input.input
 import com.lomank.diary.AboutActivity
 import com.lomank.diary.R
 import com.lomank.diary.SettingsHolderActivity
-import com.lomank.diary.TopSpacingItemDecoration
+import other.TopSpacingItemDecoration
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_daily_list.view.*
@@ -208,7 +208,7 @@ class DailyListFragment : Fragment() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.actionbar_menu, menu)
+        inflater.inflate(R.menu.menu_main, menu)
         menu.findItem(R.id.search_view).isVisible = false
         menu.findItem(R.id.star).isVisible = false
         super.onCreateOptionsMenu(menu, inflater)
