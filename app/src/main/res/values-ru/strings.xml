@@ -111,4 +111,7 @@
     <string name="perm_denied">Права не выданы</string>
     <string name="perm_denied_again">Включите право в настройках</string>
 
+    <string name="privacy_policy">Ссылка на политику конфиденциальности:</string>
+    <string name="pp_link">https://diary-daily-list.flycricket.io/privacy.html</string>
+
 </resources>
