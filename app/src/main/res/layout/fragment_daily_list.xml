@@ -19,7 +19,11 @@
             android:layout_height="115dp"
             app:expandedTitleMargin="24dp"
             app:layout_scrollFlags="scroll|snap|exitUntilCollapsed"
-            app:title="@string/sample">
+            app:title="@string/list_name"
+            app:expandedTitleMarginEnd="104dp"
+            app:expandedTitleTextAppearance="@style/collapsingToolbarTitleExpanded"
+            app:collapsedTitleTextAppearance="@style/collapsingToolbarTitleCollapsed"
+            >
 
             <ImageButton
                 android:id="@+id/imageButton_edit_list_name"
@@ -30,7 +34,7 @@
                 android:layout_marginBottom="18dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/sample"
-                android:src="@android:drawable/ic_menu_edit" />
+                android:src="@drawable/ic_outline_edit_32" />
 
             <ImageButton
                 android:id="@+id/imageButton_clear_list"
@@ -41,7 +45,7 @@
                 android:layout_marginBottom="18dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/sample"
-                android:src="@android:drawable/ic_menu_delete" />
+                android:src="@drawable/ic_outline_delete_32" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/progress_layout"
@@ -66,13 +70,13 @@
 
                 <TextView
                     android:id="@+id/progressbar_text"
-                    android:layout_width="115dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="12dp"
                     android:fontFamily="@font/ubuntu_regular"
-                    android:text="@string/sample"
+                    android:text="@string/progressbar_progress_empty"
                     android:textAlignment="center"
                     android:textColor="#000"
                     android:textSize="13sp"
@@ -110,10 +114,10 @@
         android:visibility="visible"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:listitem="@layout/recyclerview_layout_daily_list"
-        android:layout_gravity="top"
+        android:layout_gravity="top|bottom"
         android:paddingStart="5dp"
         android:paddingEnd="5dp"
-        android:paddingBottom="64dp"
+        android:paddingBottom="128dp"
         android:clipToPadding="false">
     </androidx.recyclerview.widget.RecyclerView>
 

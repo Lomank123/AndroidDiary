@@ -13,112 +13,169 @@
         android:id="@+id/constraint_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
-        android:padding="15dp">
+        android:background="@color/white">
 
-        <ImageView
-            android:id="@+id/imageView_mic"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_below="@+id/imageView"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="4dp"
-            android:layout_toEndOf="@+id/imageView"
-            android:contentDescription="@string/sample"
-            android:visibility="gone"
+        <TableLayout
+            android:id="@+id/tableLayout_images"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:stretchColumns="2"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageButton_delete"
-            app:srcCompat="@android:drawable/ic_btn_speak_now" />
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/imageView"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:src="@drawable/logo"
-            android:visibility="visible"
-            app:civ_border_color="@color/primary_color_dark1"
-            app:civ_border_width="2dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/textView_content"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="12dp"
-            android:layout_toEndOf="@+id/imageView"
-            android:text="@string/description"
-            android:textColor="#939596"
-            android:fontFamily="@font/ubuntu_regular"
-            android:textSize="16sp"
-            app:layout_constraintStart_toEndOf="@+id/imageView"
-            app:layout_constraintTop_toBottomOf="@+id/editText_name" />
-
-        <TextView
-            android:id="@+id/editText_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="12dp"
-            android:layout_toEndOf="@+id/imageView"
-            android:text="@string/sample"
-            android:fontFamily="@font/ubuntu_regular"
-            android:textColor="#000"
-            android:textSize="17sp"
-            app:layout_constraintStart_toEndOf="@+id/imageView"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <ImageView
-            android:id="@+id/imageView_star"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/imageView"
-            android:layout_marginTop="48dp"
-            android:layout_toEndOf="@+id/imageView"
-            android:contentDescription="@string/sample"
-            android:visibility="visible"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@android:drawable/btn_star_big_on" />
+            android:visibility="gone">
 
-        <ImageButton
-            android:id="@+id/imageButton_options"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="4dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/sample"
-            app:layout_constraintEnd_toStartOf="@+id/imageButton_delete"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_outline_settings_32" />
+            <TableRow>
 
-        <ImageButton
-            android:id="@+id/imageButton_delete"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="4dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/sample"
+                <ImageView
+                    android:id="@+id/image1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="200dp"
+                    android:layout_weight="1"
+                    android:scaleType="centerCrop"
+                    android:visibility="gone"/>
+
+                <ImageView
+                    android:id="@+id/image2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="200dp"
+                    android:scaleType="centerCrop"
+                    android:layout_weight="1"
+                    android:visibility="gone"/>
+
+                <ImageView
+                    android:id="@+id/image3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="200dp"
+                    android:scaleType="centerCrop"
+                    android:layout_weight="1"
+                    android:visibility="gone" />
+            </TableRow>
+        </TableLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="15dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_baseline_close_32" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tableLayout_images">
+
+            <ImageView
+                android:id="@+id/imageView_mic"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_below="@+id/imageView"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="4dp"
+                android:layout_toEndOf="@+id/imageView"
+                android:contentDescription="@string/sample"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/imageButton_delete"
+                app:srcCompat="@android:drawable/ic_btn_speak_now" />
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/imageView"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:src="@drawable/logo"
+                android:visibility="visible"
+                app:civ_border_color="@color/primary_color_dark1"
+                app:civ_border_width="2dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/textView_content"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
+                android:layout_toEndOf="@+id/imageView"
+                android:fontFamily="@font/ubuntu_regular"
+                android:maxWidth="220dp"
+                android:text="@string/description"
+                android:textColor="#939596"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="@+id/editText_name"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/imageView"
+                app:layout_constraintTop_toBottomOf="@+id/editText_name" />
+
+            <TextView
+                android:id="@+id/editText_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="12dp"
+                android:layout_toEndOf="@+id/imageView"
+                android:fontFamily="@font/ubuntu_regular"
+                android:maxWidth="220dp"
+                android:text="@string/sample"
+                android:textColor="#000"
+                android:textSize="17sp"
+                app:layout_constraintEnd_toStartOf="@+id/imageButton_delete"
+                app:layout_constraintStart_toEndOf="@+id/imageView"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/imageView_star"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/imageView"
+                android:layout_marginTop="48dp"
+                android:layout_toEndOf="@+id/imageView"
+                android:contentDescription="@string/sample"
+                android:visibility="visible"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@android:drawable/btn_star_big_on" />
+
+            <ImageButton
+                android:id="@+id/imageButton_options"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="4dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/sample"
+                android:visibility="gone"
+                app:layout_constraintEnd_toStartOf="@+id/imageButton_delete"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_outline_settings_32" />
+
+            <ImageButton
+                android:id="@+id/imageButton_delete"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="4dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/sample"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_baseline_close_32" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/expandable_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="gone"
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageView">
+            app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
+            android:padding="15dp">
 
             <TextView
                 android:id="@+id/full_description_text"
@@ -127,36 +184,37 @@
                 android:layout_alignParentTop="true"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
+                android:maxWidth="200dp"
                 android:text="@string/sample"
                 android:textColor="#000"
                 android:textSize="13sp"
                 app:layout_constraintStart_toEndOf="@+id/full_description"
-                app:layout_constraintTop_toBottomOf="@+id/last_edit_date_text2" />
+                app:layout_constraintTop_toBottomOf="@+id/amount_of_notes_count" />
 
             <TextView
                 android:id="@+id/full_description"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
-                android:layout_marginStart="12dp"
+                android:layout_marginStart="8dp"
                 android:layout_marginTop="16dp"
                 android:text="@string/description_full"
                 android:textColor="#000"
                 android:textSize="13sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/last_edit_date_text" />
+                app:layout_constraintTop_toBottomOf="@+id/amount_of_notes_text" />
 
             <TextView
                 android:id="@+id/creation_date_text2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
-                android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
                 android:text="@string/sample"
                 android:textColor="#000"
                 android:textSize="13sp"
-                app:layout_constraintStart_toEndOf="@+id/creation_date_text"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
@@ -164,7 +222,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
-                android:layout_marginStart="12dp"
+                android:layout_marginStart="8dp"
                 android:layout_marginTop="16dp"
                 android:text="@string/last_edit_date"
                 android:textColor="#000"
@@ -177,12 +235,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
-                android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
                 android:text="@string/sample"
                 android:textColor="#000"
                 android:textSize="13sp"
-                app:layout_constraintStart_toEndOf="@+id/last_edit_date_text"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/creation_date_text2" />
 
             <TextView
@@ -190,15 +248,53 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
-                android:layout_marginStart="12dp"
+                android:layout_marginStart="8dp"
                 android:layout_marginTop="16dp"
                 android:text="@string/creation_date"
                 android:textColor="#000"
                 android:textSize="13sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/amount_of_notes_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:text="@string/sample"
+                android:textColor="#000"
+                android:textSize="13sp"
+                android:visibility="gone"
+                app:layout_constraintStart_toEndOf="@+id/amount_of_notes_text"
+                app:layout_constraintTop_toBottomOf="@+id/last_edit_date_text2" />
+
+            <TextView
+                android:id="@+id/amount_of_notes_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
+                android:text="@string/amount_of_notes"
+                android:textColor="#000"
+                android:textSize="13sp"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/last_edit_date_text" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <ImageView
+            android:id="@+id/backImage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:maxHeight="200dp"
+            android:scaleType="centerCrop"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+        
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 </androidx.cardview.widget.CardView>

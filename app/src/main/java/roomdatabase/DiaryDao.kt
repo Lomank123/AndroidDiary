@@ -26,6 +26,9 @@ interface DiaryDao {
     // Обновляет дневник
     @Update
     suspend fun updateDiary(diary : Diary)
+    // Обновляет лист из дневников
+    @Update
+    suspend fun updateListOfDiaries(list : List<Diary>)
 
     // удаляет 1 дневник (в MainRepository при удалении также используется deleteNotes для заметок)
     // таким образом удаляется дневник + все заметки, связанные с этим дневником
@@ -58,6 +61,9 @@ interface DiaryDao {
     // Обновляет заметку
     @Update
     suspend fun updateNote(note : Note)
+    // Обновляет лист из заметок
+    @Update
+    suspend fun updateListOfNotes(list : List<Note>)
 
     // См. выше (функция deleteDiary)
     // удаляет все заметки, с note_parent_id таким же как и у дневника

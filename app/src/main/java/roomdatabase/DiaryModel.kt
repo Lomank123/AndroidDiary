@@ -1,7 +1,11 @@
 package roomdatabase
 
 import androidx.room.*
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import java.io.Serializable
+import java.lang.reflect.Type
+
 
 /**
  * Здесь хранятся все модели(сущности) для бд, все поля, колонки, их обозначения
@@ -10,9 +14,31 @@ import java.io.Serializable
 /**
  * Модель дневника
  */
+class Converters {
+    @TypeConverter // note this annotation
+    fun fromStringList(list : List<String?>?): String? {
+        if (list == null) {
+            return null
+        }
+        val gson = Gson()
+        val type: Type = object : TypeToken<List<String?>?>() {}.type
+        return gson.toJson(list, type)
+    }
+
+    @TypeConverter // note this annotation
+    fun toStringList(listString : String?): List<String?>? {
+        if (listString == null) {
+            return null
+        }
+        val gson = Gson()
+        val type: Type = object : TypeToken<List<String?>?>() {}.type
+        return gson.fromJson(listString, type)
+    }
+}
 
 @Entity(tableName = "diary_table")                                        // название таблицы
-data class Diary(@ColumnInfo(name = "diary_name") var name: String        // название дневника
+data class Diary(
+    @ColumnInfo(name = "diary_name") var name: String        // название дневника
 ) : Serializable
 {
     // Первичный ключ - id с авто-генерацией ключей
@@ -32,13 +58,16 @@ data class Diary(@ColumnInfo(name = "diary_name") var name: String        // н�
     var creationDate : String? = null              // Дата создания
 
     @ColumnInfo(name = "diary_list_name")
-    var listName : String = "List name"            // Название списка дел
+    var listName : String? = null                  // Название списка дел
 
     @ColumnInfo(name = "diary_date")
     var lastEditDate : String? = null              // дата последнего изменения
 
     @ColumnInfo(name = "diary_content")
     var content: String? = null                    // описание
+
+    @ColumnInfo(name = "diary_isExpanded")
+    var isExpanded : Boolean = false               // развернута ли доп. информация
 
     override fun equals(other: Any?): Boolean {
 
@@ -65,6 +94,8 @@ data class Diary(@ColumnInfo(name = "diary_name") var name: String        // н�
             return false
         if(listName != other.listName)
             return false
+        if(isExpanded != other.isExpanded)
+            return false
 
         return true
     }
@@ -76,7 +107,8 @@ data class Diary(@ColumnInfo(name = "diary_name") var name: String        // н�
  * заметок (связь один-ко-многим)
  */
 @Entity(tableName = "note_table")                                           // Название таблицы
-data class Note(@ColumnInfo(name = "note_name") var name : String,          // Название
+data class Note(
+    @ColumnInfo(name = "note_name") var name: String,          // Название
 ) : Serializable
 {
     // Первичный ключ - id с авто-генерацией ключей
@@ -92,6 +124,9 @@ data class Note(@ColumnInfo(name = "note_name") var name : String,          // �
     @ColumnInfo(name = "note_img")
     var img : String? = null                        // картинка
 
+    @ColumnInfo(name = "note_images")
+    var images : List<String?>? = null
+
     @ColumnInfo(name = "note_color")
     var color : Int? = null                         // цвет
 
@@ -106,6 +141,9 @@ data class Note(@ColumnInfo(name = "note_name") var name : String,          // �
 
     @ColumnInfo(name = "note_creation_date")
     var creationDate : String? = null               // Дата создания
+
+    @ColumnInfo(name = "note_isExpanded")
+    var isExpanded : Boolean = false                // развернута ли доп. информация
 
     override fun equals(other: Any?): Boolean {
 
@@ -132,14 +170,19 @@ data class Note(@ColumnInfo(name = "note_name") var name : String,          // �
             return false
         if(voice != other.voice)
             return false
+        if(isExpanded != other.isExpanded)
+            return false
+        if (images != other.images)
+            return false
 
         return true
     }
 }
 
 @Entity(tableName = "daily_list_item_table")                                           // Название таблицы
-data class DailyListItem(@ColumnInfo(name = "daily_list_item_name") var name : String,          // Название
-                         @ColumnInfo(name = "daily_list_item_parent_id") val parentId : Long   // id дневника, к к-му привязана
+data class DailyListItem(
+    @ColumnInfo(name = "daily_list_item_name") var name: String,          // Название
+    @ColumnInfo(name = "daily_list_item_parent_id") val parentId: Long   // id дневника, к к-му привязана
 ) : Serializable
 {
     // Первичный ключ - id с авто-генерацией ключей
@@ -174,8 +217,10 @@ data class DailyListItem(@ColumnInfo(name = "daily_list_item_name") var name : S
  * Дата-класс, в котором ключевая модель - модель Diary, а связные - все остальные
  * Т.е. при помощи полиморфной связи в этом классе соединены несколько моделей
  */
-data class ExtendedDiary(@Embedded val diary : Diary,
-                         @Relation(parentColumn = "id", entityColumn = "note_parent_id")
-                         val notes : List<Note>,
-                         @Relation(parentColumn= "id", entityColumn = "daily_list_item_parent_id")
-                         val dailyListItems : List<DailyListItem>) : Serializable
+data class ExtendedDiary(
+    @Embedded val diary: Diary,
+    @Relation(parentColumn = "id", entityColumn = "note_parent_id")
+    val notes: List<Note>,
+    @Relation(parentColumn = "id", entityColumn = "daily_list_item_parent_id")
+    val dailyListItems: List<DailyListItem>
+) : Serializable

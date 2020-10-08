@@ -9,14 +9,13 @@
         android:title="@string/about_btn" />
     <item
         android:id="@+id/search_view"
+        android:icon="@drawable/ic_baseline_search_32"
         android:title="@string/search"
-        android:icon="@android:drawable/ic_menu_search"
-        app:showAsAction="always|collapseActionView"
         app:actionViewClass="androidx.appcompat.widget.SearchView"
-        />
+        app:showAsAction="always|collapseActionView" />
     <item
         android:id="@+id/star"
-        android:icon="@android:drawable/btn_star_big_off"
+        android:icon="@drawable/ic_baseline_star_border_32"
         android:title="@string/sample"
         app:showAsAction="ifRoom|collapseActionView" />
 

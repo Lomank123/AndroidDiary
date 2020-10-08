@@ -1,70 +1,85 @@
 <resources>
 
-    <!-- Main -->
-    <string name="hint_diary">Diary…</string>
-    <string name="button_save">Save</string>
-    <string name="empty_not_saved">Canceled or Diary name is empty</string>
-    <string name="empty_not_saved_note">Canceled or Note name is empty</string>
-    <string name="image">Image Text</string>
-    <string name="sample">Sample Text</string>
+    <!-- Hints -->
     <string name="description">Description…</string>
-    <string name="description_full">Description:</string>
-    <string name="back_btn">Back</string>
-    <string name="cancel_btn">Cancel</string>
-    <string name="hint_note">Note…</string>
+    <string name="hint_diary">Diary name…</string>
     <string name="hint_text_note">Text…</string>
+    <string name="dialog_new_daily_list_hint">Name…</string>
+    <string name="title">Title…</string>
+
+    <!-- Toast messages -->
+    <string name="empty_not_saved">Canceled or Diary name is empty</string>
+    <string name="add_favor">Added to Favorites</string>
+    <string name="del_favor">Removed from Favorites</string>
+        <!-- Permissions -->
+    <string name="perm_granted">Permissions granted</string>
+    <string name="perm_denied">Permissions denied</string>
+    <string name="perm_denied_again">Enable permission in the settings</string>
+
+
+    <!-- Main -->
+    <string name="sample">Sample Text</string>
+    <string name="list_name">Daily list</string>
+
+    <string name="cancel_btn">Cancel</string>
+    <string name="done_btn">Done</string>
+
+    <string name="button_save">Save</string>
     <string name="photo_choose">Photo</string>
     <string name="color_choose">Color</string>
     <string name="photo_reset">Reset</string>
     <string name="search">Search</string>
-    <string name="saved">Saved</string>
-    <string name="canceled">Canceled</string>
-    <string name="change_language">If you want to change language,
-        do it in device settings, the app will be translated automatically
-    </string>
-    <string name="add_favor">Added to Favorites</string>
-    <string name="del_favor">Removed from Favorites</string>
+
+    <string name="description_full">Description:</string>
     <string name="creation_date">Creation date: </string>
     <string name="last_edit_date">Last edit date: </string>
-    <string name="title">Title</string>
+    <string name="amount_of_notes">Amount of notes: </string>
+
 
     <!-- Dialog screen -->
     <string name="dialog_yes">Yes</string>
     <string name="dialog_no">No</string>
+
+    <string name="dialog_delete">Delete</string>
     <string name="dialog_check_delete">Do you want to delete this diary?</string>
     <string name="dialog_check_delete_note">Do you want to delete this note?</string>
-    <string name="dialog_deleted">Deleted</string>
-    <string name="dialog_delete">Delete</string>
+
+    <string name="dialog_save">Save changes</string>
     <string name="dialog_check_save_changes">Do you want to save changes?</string>
-    <string name="dialog_save">Saving</string>
-    <string name="dialog_check_leave">There are some unsaved changes. Do you want to close this window?</string>
+
     <string name="dialog_leave_changes">Unsaved changes</string>
-    <string name="dialog_new_item">New item</string>
-    <string name="dialog_item_name">Item name…</string>
-    <string name="dialog_item_input_text">Input a name of a new item</string>
-    <string name="dialog_new_daily_list">New Daily List</string>
-    <string name="dialog_new_daily_list_text">Input Daily List name</string>
-    <string name="dialog_new_daily_list_hint">Name…</string>
-    <string name="dialog_edit_text">Enter a new name</string>
+    <string name="dialog_check_leave">There are some unsaved changes. Do you want to close this window?</string>
+
+    <string name="dialog_new_item">New thing</string>
+    <string name="dialog_item_input_text">Enter something you want to do</string>
+
+    <string name="dialog_clear_list_title">Clear the list</string>
     <string name="dialog_clear_list">Do you want to clear the list?</string>
-    <string name="dialog_clear_list_title">Clearing the list</string>
+
     <string name="dialog_delete_voice_title">Delete voice note</string>
     <string name="dialog_delete_voice_message">Do you want to delete voice note? This cannot be undone.</string>
+
     <string name="dialog_color_choose_title">Choose color</string>
+
+    <string name="dialog_edit_text">Enter a new name of your daily list</string>
+    <string name="dialog_edit_daily_list_item_text">Enter a new name for daily list item</string>
+
 
     <!-- Settings -->
     <string name="categoryMainSettings">Main settings</string>
-    <string name="font_check">Font style</string>
-    <string name="img_check">Allow to show img</string>
-    <string name="color_check_diary">Colorful diaries</string>
-    <string name="color_check_note">Colorful notes</string>
+    <string name="img_check">Show img</string>
+    <string name="color_check_diary">Show diary color</string>
+    <string name="color_check_note">Show note color</string>
 
     <!-- Menu buttons -->
     <string name="edit_btn">Edit</string>
     <string name="open_btn">Open</string>
     <string name="delete_btn">Delete</string>
     <string name="move_btn">Move to</string>
-    <string name="info_btn">Info</string>
+    <string name="show_info">Show info</string>
+    <string name="hide_info">Hide info</string>
+    <string name="bookmark">Add star</string>
+    <string name="remove_bookmark">Remove star</string>
 
     <!-- Labels -->
     <string name="about_btn">About</string>
@@ -73,16 +88,8 @@
     <string name="notes_btn">Notes</string>
     <string name="new_note">New note</string>
     <string name="new_diary">New diary</string>
-    <string name="edit_note">Edit note</string>
     <string name="edit_diary">Edit diary</string>
     <string name="clicked_note">Your note</string>
-    <string name="bookmark">Add star</string>
-    <string name="remove_bookmark">Remove star</string>
-
-    <!-- Creators -->
-    <string name="creators">Creator</string>
-    <string name="robert">Robert Khakimov</string>
-    <string name="app_ver">App version: 1.0</string>
 
     <!-- Voice -->
     <string name="start_time">0:00</string>
@@ -90,8 +97,8 @@
     <string name="no_voice_note">Tap on mic to start recording</string>
 
     <!-- ProgressBar -->
-    <string name="progressbar_progress"> of 100</string>
-    <string name="progressbar_progress_full">0 of 100</string>
+    <string name="progressbar_progress">of</string>
+    <string name="progressbar_progress_empty">Add something to do</string>
 
     <!-- SnackBar -->
     <string name="snackbar_diary_delete">Diary has been deleted.</string>
@@ -104,12 +111,11 @@
     <!-- Fragments -->
     <string name="fragment_notes">Notes</string>
     <string name="fragment_daily_list">Daily list</string>
-    
-    <!-- Permissions -->
-    <string name="perm_granted">Permissions granted</string>
-    <string name="perm_denied">Permissions denied</string>
-    <string name="perm_denied_again">Enable the permission in settings</string>
 
+    <!-- Other -->
+    <string name="creators">Creator</string>
+    <string name="robert">Robert Khakimov</string>
+    <string name="app_ver">App version: 1.02</string>
     <string name="privacy_policy">Privacy policy link:</string>
     <string name="pp_link">https://diary-daily-list.flycricket.io/privacy.html</string>
 

@@ -113,6 +113,17 @@ class NoteFragment : Fragment() {
         recyclerview_note.adapter!!.notifyDataSetChanged()
     }
 
+    override fun onPause() {
+        super.onPause()
+
+        val list = arrayListOf<Note>()
+        for(note in mainNoteList) {
+            note.isExpanded = false
+            list.add(note)
+        }
+        updateListOfNotes(list)
+    }
+
     private fun newNoteAdapter(view : View) : NoteListAdapter
     {
         return NoteListAdapter(requireActivity(), {
@@ -156,12 +167,15 @@ class NoteFragment : Fragment() {
         if (requestCode == openNoteRequestCode && resultCode == Activity.RESULT_OK) {
             val note = data?.getSerializableExtra(ClickedActivity.EXTRA_REPLY_EDIT) as Note
             note.lastEditDate = currentDate()   // обновляем дату
+            note.isExpanded = false
             updateNote(note)                    // обновляем заметку
         }
         if(requestCode == openNoteRequestCode && resultCode == Activity.RESULT_CANCELED){
             val note = data?.getSerializableExtra(ClickedActivity.EXTRA_REPLY_CANCELED) as? Note
-            if(note != null)
+            if(note != null) {
+                note.isExpanded = false
                 updateNote(note)
+            }
         }
     }
 
@@ -197,9 +211,9 @@ class NoteFragment : Fragment() {
 
         if(starItem != null){
             if (prefs!!.getBoolean("sorted_notes", false)) {
-                starItem.setIcon(android.R.drawable.btn_star_big_on)
+                starItem.setIcon(R.drawable.ic_baseline_star_32)
             } else {
-                starItem.setIcon(android.R.drawable.btn_star_big_off)
+                starItem.setIcon(R.drawable.ic_baseline_star_border_32)
             }
         }
 
@@ -225,11 +239,11 @@ class NoteFragment : Fragment() {
                 if (prefs!!.getBoolean("sorted_notes", false)) {
                     prefs.edit().putBoolean("sorted_notes", false).apply()
                     adapter.setNotes(mainNoteList, mainViewModel.allExtendedDiaries.value!!)
-                    item.setIcon(android.R.drawable.btn_star_big_off)
+                    item.setIcon(R.drawable.ic_baseline_star_border_32)
                 } else {
                     prefs.edit().putBoolean("sorted_notes", true).apply()
                     adapter.setNotes(mainNoteList.sortedBy { !it.favorite }, mainViewModel.allExtendedDiaries.value!!)
-                    item.setIcon(android.R.drawable.btn_star_big_on)
+                    item.setIcon(R.drawable.ic_baseline_star_32)
                     recyclerview_note.scrollToPosition(0)
                 }
             }
@@ -297,5 +311,8 @@ class NoteFragment : Fragment() {
     }
     private fun updateNote(note: Note){
         mainViewModel.updateNote(note)
+    }
+    private fun updateListOfNotes(list : List<Note>){
+        mainViewModel.updateListOfNotes(list)
     }
 }

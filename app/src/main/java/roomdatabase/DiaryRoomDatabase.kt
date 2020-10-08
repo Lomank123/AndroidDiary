@@ -4,11 +4,13 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-@Database(entities = [Diary::class, Note::class, DailyListItem::class], version = 1, exportSchema = false)
+@Database(entities = [Diary::class, Note::class, DailyListItem::class], version = 2, exportSchema = false)
+@TypeConverters(Converters::class)
 abstract class DiaryRoomDatabase : RoomDatabase() {
 
     abstract fun diaryDao(): DiaryDao
@@ -51,7 +53,7 @@ abstract class DiaryRoomDatabase : RoomDatabase() {
                     DiaryRoomDatabase::class.java,
                     "diary_database"
                 ).addCallback(DiaryDatabaseCallback(scope))
-                    //.fallbackToDestructiveMigration()
+                    .fallbackToDestructiveMigration()
                     .build()
                 INSTANCE = instance
                 return instance

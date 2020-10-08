@@ -22,6 +22,59 @@
         app:layout_constraintVertical_bias="1.0"
         app:srcCompat="@color/white" />
 
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView_images"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="16dp"
+        app:cardCornerRadius="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editText_name"
+        android:visibility="gone">
+
+        <TableLayout
+            android:id="@+id/imageTableLayout"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:stretchColumns="2"
+            android:visibility="visible">
+
+            <TableRow>
+
+                <ImageView
+                    android:id="@+id/imageClicked1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="200dp"
+                    android:layout_weight="1"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:scaleType="centerCrop"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:id="@+id/imageClicked2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="200dp"
+                    android:layout_weight="1"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:scaleType="centerCrop"
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:id="@+id/imageClicked3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="200dp"
+                    android:layout_weight="1"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:scaleType="centerCrop"
+                    android:visibility="gone" />
+
+            </TableRow>
+        </TableLayout>
+    </androidx.cardview.widget.CardView>
+
     <EditText
         android:id="@+id/editText_name"
         android:layout_width="match_parent"
@@ -30,6 +83,7 @@
         android:layout_marginTop="10dp"
         android:layout_marginEnd="16dp"
         android:autofillHints="text"
+        android:maxLength="36"
         android:fontFamily="@font/ubuntu_regular"
         android:hint="@string/title"
         android:inputType="textMultiLine"
@@ -44,20 +98,20 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="10dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="10dp"
+        android:layout_marginTop="5dp"
         android:autofillHints="text"
         android:backgroundTint="@android:color/transparent"
         android:ems="10"
+        android:fontFamily="@font/ubuntu_regular"
         android:gravity="start|top"
         android:hint="@string/hint_text_note"
         android:inputType="textMultiLine"
-        android:fontFamily="@font/ubuntu_regular"
         app:layout_constraintBottom_toTopOf="@+id/view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText_name" />
+        app:layout_constraintTop_toBottomOf="@+id/cardView_images" />
 
     <View
         android:id="@+id/color_indicator"
@@ -67,14 +121,13 @@
         android:background="@color/primary_color1"
         app:layout_constraintBottom_toBottomOf="@+id/editText_content"
         app:layout_constraintTop_toTopOf="@+id/editText_content"
-        app:layout_constraintStart_toStartOf="parent"
-        />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_voice"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/layout_color_light_blue"
+        android:background="@drawable/voice_layout_appearance"
         android:padding="15dp"
         android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
@@ -94,7 +147,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.525"
-            app:srcCompat="@android:drawable/ic_menu_close_clear_cancel" />
+            app:srcCompat="@drawable/ic_baseline_close_32" />
 
         <ImageButton
             android:id="@+id/play_btn_active"
@@ -108,7 +161,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.525"
-            app:srcCompat="@android:drawable/ic_media_play" />
+            app:srcCompat="@drawable/ic_baseline_play_arrow_32" />
 
         <SeekBar
             android:id="@+id/seekBar_active"
@@ -181,71 +234,6 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/photo_choose_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/layout_color_light_blue"
-        android:visibility="invisible"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/panel_layout">
-
-        <Button
-            android:id="@+id/button_choose_photo"
-            android:layout_width="100dp"
-            android:layout_height="44dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="80dp"
-            android:layout_marginBottom="32dp"
-            android:background="@drawable/button_click_effect1"
-            android:text="@string/photo_choose"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/button_reset_photo"
-            app:layout_constraintTop_toBottomOf="@+id/imageView_photo"
-            app:layout_constraintVertical_bias="0.0" />
-
-        <Button
-            android:id="@+id/button_reset_photo"
-            android:layout_width="100dp"
-            android:layout_height="44dp"
-            android:layout_marginStart="80dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="26dp"
-            android:layout_marginBottom="32dp"
-            android:background="@drawable/button_click_effect1"
-            android:text="@string/photo_reset"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/button_choose_photo"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageView_photo"
-            app:layout_constraintVertical_bias="1.0" />
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/imageView_photo"
-            android:layout_width="125dp"
-            android:layout_height="125dp"
-            android:layout_marginTop="24dp"
-            android:layout_marginBottom="30dp"
-            android:contentDescription="@string/description"
-            android:src="@drawable/empty_note_photo"
-            app:civ_border_color="#DD8D15"
-            app:civ_border_width="2dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
     <View
         android:id="@+id/view"
         android:layout_width="match_parent"
@@ -311,7 +299,5 @@
         app:layout_constraintBottom_toTopOf="@+id/panel_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/panel_layout" />
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

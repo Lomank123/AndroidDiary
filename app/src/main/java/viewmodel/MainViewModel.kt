@@ -44,6 +44,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         repository.updateDiary(diary)
     }
 
+    fun updateListOfDiaries(list : List<Diary>) = viewModelScope.launch {
+        repository.updateListOfDiaries(list)
+    }
+
     // Notes:
 
     // добавляет запись, вызывая функцию в репозитории
@@ -65,6 +69,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     // обновляет запись, вызывая функцию в репозитории
     fun updateNote(note: Note) = viewModelScope.launch{
         repository.updateNote(note)
+    }
+
+    fun updateListOfNotes(list : List<Note>) = viewModelScope.launch {
+        repository.updateListOfNotes(list)
     }
 
     // DailyListItems:

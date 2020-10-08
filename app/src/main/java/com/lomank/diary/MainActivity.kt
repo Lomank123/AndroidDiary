@@ -14,7 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.MobileAds
 import com.google.android.material.snackbar.Snackbar
@@ -55,7 +55,7 @@ class MainActivity : AppCompatActivity() {
 
         val adapter = newDiaryAdapter()
         recyclerview.adapter = adapter
-        recyclerview.layoutManager = LinearLayoutManager(this)
+        recyclerview.layoutManager = StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
         recyclerview.addItemDecoration(TopSpacingItemDecoration(20)) // отступы
 
         // Следит за изменением списка записей(дневников) и обновляет данные в RecyclerView
@@ -80,6 +80,18 @@ class MainActivity : AppCompatActivity() {
         // Конкретно сейчас влияет на мгновенное появление цветов записей
         // если изменить опцию в настройках эффект будет мгновенным
         recyclerview.adapter!!.notifyDataSetChanged()
+    }
+
+
+    override fun onPause() {
+        super.onPause()
+
+        val list = arrayListOf<Diary>()
+        for(diary in extDiaryList) {
+            diary.diary.isExpanded = false
+            list.add(diary.diary)
+        }
+        updateListOfDiaries(list)
     }
 
     // Возвращает текущую дату
@@ -149,6 +161,7 @@ class MainActivity : AppCompatActivity() {
                 if (colorDiaryEdit != null && colorDiaryEdit != 0)
                     diaryEdit.color = colorDiaryEdit
                 diaryEdit.lastEditDate = currentDate()
+                diaryEdit.isExpanded = false
                 mainViewModel.updateDiary(diaryEdit) // обновляем запись в БД
             }
         }
@@ -192,9 +205,9 @@ class MainActivity : AppCompatActivity() {
 
         if(starItem != null){
             if (prefs!!.getBoolean("sorted", false)) {
-                starItem.setIcon(android.R.drawable.btn_star_big_on)
+                starItem.setIcon(R.drawable.ic_baseline_star_32)
             } else {
-                starItem.setIcon(android.R.drawable.btn_star_big_off)
+                starItem.setIcon(R.drawable.ic_baseline_star_border_32)
             }
         }
 
@@ -243,11 +256,11 @@ class MainActivity : AppCompatActivity() {
                 if (prefs!!.getBoolean("sorted", false)) {
                     prefs.edit().putBoolean("sorted", false).apply()
                     adapter.setDiaries(extDiaryList)
-                    item.setIcon(android.R.drawable.btn_star_big_off)
+                    item.setIcon(R.drawable.ic_baseline_star_border_32)
                 } else {
                     prefs.edit().putBoolean("sorted", true).apply()
                     adapter.setDiaries(extDiaryList.sortedBy { !it.diary.favorite })
-                    item.setIcon(android.R.drawable.btn_star_big_on)
+                    item.setIcon(R.drawable.ic_baseline_star_32)
                     recyclerview.scrollToPosition(0)
                 }
             }
@@ -297,6 +310,9 @@ class MainActivity : AppCompatActivity() {
     }
     private fun updateDiary(extDiary: ExtendedDiary){
         mainViewModel.updateDiary(extDiary.diary)
+    }
+    private fun updateListOfDiaries(list : List<Diary>){
+        mainViewModel.updateListOfDiaries(list)
     }
 }
 

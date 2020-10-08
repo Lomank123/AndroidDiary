@@ -62,16 +62,16 @@ class DailyListAdapter internal constructor(
                 val dialog = MaterialDialog(mContext)
                 dialog.show{
                     title(R.string.edit_btn)
-                    message(R.string.dialog_edit_text)
-                    input(hintRes = R.string.dialog_item_name){ _, text ->
+                    message(R.string.dialog_edit_daily_list_item_text)
+                    input(hintRes = R.string.dialog_new_daily_list_hint){ _, text ->
                         dailyListItem.name = text.toString()
                     }
-                    positiveButton(R.string.dialog_yes) {
+                    positiveButton(R.string.done_btn) {
                         listenerUpdateList(dailyListItem)
                         notifyItemChanged(position)
                         dialog.dismiss()
                     }
-                    negativeButton(R.string.dialog_no) {
+                    negativeButton(R.string.cancel_btn) {
                         dialog.dismiss()
                     }
                 }

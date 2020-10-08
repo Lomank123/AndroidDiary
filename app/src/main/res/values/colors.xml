@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#D81B60</color>
+
     <color name="buttonLabel">#d3d3d3</color>
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
@@ -18,10 +16,10 @@
 
 
     <!-- colors for diaries and notes -->
-
+    <color name="gray">#7D7D7D</color>
     <color name="normal_green">#25A13D</color>
     <color name="red">#B0303C</color>
-    <color name="pink">#FF7369</color>
+    <color name="pink">#5FFF7369</color>
     <color name="green">#95FF78</color>
     <color name="yellow">#F3FF6E</color>
     <color name="blue">#91C4FF</color>

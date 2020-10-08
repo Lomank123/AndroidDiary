@@ -18,6 +18,7 @@ import com.lomank.diary.SettingsHolderActivity
 import other.TopSpacingItemDecoration
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.android.synthetic.main.fragment_daily_list.*
 import kotlinx.android.synthetic.main.fragment_daily_list.view.*
 import recyclerviewadapter.DailyListAdapter
 import roomdatabase.DailyListItem
@@ -52,12 +53,17 @@ class DailyListFragment : Fragment() {
         layout.recyclerview_list.layoutManager = LinearLayoutManager(activity)
         layout.recyclerview_list.addItemDecoration(TopSpacingItemDecoration(20))    // Отступы
 
+        if(extDiaryParent!!.diary.listName != null)
+            layout.collapsing_toolbar_layout.title = extDiaryParent.diary.listName
+        else
+            layout.collapsing_toolbar_layout.title = requireActivity().resources.getString(R.string.list_name)
+
+
         if (mainViewModel.allExtendedDiaries.hasActiveObservers())
             mainViewModel.allExtendedDiaries.removeObservers(requireActivity())
         mainViewModel.allExtendedDiaries.observe(viewLifecycleOwner, {
             allDailyListItems = findDailyListItems(it, extDiaryParent)
             adapter.setDailyListItems(allDailyListItems)
-            layout.recyclerview_list.setHasFixedSize(true)
 
             // Updating horizontal Progress Bar
             val listSize = allDailyListItems.size
@@ -66,21 +72,20 @@ class DailyListFragment : Fragment() {
                 if (item.isDone)
                     listDoneSize++
             }
+            // setting the text like "1 of 4"
+            val progressText = "$listDoneSize " + resources.getString(R.string.progressbar_progress) + " $listSize"
+            layout.progressbar_text.text = progressText
+
             if (listSize != 0) {
-                val i = ObjectAnimator.ofInt(
+                val progressBarAnimation = ObjectAnimator.ofInt(
                     layout.progressBar_appbar,
                     "progress",
                     (listDoneSize * 100) / listSize
                 )
-                i.interpolator = FastOutLinearInInterpolator()
-                i.duration = 500
-                i.addUpdateListener {
-                    layout.progressbar_text.text =
-                        i.animatedValue.toString() + " " + resources.getString(
-                            R.string.progressbar_progress
-                        )
-                }
-                i.start()
+                progressBarAnimation.interpolator = FastOutLinearInInterpolator()
+                progressBarAnimation.duration = 500
+                progressBarAnimation.start()
+
                 if((listDoneSize * 100) / listSize >= 100) {
                     // появляется всего 1 раз когда отмечены все пункты
                     if(!isComplete)
@@ -88,16 +93,10 @@ class DailyListFragment : Fragment() {
                     isComplete = true
                 }
             } else {
-                layout.progressBar_appbar.progress = 0
-                layout.progressbar_text.text = resources.getString(R.string.progressbar_progress_full)
+                layout.progressbar_text.text = resources.getString(R.string.progressbar_progress_empty)
+                progressBar_appbar.progress = 0
             }
-
-            // don't need for now
-            //layout.recyclerview_list.scrollToPosition(0)
         })
-
-        layout.collapsing_toolbar_layout.title = extDiaryParent!!.diary.listName
-        layout.progressbar_text.text = resources.getString(R.string.progressbar_progress_full)
 
         // Buttons
         // New item button
@@ -106,34 +105,33 @@ class DailyListFragment : Fragment() {
             dialog.show{
                 title(R.string.dialog_new_item)
                 message(R.string.dialog_item_input_text)
-                input(hintRes = R.string.dialog_item_name){ _, text ->
+                input(hintRes = R.string.dialog_new_daily_list_hint){ _, text ->
                     val item = DailyListItem(text.toString(), extDiaryParent.diary.id)
                     insertDailyListItem(item)
                 }
-                positiveButton(R.string.dialog_yes) {
-
+                positiveButton(R.string.done_btn) {
                     dialog.dismiss()
                 }
-                negativeButton(R.string.dialog_no) {
+                negativeButton(R.string.cancel_btn) {
                     dialog.dismiss()
                 }
             }
         }
+        // TODO: Загружать сюда прошлое название
         layout.imageButton_edit_list_name.setOnClickListener{
             val dialog = MaterialDialog(requireActivity())
             dialog.show{
                 title(R.string.edit_btn)
                 message(R.string.dialog_edit_text)
-                input(hintRes = R.string.dialog_item_name){ _, text ->
-                    val newDiary = extDiaryParent.diary
-                    newDiary.listName = text.toString()
-                    mainViewModel.updateDiary(newDiary)
+                input(hintRes = R.string.dialog_new_daily_list_hint){ _, text ->
+                    extDiaryParent.diary.listName = text.toString()
+                    mainViewModel.updateDiary(extDiaryParent.diary)
                     layout.collapsing_toolbar_layout.title = text.toString()
                 }
-                positiveButton(R.string.dialog_yes) {
+                positiveButton(R.string.done_btn) {
                     dialog.dismiss()
                 }
-                negativeButton(R.string.dialog_no) {
+                negativeButton(R.string.cancel_btn) {
                     dialog.dismiss()
                 }
             }

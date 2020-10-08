@@ -1,7 +1,5 @@
 package recyclerviewadapter
 
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
 import android.content.Context
 import android.content.SharedPreferences
 import android.view.LayoutInflater
@@ -65,18 +63,32 @@ class DiaryListAdapter internal constructor(
         private val diaryDescriptionView: TextView = itemView.findViewById(R.id.textView_content)
         private val diaryImageView: ImageView = itemView.findViewById(R.id.imageView)
         private val diaryStarView: ImageView = itemView.findViewById(R.id.imageView_star)
-        private val diaryImageButtonViewOptions : ImageButton = itemView.findViewById(R.id.imageButton_options)
+
+        private val diaryBackImage : ImageView = itemView.findViewById(R.id.backImage)
+
+        // TODO: Maybe delete this
+        //private val diaryImageButtonViewOptions : ImageButton = itemView.findViewById(R.id.imageButton_options)
         private val diaryImageButtonViewDelete : ImageButton = itemView.findViewById(R.id.imageButton_delete)
         // expandable layout
         private val expandableLayoutItemView : ConstraintLayout = itemView.findViewById(R.id.expandable_layout)
         private val creationDateItemView : TextView = itemView.findViewById(R.id.creation_date_text2)
         private val lastEditDateItemView : TextView = itemView.findViewById(R.id.last_edit_date_text2)
         private val fullDescriptionItemView : TextView = itemView.findViewById(R.id.full_description_text)
+        private val amountOfNotesText : TextView = itemView.findViewById(R.id.amount_of_notes_text)
+        private val amountOfNotesCount : TextView = itemView.findViewById(R.id.amount_of_notes_count)
 
-        private var isExpanded = false
+        // images
+        private val image1 : ImageView = itemView.findViewById(R.id.image1)
+        private val image2 : ImageView = itemView.findViewById(R.id.image2)
+        private val image3 : ImageView = itemView.findViewById(R.id.image3)
 
         // эта функция применяется для каждого члена RecyclerView т.к. вызывается в onBindViewHolder
         fun bindView(extDiary: ExtendedDiary) {
+            // Amount of notes
+            amountOfNotesText.visibility = VISIBLE
+            amountOfNotesCount.visibility = VISIBLE
+            amountOfNotesCount.text = extDiary.notes.size.toString()
+
             diaryItemView.text = extDiary.diary.name
             if (extDiary.diary.content != null)
                 diaryDescriptionView.text = cutString(extDiary.diary.content!!)
@@ -101,9 +113,26 @@ class DiaryListAdapter internal constructor(
                 diaryStarView.visibility = GONE
 
             // photo
+
+            // TODO: перенести в NoteListAdapter
+            // changing margins of ImageView
+            //val params = (image2.layoutParams as ViewGroup.MarginLayoutParams)
+            //params.setMargins(9, 0, 9, 0)
+            //image2.layoutParams = params
+
             if (extDiary.diary.img != null && extDiary.diary.img != "") {
                 // trying to set an image with Glide
                 Glide.with(mContext).load(extDiary.diary.img).into(diaryImageView)
+                //Glide.with(mContext).load(ContextCompat.getDrawable(mContext, R.drawable.im1))
+                //    .fitCenter()
+                //    .into(image1)
+                //Glide.with(mContext).load(ContextCompat.getDrawable(mContext, R.drawable.app_screen_2))
+                //    .fitCenter()
+                //    .into(image2)
+                //Glide.with(mContext).load(extDiary.diary.img)
+                //    .fitCenter()
+                //    .into(image3)
+
             } else {
                 diaryImageView.setImageResource(R.drawable.logo)
             }
@@ -123,7 +152,17 @@ class DiaryListAdapter internal constructor(
                 }
             }
 
-            diaryImageButtonViewOptions.setOnClickListener{
+            // Проверяем нужно ли показать информацию
+            if (extDiary.diary.isExpanded) {
+                diaryDescriptionView.visibility = GONE
+                expandableLayoutItemView.visibility = VISIBLE
+            } else {
+                diaryDescriptionView.visibility = VISIBLE
+                expandableLayoutItemView.visibility = GONE
+            }
+
+            //diaryImageButtonViewOptions.setOnClickListener{
+            itemView.setOnLongClickListener {
                 // Устанавливаем контекстное меню
                 val popupMenu = PopupMenu(mContext, it)
                 popupMenu.inflate(R.menu.menu_context)
@@ -138,6 +177,14 @@ class DiaryListAdapter internal constructor(
                     popupMenu.menu.findItem(R.id.bookmark).title = mContext.resources.
                     getString(R.string.bookmark)
                 }
+
+                if(extDiary.diary.isExpanded)
+                    popupMenu.menu.findItem(R.id.info).title = mContext.resources.
+                    getString(R.string.hide_info)
+                else
+                    popupMenu.menu.findItem(R.id.info).title = mContext.resources.
+                    getString(R.string.show_info)
+
                 // Устанавливаем обработчик нажатий на пункты контекстного меню
                 popupMenu.setOnMenuItemClickListener { item ->
                     when(item.itemId) {
@@ -169,24 +216,15 @@ class DiaryListAdapter internal constructor(
                             true
                         }
                         R.id.info -> {
-                            isExpanded = !isExpanded
-                            if (isExpanded) {
-                                expandableLayoutItemView.animate()
-                                    .alpha(1f).setDuration(500).setListener(object :
-                                        AnimatorListenerAdapter() {
-                                        override fun onAnimationStart(animation: Animator?) {
-                                            expandableLayoutItemView.visibility = VISIBLE
-                                        }
-                                    }).start()
+                            extDiary.diary.isExpanded = !extDiary.diary.isExpanded
+                            if (extDiary.diary.isExpanded) {
+                                diaryDescriptionView.visibility = GONE
+                                expandableLayoutItemView.visibility = VISIBLE
                             } else {
-                                expandableLayoutItemView.animate()
-                                    .alpha(0f).setDuration(500).setListener(object :
-                                        AnimatorListenerAdapter() {
-                                        override fun onAnimationEnd(animation: Animator?) {
-                                            expandableLayoutItemView.visibility = GONE
-                                        }
-                                    }).start()
+                                diaryDescriptionView.visibility = VISIBLE
+                                expandableLayoutItemView.visibility = GONE
                             }
+                            listenerUpdateDiary(extDiary)
                             true
                         }
                         // Иначе вернем false (если when не сработал ни разу)
@@ -194,6 +232,7 @@ class DiaryListAdapter internal constructor(
                     }
                 }
                 popupMenu.show() // показываем меню
+                true
             }
         }
     }
@@ -218,8 +257,7 @@ class DiaryListAdapter internal constructor(
     internal fun setDiaries(diaries: List<ExtendedDiary>) {
         val oldList = this.diaries
         val diffResult : DiffUtil.DiffResult = DiffUtil.calculateDiff(
-            DiaryItemDiffCallBack(oldList, diaries)
-        )
+            DiaryItemDiffCallBack(oldList, diaries))
         this.diaries = diaries      // обновляем внутренний список
         diffResult.dispatchUpdatesTo(this)
         //notifyDataSetChanged()
@@ -230,7 +268,7 @@ class DiaryListAdapter internal constructor(
         var newStr = ""
         for(i in str) {
             if (count == num) {
-                newStr += ".."
+                newStr += "..."
                 break
             }
             newStr += i
@@ -242,6 +280,6 @@ class DiaryListAdapter internal constructor(
     override fun getItemCount() = diaries.size // сколько эл-тов будет в списке
 
     companion object {
-        const val NUMBER_OF_SYMBOLS = 18
+        const val NUMBER_OF_SYMBOLS = 32
     }
 }

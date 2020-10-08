@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:foreground="?android:attr/selectableItemBackground">
+    app:cardElevation="10dp"
+    android:layout_marginTop="5dp"
+    android:layout_marginStart="5dp"
+    android:layout_marginEnd="5dp"
+    app:cardCornerRadius="10dp">
 
-    <RelativeLayout
-        android:id="@+id/relative_layout_dialog_list"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_dialog_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#FFFFFF"
         android:padding="16dp">
-
 
         <TextView
             android:id="@+id/textView_dialog"
@@ -19,14 +22,18 @@
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
-            android:layout_marginStart="15dp"
-            android:layout_marginTop="0dp"
-            android:layout_marginEnd="14dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
             android:text="@string/sample"
-            android:textSize="18sp">
+            android:textSize="18sp"
+            android:textColor="@color/black"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
         </TextView>
 
-    </RelativeLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.cardview.widget.CardView>

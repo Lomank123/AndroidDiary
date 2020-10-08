@@ -3,8 +3,8 @@ package other
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.lomank.diary.R
 import roomdatabase.Diary
@@ -20,12 +20,12 @@ class MaterialDialogAdapter internal constructor(
 
     inner class ItemViewHolder(v : View) : RecyclerView.ViewHolder(v){
 
-        private val relativeLayoutDialog : RelativeLayout = v.findViewById(R.id.relative_layout_dialog_list)
+        private val layoutDialog : ConstraintLayout = v.findViewById(R.id.layout_dialog_list)
         private val textViewDialog : TextView = v.findViewById(R.id.textView_dialog)
 
         fun bindView(item : Diary){
             textViewDialog.text = item.name
-            relativeLayoutDialog.setOnClickListener {
+            layoutDialog.setOnClickListener {
                 listenerSwap(item)
             }
         }

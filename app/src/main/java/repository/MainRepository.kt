@@ -33,6 +33,10 @@ class MainRepository (private val diaryDao : DiaryDao) {
         diaryDao.updateDiary(diary)
     }
 
+    suspend fun updateListOfDiaries(list : List<Diary>) {
+        diaryDao.updateListOfDiaries(list)
+    }
+
     // Notes:
 
     // добавить заметку
@@ -54,6 +58,10 @@ class MainRepository (private val diaryDao : DiaryDao) {
     // обновить заметку
     suspend fun updateNote(note : Note){
         diaryDao.updateNote(note)
+    }
+
+    suspend fun updateListOfNotes(list : List<Note>){
+        diaryDao.updateListOfNotes(list)
     }
 
     // DailyListItems:

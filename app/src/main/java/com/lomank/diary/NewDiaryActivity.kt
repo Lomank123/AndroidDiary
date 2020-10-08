@@ -5,7 +5,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Color.*
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -13,6 +12,7 @@ import android.text.TextUtils
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.PermissionChecker
+import androidx.core.content.res.ResourcesCompat
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.color.colorChooser
 import com.bumptech.glide.Glide
@@ -33,7 +33,6 @@ class NewDiaryActivity : AppCompatActivity() {
     // RequestCode для выбора фото
     private val choosePhotoRequestCode = 1
     private var isPhotoExist = false
-    private val colorArray = intArrayOf(RED, BLUE, GREEN)
 
     private val replyIntent = Intent()
 
@@ -98,6 +97,14 @@ class NewDiaryActivity : AppCompatActivity() {
 
         }
         // color button
+        val colorArray = intArrayOf(
+            ResourcesCompat.getColor(resources, R.color.white, null),
+            ResourcesCompat.getColor(resources, R.color.pink, null),
+            ResourcesCompat.getColor(resources, R.color.green, null),
+            ResourcesCompat.getColor(resources, R.color.yellow, null),
+            ResourcesCompat.getColor(resources, R.color.blue, null),
+            ResourcesCompat.getColor(resources, R.color.grass, null),
+            ResourcesCompat.getColor(resources, R.color.purple, null))
         change_color_button.setOnClickListener {
             val colorDialog = MaterialDialog(this)
             colorDialog.show {

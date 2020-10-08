@@ -1,7 +1,5 @@
 package recyclerviewadapter
 
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
 import android.content.Context
 import android.content.SharedPreferences
 import android.view.LayoutInflater
@@ -70,7 +68,8 @@ class NoteListAdapter internal constructor(
         private val noteDescriptionView : TextView = itemView.findViewById(R.id.textView_content)
         private val noteImageView : ImageView = itemView.findViewById(R.id.imageView)
         private val noteStarView : ImageView = itemView.findViewById(R.id.imageView_star)
-        private val noteImageButtonViewOptions : ImageButton = itemView.findViewById(R.id.imageButton_options)
+        // TODO: Maybe delete this
+        //private val noteImageButtonViewOptions : ImageButton = itemView.findViewById(R.id.imageButton_options)
         private val noteImageButtonViewDelete : ImageButton = itemView.findViewById(R.id.imageButton_delete)
         // expandable layout
         private val expandableLayoutItemView : ConstraintLayout = itemView.findViewById(R.id.expandable_layout)
@@ -79,7 +78,11 @@ class NoteListAdapter internal constructor(
         private val fullDescriptionItemView : TextView = itemView.findViewById(R.id.full_description_text)
         private val imageViewMic : ImageView = itemView.findViewById(R.id.imageView_mic)
 
-        private var isExpanded = false
+        // images
+        private val imageLayout : TableLayout = itemView.findViewById(R.id.tableLayout_images)
+        private val image1 : ImageView = itemView.findViewById(R.id.image1)
+        private val image2 : ImageView = itemView.findViewById(R.id.image2)
+        private val image3 : ImageView = itemView.findViewById(R.id.image3)
 
         // эта функция применяется для каждого члена RecyclerView т.к. вызывается в onBindViewHolder
         fun bindView(note: Note) {
@@ -102,6 +105,30 @@ class NoteListAdapter internal constructor(
             } else {
                 noteImageView.setImageResource(R.drawable.empty_note_photo)
             }
+
+            // TODO: Add check in the settings
+            // Images
+            val viewList = arrayListOf(image1, image2, image3)
+            if (note.images != null) {
+                if(note.images!!.isNotEmpty()) {
+                    imageLayout.visibility = VISIBLE
+                    for(i in note.images!!.indices) {
+                        // setting image
+                        viewList[i].visibility = VISIBLE
+                        Glide.with(mContext).load(note.images!![i]).override(800, 1000).into(viewList[i])
+                    }
+                } else {
+                    imageLayout.visibility = GONE
+                }
+                for(i in note.images!!.size until viewList.size){
+                    viewList[i].visibility = GONE
+                }
+                setLayoutParams(note, image1, image2)
+            } else {
+                imageLayout.visibility = GONE
+            }
+
+
 
             // иконка со звездочкой (избранное)
             if (note.favorite)
@@ -137,7 +164,17 @@ class NoteListAdapter internal constructor(
                 }
             }
 
-            noteImageButtonViewOptions.setOnClickListener{
+            // Проверяем нужно ли показать информацию
+            if (note.isExpanded) {
+                noteDescriptionView.visibility = GONE
+                expandableLayoutItemView.visibility = VISIBLE
+            } else {
+                noteDescriptionView.visibility = VISIBLE
+                expandableLayoutItemView.visibility = GONE
+            }
+
+            //noteImageButtonViewOptions.setOnClickListener{
+            itemView.setOnLongClickListener {
                 // Устанавливаем контекстное меню
                 val popupMenu = PopupMenu(mContext, it)
                 popupMenu.inflate(R.menu.menu_context)
@@ -149,6 +186,14 @@ class NoteListAdapter internal constructor(
                 else
                     popupMenu.menu.findItem(R.id.bookmark).title = mContext.resources.
                     getString(R.string.bookmark)
+
+                if(note.isExpanded)
+                    popupMenu.menu.findItem(R.id.info).title = mContext.resources.
+                    getString(R.string.hide_info)
+                else
+                    popupMenu.menu.findItem(R.id.info).title = mContext.resources.
+                    getString(R.string.show_info)
+
                 popupMenu.menu.findItem(R.id.edit).isVisible = false
                 popupMenu.setOnMenuItemClickListener { item ->
                     when(item.itemId) {
@@ -176,6 +221,7 @@ class NoteListAdapter internal constructor(
                             val anotherAdapter = MaterialDialogAdapter(extDiaryList
                             ) {diary ->
                                 note.parentId = diary.id
+                                note.isExpanded = false
                                 listenerUpdate(note)
                                 dialog.dismiss()
                             }
@@ -189,22 +235,15 @@ class NoteListAdapter internal constructor(
                             true
                         }
                         R.id.info -> {
-                            isExpanded = !isExpanded
-                            if(isExpanded) {
-                                expandableLayoutItemView.animate()
-                                    .alpha(1f).setDuration(500).setListener(object : AnimatorListenerAdapter(){
-                                        override fun onAnimationStart(animation: Animator?) {
-                                            expandableLayoutItemView.visibility = VISIBLE
-                                        }
-                                    }).start()
+                            note.isExpanded = !note.isExpanded
+                            if (note.isExpanded) {
+                                noteDescriptionView.visibility = GONE
+                                expandableLayoutItemView.visibility = VISIBLE
                             } else {
-                                expandableLayoutItemView.animate()
-                                    .alpha(0f).setDuration(500).setListener(object : AnimatorListenerAdapter(){
-                                        override fun onAnimationEnd(animation: Animator?) {
-                                            expandableLayoutItemView.visibility = GONE
-                                        }
-                                    }).start()
+                                noteDescriptionView.visibility = VISIBLE
+                                expandableLayoutItemView.visibility = GONE
                             }
+                            listenerUpdate(note)
                             true
                         }
                         // Иначе вернем false (если when не сработал ни разу)
@@ -212,6 +251,7 @@ class NoteListAdapter internal constructor(
                     }
                 }
                 popupMenu.show() // показываем меню
+                true
             }
         }
     }
@@ -244,7 +284,7 @@ class NoteListAdapter internal constructor(
         var newStr = ""
         for(i in str) {
             if (count == num) {
-                newStr += ".."
+                newStr += "..."
                 break
             }
             newStr += i
@@ -253,9 +293,33 @@ class NoteListAdapter internal constructor(
         return newStr
     }
 
+    private fun setLayoutParams(note : Note, image1 : ImageView, image2 : ImageView) {
+        if(note.images!!.size == 1) {
+            val params1 = (image1.layoutParams as ViewGroup.MarginLayoutParams)
+            params1.setMargins(0, 0, 0, 0)
+            image1.layoutParams = params1
+        } else {
+            if(note.images!!.size == 2) {
+                val params1 = (image1.layoutParams as ViewGroup.MarginLayoutParams)
+                params1.setMargins(0, 0, 9, 0)
+                image1.layoutParams = params1
+                val params2 = (image2.layoutParams as ViewGroup.MarginLayoutParams)
+                params2.setMargins(0, 0, 0, 0)
+                image2.layoutParams = params2
+            } else { // 3
+                val params1 = (image1.layoutParams as ViewGroup.MarginLayoutParams)
+                params1.setMargins(0, 0, 0, 0)
+                image1.layoutParams = params1
+                val params2 = (image2.layoutParams as ViewGroup.MarginLayoutParams)
+                params2.setMargins(9, 0, 9, 0)
+                image2.layoutParams = params2
+            }
+        }
+    }
+
     override fun getItemCount() = notes.size // сколько эл-тов будет в списке
 
     companion object {
-        const val NUMBER_OF_SYMBOLS = 12
+        const val NUMBER_OF_SYMBOLS = 32
     }
 }

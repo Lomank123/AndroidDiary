@@ -19,6 +19,6 @@
         android:title="@string/move_btn"/>
     <item
         android:id="@+id/info"
-        android:title="@string/info_btn"/>
+        android:title="@string/show_info"/>
 
 </menu>

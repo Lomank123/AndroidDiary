@@ -13,7 +13,7 @@
                 tools:ignore="PrivateResource" />
             <stroke
                 android:width="4dp"
-                android:color="@color/colorAccent">
+                android:color="@color/primary_color1">
             </stroke>
         </shape>
     </item>
@@ -23,7 +23,7 @@
                 <corners android:radius="10dip" />
                 <stroke
                     android:width="4dp"
-                    android:color="@color/colorAccent">
+                    android:color="@color/primary_color1">
                 </stroke>
                 <solid android:color="@color/green" />
             </shape>
