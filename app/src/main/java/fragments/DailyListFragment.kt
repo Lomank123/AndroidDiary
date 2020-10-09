@@ -100,12 +100,12 @@ class DailyListFragment : Fragment() {
 
         // Buttons
         // New item button
-        layout.fab_new_item.setOnClickListener{
+        layout.fab_new_item.setOnClickListener {
             val dialog = MaterialDialog(requireActivity())
-            dialog.show{
+            dialog.show {
                 title(R.string.dialog_new_item)
                 message(R.string.dialog_item_input_text)
-                input(hintRes = R.string.dialog_new_daily_list_hint){ _, text ->
+                input(hintRes = R.string.dialog_new_daily_list_hint) { _, text ->
                     val item = DailyListItem(text.toString(), extDiaryParent.diary.id)
                     insertDailyListItem(item)
                 }
@@ -117,13 +117,13 @@ class DailyListFragment : Fragment() {
                 }
             }
         }
-        // TODO: Загружать сюда прошлое название
+        // edit list name button
         layout.imageButton_edit_list_name.setOnClickListener{
             val dialog = MaterialDialog(requireActivity())
             dialog.show{
                 title(R.string.edit_btn)
                 message(R.string.dialog_edit_text)
-                input(hintRes = R.string.dialog_new_daily_list_hint){ _, text ->
+                input(hintRes = R.string.dialog_new_daily_list_hint, prefill = extDiaryParent.diary.listName){ _, text ->
                     extDiaryParent.diary.listName = text.toString()
                     mainViewModel.updateDiary(extDiaryParent.diary)
                     layout.collapsing_toolbar_layout.title = text.toString()
@@ -136,7 +136,7 @@ class DailyListFragment : Fragment() {
                 }
             }
         }
-
+        // clear list button
         layout.imageButton_clear_list.setOnClickListener {
             val dialog = MaterialDialog(requireActivity())
             dialog.show{

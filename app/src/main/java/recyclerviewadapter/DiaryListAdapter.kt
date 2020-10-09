@@ -64,16 +64,16 @@ class DiaryListAdapter internal constructor(
         private val diaryImageView: ImageView = itemView.findViewById(R.id.imageView)
         private val diaryStarView: ImageView = itemView.findViewById(R.id.imageView_star)
 
-        private val diaryBackImage : ImageView = itemView.findViewById(R.id.backImage)
-
         // TODO: Maybe delete this
         //private val diaryImageButtonViewOptions : ImageButton = itemView.findViewById(R.id.imageButton_options)
+
         private val diaryImageButtonViewDelete : ImageButton = itemView.findViewById(R.id.imageButton_delete)
         // expandable layout
         private val expandableLayoutItemView : ConstraintLayout = itemView.findViewById(R.id.expandable_layout)
         private val creationDateItemView : TextView = itemView.findViewById(R.id.creation_date_text2)
         private val lastEditDateItemView : TextView = itemView.findViewById(R.id.last_edit_date_text2)
-        private val fullDescriptionItemView : TextView = itemView.findViewById(R.id.full_description_text)
+        private val fullDescriptionText : TextView = itemView.findViewById(R.id.full_description_text)
+        private val fullDescriptionItemView : TextView = itemView.findViewById((R.id.full_description))
         private val amountOfNotesText : TextView = itemView.findViewById(R.id.amount_of_notes_text)
         private val amountOfNotesCount : TextView = itemView.findViewById(R.id.amount_of_notes_count)
 
@@ -88,13 +88,16 @@ class DiaryListAdapter internal constructor(
             amountOfNotesText.visibility = VISIBLE
             amountOfNotesCount.visibility = VISIBLE
             amountOfNotesCount.text = extDiary.notes.size.toString()
+            // full description
+            fullDescriptionItemView.visibility = VISIBLE
+            fullDescriptionText.visibility = VISIBLE
+            fullDescriptionText.text = extDiary.diary.content
 
             diaryItemView.text = extDiary.diary.name
             if (extDiary.diary.content != null)
                 diaryDescriptionView.text = cutString(extDiary.diary.content!!)
             creationDateItemView.text = extDiary.diary.creationDate.toString()
             lastEditDateItemView.text = extDiary.diary.lastEditDate
-            fullDescriptionItemView.text = extDiary.diary.content
 
             itemView.setOnClickListener {
                 listenerOpenDiary(extDiary)
@@ -113,26 +116,9 @@ class DiaryListAdapter internal constructor(
                 diaryStarView.visibility = GONE
 
             // photo
-
-            // TODO: перенести в NoteListAdapter
-            // changing margins of ImageView
-            //val params = (image2.layoutParams as ViewGroup.MarginLayoutParams)
-            //params.setMargins(9, 0, 9, 0)
-            //image2.layoutParams = params
-
             if (extDiary.diary.img != null && extDiary.diary.img != "") {
                 // trying to set an image with Glide
                 Glide.with(mContext).load(extDiary.diary.img).into(diaryImageView)
-                //Glide.with(mContext).load(ContextCompat.getDrawable(mContext, R.drawable.im1))
-                //    .fitCenter()
-                //    .into(image1)
-                //Glide.with(mContext).load(ContextCompat.getDrawable(mContext, R.drawable.app_screen_2))
-                //    .fitCenter()
-                //    .into(image2)
-                //Glide.with(mContext).load(extDiary.diary.img)
-                //    .fitCenter()
-                //    .into(image3)
-
             } else {
                 diaryImageView.setImageResource(R.drawable.logo)
             }
@@ -265,11 +251,17 @@ class DiaryListAdapter internal constructor(
 
     private fun cutString(str : String, num : Int = NUMBER_OF_SYMBOLS) : String {
         var count = 0
+        var nCount = 0
         var newStr = ""
         for(i in str) {
             if (count == num) {
                 newStr += "..."
                 break
+            }
+            if(i.toString() == "\n") {
+                nCount++
+                if(nCount >= 3)
+                    break
             }
             newStr += i
             count++

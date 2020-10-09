@@ -99,6 +99,20 @@ data class Diary(
 
         return true
     }
+
+    override fun hashCode(): Int {
+        var result = name.hashCode()
+        result = 31 * result + id.hashCode()
+        result = 31 * result + (img?.hashCode() ?: 0)
+        result = 31 * result + (color ?: 0)
+        result = 31 * result + favorite.hashCode()
+        result = 31 * result + (creationDate?.hashCode() ?: 0)
+        result = 31 * result + (listName?.hashCode() ?: 0)
+        result = 31 * result + (lastEditDate?.hashCode() ?: 0)
+        result = 31 * result + (content?.hashCode() ?: 0)
+        result = 31 * result + isExpanded.hashCode()
+        return result
+    }
 }
 
 
@@ -177,6 +191,22 @@ data class Note(
 
         return true
     }
+
+    override fun hashCode(): Int {
+        var result = name.hashCode()
+        result = 31 * result + id.hashCode()
+        result = 31 * result + content.hashCode()
+        result = 31 * result + (parentId?.hashCode() ?: 0)
+        result = 31 * result + (img?.hashCode() ?: 0)
+        result = 31 * result + (images?.hashCode() ?: 0)
+        result = 31 * result + (color ?: 0)
+        result = 31 * result + voice.hashCode()
+        result = 31 * result + favorite.hashCode()
+        result = 31 * result + (lastEditDate?.hashCode() ?: 0)
+        result = 31 * result + (creationDate?.hashCode() ?: 0)
+        result = 31 * result + isExpanded.hashCode()
+        return result
+    }
 }
 
 @Entity(tableName = "daily_list_item_table")                                           // Название таблицы
@@ -210,6 +240,15 @@ data class DailyListItem(
             return false
 
         return true
+    }
+
+    override fun hashCode(): Int {
+        var result = name.hashCode()
+        result = 31 * result + parentId.hashCode()
+        result = 31 * result + id.hashCode()
+        result = 31 * result + (color ?: 0)
+        result = 31 * result + isDone.hashCode()
+        return result
     }
 }
 

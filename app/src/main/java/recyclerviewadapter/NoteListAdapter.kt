@@ -68,14 +68,15 @@ class NoteListAdapter internal constructor(
         private val noteDescriptionView : TextView = itemView.findViewById(R.id.textView_content)
         private val noteImageView : ImageView = itemView.findViewById(R.id.imageView)
         private val noteStarView : ImageView = itemView.findViewById(R.id.imageView_star)
+
         // TODO: Maybe delete this
         //private val noteImageButtonViewOptions : ImageButton = itemView.findViewById(R.id.imageButton_options)
+
         private val noteImageButtonViewDelete : ImageButton = itemView.findViewById(R.id.imageButton_delete)
         // expandable layout
         private val expandableLayoutItemView : ConstraintLayout = itemView.findViewById(R.id.expandable_layout)
         private val creationDateItemView : TextView = itemView.findViewById(R.id.creation_date_text2)
         private val lastEditDateItemView : TextView = itemView.findViewById(R.id.last_edit_date_text2)
-        private val fullDescriptionItemView : TextView = itemView.findViewById(R.id.full_description_text)
         private val imageViewMic : ImageView = itemView.findViewById(R.id.imageView_mic)
 
         // images
@@ -86,11 +87,11 @@ class NoteListAdapter internal constructor(
 
         // эта функция применяется для каждого члена RecyclerView т.к. вызывается в onBindViewHolder
         fun bindView(note: Note) {
+            noteImageView.setImageResource(R.drawable.empty_note_photo)
             noteItemView.text = note.name
             noteDescriptionView.text = cutString(note.content)
             creationDateItemView.text = note.creationDate.toString()
             lastEditDateItemView.text = note.lastEditDate
-            fullDescriptionItemView.text = note.content
 
             // Устанавливаем обработчик нажатий на элемент RecyclerView, при нажатии
             // будет вызываться первый listener (listenerOpen), который открывает заметку
@@ -98,13 +99,6 @@ class NoteListAdapter internal constructor(
                 listenerOpen(note)
             }
 
-            // photo
-            if (note.img != null && note.img != "") {
-                // trying to set an image with Glide
-                Glide.with(mContext).load(note.img).into(noteImageView)
-            } else {
-                noteImageView.setImageResource(R.drawable.empty_note_photo)
-            }
 
             // TODO: Add check in the settings
             // Images
@@ -127,7 +121,6 @@ class NoteListAdapter internal constructor(
             } else {
                 imageLayout.visibility = GONE
             }
-
 
 
             // иконка со звездочкой (избранное)
@@ -166,10 +159,10 @@ class NoteListAdapter internal constructor(
 
             // Проверяем нужно ли показать информацию
             if (note.isExpanded) {
-                noteDescriptionView.visibility = GONE
+                //noteDescriptionView.visibility = GONE
                 expandableLayoutItemView.visibility = VISIBLE
             } else {
-                noteDescriptionView.visibility = VISIBLE
+                //noteDescriptionView.visibility = VISIBLE
                 expandableLayoutItemView.visibility = GONE
             }
 
@@ -237,10 +230,10 @@ class NoteListAdapter internal constructor(
                         R.id.info -> {
                             note.isExpanded = !note.isExpanded
                             if (note.isExpanded) {
-                                noteDescriptionView.visibility = GONE
+                                //noteDescriptionView.visibility = GONE
                                 expandableLayoutItemView.visibility = VISIBLE
                             } else {
-                                noteDescriptionView.visibility = VISIBLE
+                                //noteDescriptionView.visibility = VISIBLE
                                 expandableLayoutItemView.visibility = GONE
                             }
                             listenerUpdate(note)
@@ -281,11 +274,20 @@ class NoteListAdapter internal constructor(
     // cuts string to num symbols
     private fun cutString(str : String, num : Int = NUMBER_OF_SYMBOLS) : String {
         var count = 0
+        var nCount = 0
         var newStr = ""
         for(i in str) {
             if (count == num) {
                 newStr += "..."
                 break
+            }
+            // if number of "\n" symbols >= 3 we cut the string
+            if(i.toString() == "\n") {
+                nCount++
+                if(nCount >= 3) {
+                    newStr += "..."
+                    break
+                }
             }
             newStr += i
             count++

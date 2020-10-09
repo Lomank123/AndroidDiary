@@ -63,7 +63,7 @@ class DailyListAdapter internal constructor(
                 dialog.show{
                     title(R.string.edit_btn)
                     message(R.string.dialog_edit_daily_list_item_text)
-                    input(hintRes = R.string.dialog_new_daily_list_hint){ _, text ->
+                    input(hintRes = R.string.dialog_new_daily_list_hint, prefill = dailyListItem.name){ _, text ->
                         dailyListItem.name = text.toString()
                     }
                     positiveButton(R.string.done_btn) {

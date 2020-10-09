@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -25,7 +26,7 @@
             app:layout_constraintTop_toTopOf="parent"
             android:visibility="gone">
 
-            <TableRow>
+            <TableRow tools:ignore="UselessParent">
 
                 <ImageView
                     android:id="@+id/image1"
@@ -50,6 +51,7 @@
                     android:scaleType="centerCrop"
                     android:layout_weight="1"
                     android:visibility="gone" />
+
             </TableRow>
         </TableLayout>
 
@@ -72,6 +74,7 @@
                 android:layout_toEndOf="@+id/imageView"
                 android:contentDescription="@string/sample"
                 android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/imageButton_delete"
                 app:srcCompat="@android:drawable/ic_btn_speak_now" />
@@ -84,6 +87,7 @@
                 android:visibility="visible"
                 app:civ_border_color="@color/primary_color_dark1"
                 app:civ_border_width="2dp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -99,7 +103,7 @@
                 android:maxWidth="220dp"
                 android:text="@string/description"
                 android:textColor="#939596"
-                android:textSize="16sp"
+                android:textSize="14sp"
                 app:layout_constraintEnd_toEndOf="@+id/editText_name"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toEndOf="@+id/imageView"
@@ -111,7 +115,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="10dp"
                 android:layout_toEndOf="@+id/imageView"
                 android:fontFamily="@font/ubuntu_regular"
                 android:maxWidth="220dp"
@@ -127,12 +131,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/imageView"
-                android:layout_marginTop="48dp"
                 android:layout_toEndOf="@+id/imageView"
                 android:contentDescription="@string/sample"
                 android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="@+id/imageView"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@android:drawable/btn_star_big_on" />
 
             <ImageButton
@@ -188,6 +191,7 @@
                 android:text="@string/sample"
                 android:textColor="#000"
                 android:textSize="13sp"
+                android:visibility="gone"
                 app:layout_constraintStart_toEndOf="@+id/full_description"
                 app:layout_constraintTop_toBottomOf="@+id/amount_of_notes_count" />
 
@@ -201,6 +205,7 @@
                 android:text="@string/description_full"
                 android:textColor="#000"
                 android:textSize="13sp"
+                android:visibility="gone"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/amount_of_notes_text" />
 
@@ -284,17 +289,5 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/last_edit_date_text" />
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <ImageView
-            android:id="@+id/backImage"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:adjustViewBounds="true"
-            android:maxHeight="200dp"
-            android:scaleType="centerCrop"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-        
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

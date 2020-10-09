@@ -6,6 +6,7 @@ import android.animation.AnimatorListenerAdapter
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.media.MediaPlayer
 import android.media.MediaRecorder
@@ -25,6 +26,7 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.PermissionChecker
 import androidx.core.content.res.ResourcesCompat
+import androidx.preference.PreferenceManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.color.colorChooser
 import com.bumptech.glide.Glide
@@ -47,8 +49,6 @@ class ClickedActivity : AppCompatActivity() {
     // image handle
     private var listOfImages = mutableListOf<String?>()
 
-    private var isPhotoLayoutOpen = false
-
     private var isVoiceLayoutOpen = false // for layout
     private var isRecording = false // for counting seconds
 
@@ -68,7 +68,7 @@ class ClickedActivity : AppCompatActivity() {
         setContentView(R.layout.activity_clicked)
 
         // prefs
-        //val prefs: SharedPreferences? = PreferenceManager.getDefaultSharedPreferences(this)
+        val prefs: SharedPreferences? = PreferenceManager.getDefaultSharedPreferences(this)
 
         // getting the request code from parent activity
         requestCode = intent.getIntExtra("requestCode", 0)
@@ -88,8 +88,8 @@ class ClickedActivity : AppCompatActivity() {
 
             // parentId for new note
             note.parentId = extDiaryParent.diary.id
-
-
+            // setting photo of a diary (this photo will be on the background)
+            note.img = extDiaryParent.diary.img
         }
         else if(requestCode == openNoteRequestCode) // request for open existing note
         {
@@ -111,7 +111,7 @@ class ClickedActivity : AppCompatActivity() {
             } else {
                 record_time_dis.text = this.resources.getString(R.string.no_voice_note)
             }
-            // TODO: Look here
+
             // setting images
             if(note.images != null) {
                 listOfImages = note.images as MutableList<String?>
@@ -123,6 +123,11 @@ class ClickedActivity : AppCompatActivity() {
                 colorView.setBackgroundColor(note.color!!)
             }
         }
+        // setting image on the background
+        if(extDiaryParent.diary.img != null && extDiaryParent.diary.img != "" && prefs!!.getBoolean("img_check", false))
+            Glide.with(this).load(extDiaryParent.diary.img).into(imageView_background)
+
+
 
         // FAB save
         fab_save.setOnClickListener{
@@ -164,7 +169,6 @@ class ClickedActivity : AppCompatActivity() {
             }
         }
 
-        // TODO: Look here
         // PHOTO BUTTONS
 
         // layout appearing button (image button)
@@ -177,27 +181,7 @@ class ClickedActivity : AppCompatActivity() {
                 animateVoiceLayout()
 
             makePhotoChooseIntent()
-
-            // TODO: Maybe delete this
-            // photo_choose_layout animation
-            //animatePhotoLayout()
-
         }
-        // TODO: Maybe delete this
-        // photo button
-        //button_choose_photo.setOnClickListener {
-        //    makePhotoChooseIntent()
-        //}
-        // TODO: And this
-        // reset button
-        //button_reset_photo.setOnClickListener {
-        //    if (isPhotoExist) {
-        //        isPhotoExist = false
-        //        imageView_photo.setImageResource(R.drawable.empty_note_photo)
-        //        imageView_background.setImageDrawable(null)
-        //        note.img = null
-        //    }
-        //}
 
         // VOICE BUTTONS
 
@@ -261,11 +245,10 @@ class ClickedActivity : AppCompatActivity() {
         }
     }
 
-    // TODO: Сделать проверку только текста и заголовка
     // Back button
     override fun onBackPressed() {
         if(requestCode == newNoteRequestCode) {
-            if (!TextUtils.isEmpty(editText_name.text) || !TextUtils.isEmpty(editText_content.text) || note.voice || (note.color != null)) {
+            if (!TextUtils.isEmpty(editText_name.text) || !TextUtils.isEmpty(editText_content.text) || (note.color != null) || note.voice) {
                 saveDialogShow(requestCode)
             } else {
                 super.onBackPressed()
@@ -331,7 +314,6 @@ class ClickedActivity : AppCompatActivity() {
         }
     }
 
-    // TODO: MAybe delete this
     private fun checkVoiceNote(){
         val oldNote = intent.getSerializableExtra("openNote") as Note
         oldNote.voice = File(fileName).exists()
@@ -342,7 +324,6 @@ class ClickedActivity : AppCompatActivity() {
         finish()
     }
 
-    // TODO: Look here
     private fun makePhotoChooseIntent() {
         val choosePhotoIntent = Intent(Intent.ACTION_OPEN_DOCUMENT)
         choosePhotoIntent.type = "image/*"
@@ -360,34 +341,13 @@ class ClickedActivity : AppCompatActivity() {
             if(listOfImages.size < 3) {
                 listOfImages.add(uriImage.toString())
             } else {
+                // TODO: Change to string resources
                 Toast.makeText(this, "Already 3 images attached", Toast.LENGTH_SHORT).show()
             }
             note.images = listOfImages
         }
     }
 
-    //val glideListener = object : RequestListener<Drawable>{
-    //    override fun onLoadFailed(
-    //        e: GlideException?,
-    //        model: Any?,
-    //        target: Target<Drawable>?,
-    //        isFirstResource: Boolean
-    //    ): Boolean {
-    //        return false
-    //    }
-    //    override fun onResourceReady(
-    //        resource: Drawable?,
-    //        model: Any?,
-    //        target: Target<Drawable>?,
-    //        dataSource: DataSource?,
-    //        isFirstResource: Boolean
-    //    ): Boolean {
-    //        return false
-    //    }
-    //}
-
-    // TODO: Add ScrollView!!!
-    // TODO: Рассмотреть случаи когда фото удаляется с устройства
     private fun setImage(){
         val viewList = arrayListOf<ImageView>(imageClicked1, imageClicked2, imageClicked3)
         if (note.images != null) {
@@ -397,7 +357,7 @@ class ClickedActivity : AppCompatActivity() {
                     // setting image
                     viewList[i].visibility = VISIBLE
                     Glide.with(this).load(note.images!![i]).override(800, 1000).into(viewList[i])
-                    // delete img
+                    // delete img listener
                     viewList[i].setOnLongClickListener {
                         listOfImages.removeAt(i)
                         note.images = listOfImages
@@ -408,10 +368,11 @@ class ClickedActivity : AppCompatActivity() {
             } else {
                 cardView_images.visibility = GONE
             }
-
+            // hiding other ImageViews without images
             for(i in note.images!!.size until viewList.size){
                 viewList[i].visibility = GONE
             }
+            // Setting margins
             setLayoutParams()
         } else {
             cardView_images.visibility = GONE
@@ -422,42 +383,28 @@ class ClickedActivity : AppCompatActivity() {
         if(note.images!!.size == 1) {
             val params1 = (imageClicked1.layoutParams as ViewGroup.MarginLayoutParams)
             params1.setMargins(0, 0, 0, 0)
-            //params1.height = 1000
             imageClicked1.layoutParams = params1
-            //cardView_images.layoutParams.height = TableLayout.LayoutParams.WRAP_CONTENT
         } else {
-            //imageTableLayout.layoutParams.height = 500
             if(note.images!!.size == 2) {
                 val params1 = (imageClicked1.layoutParams as ViewGroup.MarginLayoutParams)
                 params1.setMargins(0, 0, 9, 0)
-                //params1.height = 500
                 imageClicked1.layoutParams = params1
                 val params2 = (imageClicked2.layoutParams as ViewGroup.MarginLayoutParams)
                 params2.setMargins(0, 0, 0, 0)
-                //params2.height = 500
                 imageClicked2.layoutParams = params2
             } else { // 3
                 val params1 = (imageClicked1.layoutParams as ViewGroup.MarginLayoutParams)
                 params1.setMargins(0, 0, 0, 0)
-                //params1.height = 500
                 imageClicked1.layoutParams = params1
                 val params2 = (imageClicked2.layoutParams as ViewGroup.MarginLayoutParams)
                 params2.setMargins(9, 0, 9, 0)
-                //params2.height = 500
                 imageClicked2.layoutParams = params2
-
-                //val params3 = (imageClicked3.layoutParams as ViewGroup.MarginLayoutParams)
-                //params3.setMargins(0, 0, 0, 0)
-                ////params3.height = 500
-                //imageClicked3.layoutParams = params3
             }
         }
     }
 
     override fun onResume() {
         super.onResume()
-        //val prefs: SharedPreferences? = PreferenceManager.getDefaultSharedPreferences(this)
-
         // setting image
         setImage()
 
@@ -468,7 +415,6 @@ class ClickedActivity : AppCompatActivity() {
 
         playStart()
     }
-
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_opened_note, menu)
@@ -555,23 +501,6 @@ class ClickedActivity : AppCompatActivity() {
                 }}).start()
         }
     }
-
-    // TODO: Maybe delete this
-    //private fun animatePhotoLayout(){
-    //    isPhotoLayoutOpen = !isPhotoLayoutOpen
-    //    if (isPhotoLayoutOpen) {
-    //        photo_choose_layout.visibility = VISIBLE
-    //        photo_choose_layout.alpha = 0.0f
-    //        photo_choose_layout.animate().translationY(-photo_choose_layout.height.toFloat()).alpha(1.0f).setListener(null).start()
-    //    } else {
-    //        photo_choose_layout.animate().translationY(0f).alpha(0.0f).setListener(object :
-    //            AnimatorListenerAdapter() {
-    //            override fun onAnimationEnd(animation: Animator?) {
-    //                super.onAnimationEnd(animation)
-    //                photo_choose_layout.visibility = GONE
-    //            }}).start()
-    //    }
-    //}
 
     private fun checkPermission(context : Context, permissions : Array<String>) : Boolean {
         var allSuccess = true
