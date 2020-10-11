@@ -135,9 +135,6 @@ data class Note(
     @ColumnInfo(name = "note_parent_id")
     var parentId : Long? = null                     // id дневника, к к-му привязана
 
-    @ColumnInfo(name = "note_img")
-    var img : String? = null                        // картинка
-
     @ColumnInfo(name = "note_images")
     var images : List<String?>? = null
 
@@ -174,8 +171,6 @@ data class Note(
             return false
         if(creationDate != other.creationDate)
             return false
-        if(img != other.img)
-            return false
         if(color != other.color)
             return false
         if(lastEditDate != other.lastEditDate)
@@ -197,7 +192,6 @@ data class Note(
         result = 31 * result + id.hashCode()
         result = 31 * result + content.hashCode()
         result = 31 * result + (parentId?.hashCode() ?: 0)
-        result = 31 * result + (img?.hashCode() ?: 0)
         result = 31 * result + (images?.hashCode() ?: 0)
         result = 31 * result + (color ?: 0)
         result = 31 * result + voice.hashCode()

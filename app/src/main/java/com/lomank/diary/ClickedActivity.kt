@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.text.TextUtils
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -42,6 +43,8 @@ class ClickedActivity : AppCompatActivity() {
     private val choosePhotoRequestCode = 12
     private val newNoteRequestCode = 111
     private val openNoteRequestCode = 222
+    // TODO: Use this code in onActivityResult
+    private val photoActivityRequestCode = 487
 
     private var primalColor : Int? = null
 
@@ -88,8 +91,6 @@ class ClickedActivity : AppCompatActivity() {
 
             // parentId for new note
             note.parentId = extDiaryParent.diary.id
-            // setting photo of a diary (this photo will be on the background)
-            note.img = extDiaryParent.diary.img
         }
         else if(requestCode == openNoteRequestCode) // request for open existing note
         {
@@ -346,6 +347,15 @@ class ClickedActivity : AppCompatActivity() {
             }
             note.images = listOfImages
         }
+        if(requestCode == photoActivityRequestCode && resultCode == Activity.RESULT_OK){
+            val newNote = data?.getSerializableExtra(PhotoViewerActivity.EXTRA_REPLY_PHOTO_VIEWER) as Note
+            listOfImages = newNote.images as MutableList<String?>
+            note.images = listOfImages
+            setImage()
+
+        } else if(requestCode == photoActivityRequestCode && resultCode == Activity.RESULT_CANCELED) {
+            Log.e("canceled", "no photo changed")
+        }
     }
 
     private fun setImage(){
@@ -358,12 +368,19 @@ class ClickedActivity : AppCompatActivity() {
                     viewList[i].visibility = VISIBLE
                     Glide.with(this).load(note.images!![i]).override(800, 1000).into(viewList[i])
                     // delete img listener
-                    viewList[i].setOnLongClickListener {
-                        listOfImages.removeAt(i)
-                        note.images = listOfImages
-                        setImage()
-                        true
+                    viewList[i].setOnClickListener{
+                        val imageIntent = Intent(this, PhotoViewerActivity::class.java)
+                        imageIntent.putExtra("currentPos", i)
+                        imageIntent.putExtra("images", note)
+                        startActivityForResult(imageIntent, photoActivityRequestCode)
                     }
+
+                    //viewList[i].setOnLongClickListener {
+                    //    listOfImages.removeAt(i)
+                    //    note.images = listOfImages
+                    //    setImage()
+                    //    true
+                    //}
                 }
             } else {
                 cardView_images.visibility = GONE

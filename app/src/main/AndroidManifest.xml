@@ -1,51 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.lomank.diary">
 
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
+        android:allowBackup="true"
         android:icon="@drawable/logo"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        android:allowBackup="true">
-
+        android:theme="@style/AppTheme">
         <activity
-            android:name="com.lomank.diary.EditDiaryActivity"
+            android:label=""
+            android:name=".PhotoViewerActivity"
+            android:theme="@style/noActionBarTheme" />
+        <activity
+            android:name=".EditDiaryActivity"
             android:hardwareAccelerated="true"
             android:label="@string/edit_diary" />
         <activity
-            android:name="com.lomank.diary.SettingsHolderActivity"
+            android:name=".SettingsHolderActivity"
             android:label="@string/settings_btn" />
         <activity
-            android:name="com.lomank.diary.AboutActivity"
+            android:name=".AboutActivity"
             android:hardwareAccelerated="true"
             android:label="@string/about_btn" />
         <activity
-            android:name="com.lomank.diary.NoteActivity"
+            android:name=".NoteActivity"
             android:hardwareAccelerated="true"
             android:label="@string/notes_btn" />
         <activity
-            android:name="com.lomank.diary.ClickedActivity"
+            android:name=".ClickedActivity"
+            android:label="@string/clicked_note"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden|adjustPan"
-            android:label="@string/clicked_note" />
+            android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
-            android:name="com.lomank.diary.NewDiaryActivity"
+            android:name=".NewDiaryActivity"
             android:hardwareAccelerated="true"
             android:label="@string/new_diary" />
         <activity
-            android:name="com.lomank.diary.MainActivity"
+            android:name=".MainActivity"
             android:hardwareAccelerated="true"
             android:label="@string/app_name" />
         <activity
-            android:name="com.lomank.diary.SplashActivity"
+            android:name=".SplashActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -53,10 +55,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-3081053917792975~4410022332"
-            >
-        </meta-data>
+            android:value="ca-app-pub-3081053917792975~4410022332" />
     </application>
+
 </manifest>

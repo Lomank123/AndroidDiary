@@ -11,7 +11,7 @@
     <string name="empty_not_saved">Canceled or Diary name is empty</string>
     <string name="add_favor">Added to Favorites</string>
     <string name="del_favor">Removed from Favorites</string>
-        <!-- Permissions -->
+    <!-- Permissions -->
     <string name="perm_granted">Permissions granted</string>
     <string name="perm_denied">Permissions denied</string>
     <string name="perm_denied_again">Enable permission in the settings</string>
