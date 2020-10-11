@@ -6,6 +6,8 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.viewpager2.widget.ViewPager2
+import com.afollestad.materialdialogs.MaterialDialog
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import kotlinx.android.synthetic.main.activity_photo_viewer.*
 import recyclerviewadapter.ImageViewPagerAdapter
@@ -29,8 +31,6 @@ class PhotoViewerActivity : AppCompatActivity() {
         note = intent.getSerializableExtra("images") as Note
         val currentPos = intent.getIntExtra("currentPos", 0)
 
-        //TODO: Возможно нужно передавать в адаптер всю заметку, а в заметке сделать поле с массивом размеров
-        // Эти размеры будут использоваться для отображения фото с правильной ориентацией
         val adapter = ImageViewPagerAdapter(this)
         image_viewPager.adapter = adapter
         if(note.images != null) {
@@ -58,17 +58,30 @@ class PhotoViewerActivity : AppCompatActivity() {
                 rotatePicture(v.orientation - 90, v)
             }
             R.id.delete -> {
-                // TODO: Implement dialog screen
-                allImages.removeAt(image_viewPager.currentItem)
-                if(image_viewPager.currentItem == 2){
-                    image_viewPager.setCurrentItem(1, false)
-                } else if(image_viewPager.currentItem == 1){
-                    image_viewPager.setCurrentItem(0, false)
-                }
-                (image_viewPager.adapter as ImageViewPagerAdapter).setImages(allImages)
+                val dialog = MaterialDialog(this)
+                val viewPager = this.findViewById<ViewPager2>(R.id.image_viewPager)
+                dialog.show {
+                    title(R.string.dialog_delete)
+                    message(R.string.dialog_image_delete_message)
+                    positiveButton(R.string.dialog_yes) {
+                        allImages.removeAt(viewPager.currentItem)
+                        if(viewPager.currentItem == 2){
+                            viewPager.setCurrentItem(1, false)
+                        } else if(viewPager.currentItem == 1){
+                            viewPager.setCurrentItem(0, false)
+                        }
+                        (viewPager.adapter as ImageViewPagerAdapter).setImages(allImages)
 
-                if(allImages.isEmpty())
-                    checkResultIntent()
+                        if(allImages.isEmpty())
+                            checkResultIntent()
+                        dialog.dismiss()
+                    }
+                    negativeButton(R.string.dialog_no) {
+                        dialog.dismiss()
+                    }
+
+                }
+
             }
         }
         return super.onOptionsItemSelected(item)

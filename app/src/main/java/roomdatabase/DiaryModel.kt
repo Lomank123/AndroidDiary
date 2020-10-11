@@ -14,28 +14,6 @@ import java.lang.reflect.Type
 /**
  * Модель дневника
  */
-class Converters {
-    @TypeConverter // note this annotation
-    fun fromStringList(list : List<String?>?): String? {
-        if (list == null) {
-            return null
-        }
-        val gson = Gson()
-        val type: Type = object : TypeToken<List<String?>?>() {}.type
-        return gson.toJson(list, type)
-    }
-
-    @TypeConverter // note this annotation
-    fun toStringList(listString : String?): List<String?>? {
-        if (listString == null) {
-            return null
-        }
-        val gson = Gson()
-        val type: Type = object : TypeToken<List<String?>?>() {}.type
-        return gson.fromJson(listString, type)
-    }
-}
-
 @Entity(tableName = "diary_table")                                        // название таблицы
 data class Diary(
     @ColumnInfo(name = "diary_name") var name: String        // название дневника

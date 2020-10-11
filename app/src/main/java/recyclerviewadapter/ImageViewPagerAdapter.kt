@@ -9,7 +9,6 @@ import com.davemorrissey.labs.subscaleview.ImageSource.uri
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.lomank.diary.R
 
-// TODO: Добавить Listener'ы, которые будут выполнять функционал для кнопок поворота и удаления
 class ImageViewPagerAdapter(
     context : Context
 ) : RecyclerView.Adapter<ImageViewPagerAdapter.ViewPagerViewHolder>() {
@@ -20,7 +19,7 @@ class ImageViewPagerAdapter(
 
    inner class ViewPagerViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView){
 
-        private val photoItemView : SubsamplingScaleImageView = itemView.findViewById(R.id.photoView_holder)
+       private val photoItemView : SubsamplingScaleImageView = itemView.findViewById(R.id.photoView_holder)
 
        fun bindView(image : String?){
             if(image != null){

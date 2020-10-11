@@ -15,6 +15,7 @@
     <string name="perm_granted">Permissions granted</string>
     <string name="perm_denied">Permissions denied</string>
     <string name="perm_denied_again">Enable permission in the settings</string>
+    <string name="perm_one_more">Tap one more time</string>
 
 
     <!-- Main -->
@@ -34,6 +35,8 @@
     <string name="creation_date">Creation date: </string>
     <string name="last_edit_date">Last edit date: </string>
     <string name="amount_of_notes">Amount of notes: </string>
+
+    <string name="max_image_attached">You can attach only 3 images</string>
 
 
     <!-- Dialog screen -->
@@ -64,12 +67,15 @@
     <string name="dialog_edit_text">Enter a new name of your daily list</string>
     <string name="dialog_edit_daily_list_item_text">Enter a new name for daily list item</string>
 
+    <string name="dialog_image_delete_message">Do you want to delete this image?</string>
+
 
     <!-- Settings -->
     <string name="categoryMainSettings">Main settings</string>
-    <string name="img_check">Show img</string>
+    <string name="img_check">Show diary image on the note background</string>
     <string name="color_check_diary">Show diary color</string>
     <string name="color_check_note">Show note color</string>
+    <string name="images_show_setting">Show attached to note images</string>
 
     <!-- Menu buttons -->
     <string name="edit_btn">Edit</string>

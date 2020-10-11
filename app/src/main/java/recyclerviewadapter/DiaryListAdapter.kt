@@ -64,9 +64,6 @@ class DiaryListAdapter internal constructor(
         private val diaryImageView: ImageView = itemView.findViewById(R.id.imageView)
         private val diaryStarView: ImageView = itemView.findViewById(R.id.imageView_star)
 
-        // TODO: Maybe delete this
-        //private val diaryImageButtonViewOptions : ImageButton = itemView.findViewById(R.id.imageButton_options)
-
         private val diaryImageButtonViewDelete : ImageButton = itemView.findViewById(R.id.imageButton_delete)
         // expandable layout
         private val expandableLayoutItemView : ConstraintLayout = itemView.findViewById(R.id.expandable_layout)
@@ -76,11 +73,6 @@ class DiaryListAdapter internal constructor(
         private val fullDescriptionItemView : TextView = itemView.findViewById((R.id.full_description))
         private val amountOfNotesText : TextView = itemView.findViewById(R.id.amount_of_notes_text)
         private val amountOfNotesCount : TextView = itemView.findViewById(R.id.amount_of_notes_count)
-
-        // images
-        private val image1 : ImageView = itemView.findViewById(R.id.image1)
-        private val image2 : ImageView = itemView.findViewById(R.id.image2)
-        private val image3 : ImageView = itemView.findViewById(R.id.image3)
 
         // эта функция применяется для каждого члена RecyclerView т.к. вызывается в onBindViewHolder
         fun bindView(extDiary: ExtendedDiary) {
@@ -147,7 +139,6 @@ class DiaryListAdapter internal constructor(
                 expandableLayoutItemView.visibility = GONE
             }
 
-            //diaryImageButtonViewOptions.setOnClickListener{
             itemView.setOnLongClickListener {
                 // Устанавливаем контекстное меню
                 val popupMenu = PopupMenu(mContext, it)

@@ -21,6 +21,7 @@
     <string name="last_edit_date">Дата последнего изменения: </string>
     <string name="amount_of_notes">Количество заметок: </string>
     <string name="title">Заголовок…</string>
+    <string name="max_image_attached">Вы можете прикрепить только 3 изображения</string>
 
 
     <!-- Диалоговое окно -->
@@ -46,13 +47,15 @@
     <string name="dialog_delete_voice_title">Удаление голосовой заметки</string>
     <string name="dialog_delete_voice_message">Вы хотите удалить голосовую заметку? Вернуть ее будет уже нельзя.</string>
     <string name="dialog_color_choose_title">Выберите цвет</string>
+    <string name="dialog_image_delete_message">Вы хотите удалить изображение?</string>
 
 
     <!-- Настройки -->
     <string name="categoryMainSettings">Главные настройки</string>
-    <string name="img_check">Показывать фотографии</string>
+    <string name="img_check">Показывать изображение из дневника на заднем фоне заметки</string>
     <string name="color_check_diary">Показывать цвет дневников</string>
     <string name="color_check_note">Показывать цвет заметок</string>
+    <string name="images_show_setting">Показывать изображения, прикрепленные к заметке</string>
 
     <!-- Меню -->
     <string name="edit_btn">Редактировать</string>
@@ -104,6 +107,7 @@
     <string name="perm_granted">Права выданы</string>
     <string name="perm_denied">Права не выданы</string>
     <string name="perm_denied_again">Включите доступ в настройках</string>
+    <string name="perm_one_more">Нажмите еще раз</string>
 
     <string name="privacy_policy">Ссылка на политику конфиденциальности:</string>
     <string name="pp_link">https://diary-daily-list.flycricket.io/privacy.html</string>

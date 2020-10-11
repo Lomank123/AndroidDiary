@@ -5,7 +5,6 @@ import android.app.Activity
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -145,9 +144,6 @@ class MainActivity : AppCompatActivity() {
                 diary.creationDate = currentDate()
                 diary.lastEditDate = currentDate()
                 diary.content = it[1]
-
-                Log.e("Photo", "Path of photo: ${diary.img}")
-
                 mainViewModel.insertDiary(diary) // добавляем запись в БД
             }
         }

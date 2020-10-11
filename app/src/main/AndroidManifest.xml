@@ -20,6 +20,7 @@
             android:theme="@style/noActionBarTheme" />
         <activity
             android:name=".EditDiaryActivity"
+            android:windowSoftInputMode="stateHidden|adjustPan"
             android:hardwareAccelerated="true"
             android:label="@string/edit_diary" />
         <activity
@@ -40,6 +41,7 @@
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".NewDiaryActivity"
+            android:windowSoftInputMode="stateHidden|adjustPan"
             android:hardwareAccelerated="true"
             android:label="@string/new_diary" />
         <activity

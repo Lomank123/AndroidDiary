@@ -267,6 +267,16 @@
         </ImageButton>
 
         <ImageButton
+            android:id="@+id/camera_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="12dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/sample"
+            android:padding="8dp"
+            android:src="@drawable/ic_baseline_photo_camera_24"/>
+
+        <ImageButton
             android:id="@+id/color_choose_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -289,6 +299,8 @@
             android:contentDescription="@string/sample">
 
         </ImageButton>
+
+
 
     </LinearLayout>
 

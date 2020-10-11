@@ -4,16 +4,19 @@ import android.Manifest
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.app.Activity
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.media.MediaPlayer
 import android.media.MediaRecorder
+import android.net.Uri
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import android.provider.MediaStore
 import android.text.TextUtils
 import android.util.Log
 import android.view.Menu
@@ -43,11 +46,23 @@ class ClickedActivity : AppCompatActivity() {
     private val choosePhotoRequestCode = 12
     private val newNoteRequestCode = 111
     private val openNoteRequestCode = 222
-    // TODO: Use this code in onActivityResult
     private val photoActivityRequestCode = 487
+    private val cameraActivityRequestCode = 179
+
+    private var imageUri : Uri? = null
 
     private var primalColor : Int? = null
 
+    private val permissionsList1 = arrayOf(
+        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+        Manifest.permission.READ_EXTERNAL_STORAGE,
+        Manifest.permission.RECORD_AUDIO
+    )
+    private val permissionsList2 = arrayOf(
+        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+        Manifest.permission.READ_EXTERNAL_STORAGE,
+        Manifest.permission.CAMERA
+    )
 
     // image handle
     private var listOfImages = mutableListOf<String?>()
@@ -175,13 +190,27 @@ class ClickedActivity : AppCompatActivity() {
         // layout appearing button (image button)
         photo_choose_button.setOnClickListener {
             // permission check
-            requestForCheckPermission()
+            requestForCheckPermission(2)
+            if(checkPermission(this, permissionsList2)){
+                // closing another layout if it was opened
+                if(isVoiceLayoutOpen)
+                    animateVoiceLayout()
+                makePhotoChooseIntent()
+            }
+        }
 
-            // closing another layout if it was opened
-            if(isVoiceLayoutOpen)
-                animateVoiceLayout()
-
-            makePhotoChooseIntent()
+        camera_button.setOnClickListener {
+            requestForCheckPermission(2)
+            if(checkPermission(this, permissionsList2)) {
+                if(listOfImages.size < 3) {
+                    // closing another layout if it was opened
+                    if (isVoiceLayoutOpen)
+                        animateVoiceLayout()
+                    makeCameraIntent()
+                } else {
+                    Toast.makeText(this, this.resources.getString(R.string.max_image_attached), Toast.LENGTH_SHORT).show()
+                }
+            }
         }
 
         // VOICE BUTTONS
@@ -189,9 +218,11 @@ class ClickedActivity : AppCompatActivity() {
         // layout appearing button (mic icon)
         mic_button.setOnClickListener {
             // permission check
-            requestForCheckPermission()
-            // layout_voice animation
-            animateVoiceLayout()
+            requestForCheckPermission(1)
+            if(checkPermission(this, permissionsList1)) {
+                // layout_voice animation
+                animateVoiceLayout()
+            }
         }
 
         // if voice note already exist
@@ -331,6 +362,18 @@ class ClickedActivity : AppCompatActivity() {
         startActivityForResult(choosePhotoIntent, choosePhotoRequestCode)
     }
 
+    private fun makeCameraIntent() {
+        val values = ContentValues(1)
+        values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpg")
+        imageUri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        if (intent.resolveActivity(packageManager) != null) {
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+            startActivityForResult(intent, cameraActivityRequestCode)
+        }
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == choosePhotoRequestCode && resultCode == Activity.RESULT_OK)
@@ -342,8 +385,7 @@ class ClickedActivity : AppCompatActivity() {
             if(listOfImages.size < 3) {
                 listOfImages.add(uriImage.toString())
             } else {
-                // TODO: Change to string resources
-                Toast.makeText(this, "Already 3 images attached", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, this.resources.getString(R.string.max_image_attached), Toast.LENGTH_SHORT).show()
             }
             note.images = listOfImages
         }
@@ -353,8 +395,15 @@ class ClickedActivity : AppCompatActivity() {
             note.images = listOfImages
             setImage()
 
-        } else if(requestCode == photoActivityRequestCode && resultCode == Activity.RESULT_CANCELED) {
-            Log.e("canceled", "no photo changed")
+        }
+        if(requestCode == cameraActivityRequestCode && resultCode == Activity.RESULT_OK){
+            Log.e("err", "uri is:  ${imageUri.toString()}")
+            if(listOfImages.size < 3) {
+                listOfImages.add(imageUri.toString())
+            } else {
+                Toast.makeText(this, this.resources.getString(R.string.max_image_attached), Toast.LENGTH_SHORT).show()
+            }
+            note.images = listOfImages
         }
     }
 
@@ -367,20 +416,13 @@ class ClickedActivity : AppCompatActivity() {
                     // setting image
                     viewList[i].visibility = VISIBLE
                     Glide.with(this).load(note.images!![i]).override(800, 1000).into(viewList[i])
-                    // delete img listener
+                    // open photo listener
                     viewList[i].setOnClickListener{
                         val imageIntent = Intent(this, PhotoViewerActivity::class.java)
                         imageIntent.putExtra("currentPos", i)
                         imageIntent.putExtra("images", note)
                         startActivityForResult(imageIntent, photoActivityRequestCode)
                     }
-
-                    //viewList[i].setOnLongClickListener {
-                    //    listOfImages.removeAt(i)
-                    //    note.images = listOfImages
-                    //    setImage()
-                    //    true
-                    //}
                 }
             } else {
                 cardView_images.visibility = GONE
@@ -424,6 +466,12 @@ class ClickedActivity : AppCompatActivity() {
         super.onResume()
         // setting image
         setImage()
+        val prefs: SharedPreferences? = PreferenceManager.getDefaultSharedPreferences(this)
+        val extDiaryParent = intent.getSerializableExtra("diaryParent") as ExtendedDiary
+
+        // setting image on the background
+        if(extDiaryParent.diary.img != null && extDiaryParent.diary.img != "" && prefs!!.getBoolean("img_check", false))
+            Glide.with(this).load(extDiaryParent.diary.img).into(imageView_background)
 
         // resetting progressBar and media player
         seekBar_active.progress = 0
@@ -532,17 +580,20 @@ class ClickedActivity : AppCompatActivity() {
         return allSuccess
     }
 
-    private fun requestForCheckPermission(){
-        val permissionsList = arrayOf(
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.RECORD_AUDIO,
-            Manifest.permission.CAMERA
-        )
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-            if(!checkPermission(this, permissionsList)) {
-                ActivityCompat.requestPermissions(this, permissionsList, permissionRequestCode)
+    // 1 for audio, 2 for images
+    private fun requestForCheckPermission(requestCode: Int){
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if(requestCode == 1){
+                if (!checkPermission(this, permissionsList1)) {
+                    ActivityCompat.requestPermissions(this, permissionsList1, permissionRequestCode)
+                }
+            } else if (requestCode == 2) {
+                if (!checkPermission(this, permissionsList2)) {
+                    ActivityCompat.requestPermissions(this, permissionsList2, permissionRequestCode)
+                }
             }
+        }
     }
 
     override fun onRequestPermissionsResult(
@@ -553,15 +604,21 @@ class ClickedActivity : AppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when(requestCode) {
             permissionRequestCode -> {
+                var allGranted = true
                 for(i in permissions.indices) {
                     if (grantResults[i] == PackageManager.PERMISSION_DENIED) {
                         val requestAgain = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && shouldShowRequestPermissionRationale(permissions[i])
-                        if(requestAgain)
+                        if(requestAgain) {
                             Toast.makeText(this, resources.getString(R.string.perm_denied), Toast.LENGTH_SHORT).show()
-                        else
+                        }
+                        else {
                             Toast.makeText(this, resources.getString(R.string.perm_denied_again), Toast.LENGTH_SHORT).show()
+                        }
+                        allGranted = false
                     }
                 }
+                if(allGranted)
+                    Toast.makeText(this, "Tap one more time", Toast.LENGTH_SHORT).show()
             }
         }
     }

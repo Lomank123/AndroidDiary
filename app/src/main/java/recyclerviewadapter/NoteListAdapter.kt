@@ -69,9 +69,6 @@ class NoteListAdapter internal constructor(
         private val noteImageView : ImageView = itemView.findViewById(R.id.imageView)
         private val noteStarView : ImageView = itemView.findViewById(R.id.imageView_star)
 
-        // TODO: Maybe delete this
-        //private val noteImageButtonViewOptions : ImageButton = itemView.findViewById(R.id.imageButton_options)
-
         private val noteImageButtonViewDelete : ImageButton = itemView.findViewById(R.id.imageButton_delete)
         // expandable layout
         private val expandableLayoutItemView : ConstraintLayout = itemView.findViewById(R.id.expandable_layout)
@@ -99,28 +96,31 @@ class NoteListAdapter internal constructor(
                 listenerOpen(note)
             }
 
-
-            // TODO: Add check in the settings
-            // Images
-            val viewList = arrayListOf(image1, image2, image3)
-            if (note.images != null) {
-                if(note.images!!.isNotEmpty()) {
-                    imageLayout.visibility = VISIBLE
-                    for(i in note.images!!.indices) {
-                        // setting image
-                        viewList[i].visibility = VISIBLE
-                        Glide.with(mContext).load(note.images!![i]).override(800, 1000).into(viewList[i])
+            // showing images
+            if(prefs!!.getBoolean("images_show_note", false)){
+                val viewList = arrayListOf(image1, image2, image3)
+                if (note.images != null) {
+                    if(note.images!!.isNotEmpty()) {
+                        imageLayout.visibility = VISIBLE
+                        for(i in note.images!!.indices) {
+                            // setting image
+                            viewList[i].visibility = VISIBLE
+                            Glide.with(mContext).load(note.images!![i]).override(800, 1000).into(viewList[i])
+                        }
+                    } else {
+                        imageLayout.visibility = GONE
                     }
+                    for(i in note.images!!.size until viewList.size){
+                        viewList[i].visibility = GONE
+                    }
+                    setLayoutParams(note, image1, image2)
                 } else {
                     imageLayout.visibility = GONE
                 }
-                for(i in note.images!!.size until viewList.size){
-                    viewList[i].visibility = GONE
-                }
-                setLayoutParams(note, image1, image2)
             } else {
                 imageLayout.visibility = GONE
             }
+
 
 
             // иконка со звездочкой (избранное)
@@ -136,7 +136,7 @@ class NoteListAdapter internal constructor(
                 imageViewMic.visibility = GONE
 
             // color
-            if (note.color != null && prefs!!.getBoolean("color_check_note", false)) {
+            if (note.color != null && prefs.getBoolean("color_check_note", false)) {
                 layoutItemView.setBackgroundColor(note.color!!)
             }
             else
@@ -166,7 +166,6 @@ class NoteListAdapter internal constructor(
                 expandableLayoutItemView.visibility = GONE
             }
 
-            //noteImageButtonViewOptions.setOnClickListener{
             itemView.setOnLongClickListener {
                 // Устанавливаем контекстное меню
                 val popupMenu = PopupMenu(mContext, it)

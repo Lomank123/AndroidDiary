@@ -1,15 +1,15 @@
 package roomdatabase
 
 import android.content.Context
-import androidx.room.Database
-import androidx.room.Room
-import androidx.room.RoomDatabase
-import androidx.room.TypeConverters
+import androidx.room.*
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import java.lang.reflect.Type
 
-@Database(entities = [Diary::class, Note::class, DailyListItem::class], version = 2, exportSchema = false)
+@Database(entities = [Diary::class, Note::class, DailyListItem::class], version = 1, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class DiaryRoomDatabase : RoomDatabase() {
 
@@ -61,5 +61,27 @@ abstract class DiaryRoomDatabase : RoomDatabase() {
                 // дальнейшем базу данных нельзя пересоздавать чтобы не потерять данные
             }
         }
+    }
+}
+
+class Converters {
+    @TypeConverter // note this annotation
+    fun fromStringList(list : List<String?>?): String? {
+        if (list == null) {
+            return null
+        }
+        val gson = Gson()
+        val type: Type = object : TypeToken<List<String?>?>() {}.type
+        return gson.toJson(list, type)
+    }
+
+    @TypeConverter // note this annotation
+    fun toStringList(listString : String?): List<String?>? {
+        if (listString == null) {
+            return null
+        }
+        val gson = Gson()
+        val type: Type = object : TypeToken<List<String?>?>() {}.type
+        return gson.fromJson(listString, type)
     }
 }
