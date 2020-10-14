@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:foreground="?android:attr/selectableItemBackground"
@@ -8,7 +9,7 @@
     app:cardElevation="20dp"
     app:cardPreventCornerOverlap="false">
 
-    <RelativeLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/relative_layout_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -22,44 +23,48 @@
         <CheckBox
             android:id="@+id/checkBox_list"
             style="@style/Widget.MaterialComponents.CompoundButton.CheckBox"
-            android:layout_width="284dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:fontFamily="@font/ubuntu_regular"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="0dp"
-            android:text="@string/sample" />
+            android:text="@string/sample"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/imageButton_edit"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageButton
             android:id="@+id/imageButton_delete"
             style="@style/Widget.AppCompat.ImageButton"
             android:layout_width="wrap_content"
-            android:layout_height="48dp"
+            android:layout_height="0dp"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
-            android:layout_marginTop="0dp"
-            android:layout_marginEnd="0dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/sample"
             android:paddingLeft="8dp"
             android:paddingRight="8dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_baseline_close_32" />
 
         <ImageButton
             android:id="@+id/imageButton_edit"
             android:layout_width="wrap_content"
-            android:layout_height="48dp"
+            android:layout_height="0dp"
             android:layout_alignParentTop="true"
-            android:layout_marginTop="0dp"
-            android:layout_marginEnd="0dp"
             android:layout_toStartOf="@+id/imageButton_delete"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/sample"
             android:paddingLeft="8dp"
             android:paddingRight="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/imageButton_delete"
+            app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_outline_edit_32" />
 
-    </RelativeLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.cardview.widget.CardView>

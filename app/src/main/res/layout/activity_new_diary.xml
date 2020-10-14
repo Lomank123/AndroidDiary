@@ -3,10 +3,18 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/materialToolbar_new_diary"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/primary_color1"
+        app:titleTextColor="@color/gray"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ScrollView
         android:id="@+id/scrollView2"
@@ -87,12 +95,14 @@
                 android:id="@+id/edit_content"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="20dp"
                 android:hint="@string/description"
                 android:importantForAutofill="no"
                 android:inputType="textAutoComplete"
                 android:padding="6dp"
                 android:textSize="18sp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
                 android:fontFamily="@font/ubuntu_regular"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -108,6 +118,8 @@
                 android:inputType="textAutoComplete"
                 android:maxLength="36"
                 android:padding="6dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
                 android:textSize="18sp"
                 android:fontFamily="@font/ubuntu_regular"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -143,7 +155,7 @@
         app:adUnitId="ca-app-pub-3081053917792975/2630036802"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/materialToolbar_new_diary" />
 
     <Button
         android:id="@+id/button_save"

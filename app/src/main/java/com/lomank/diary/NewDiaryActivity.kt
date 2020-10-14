@@ -20,6 +20,7 @@ import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.MobileAds
 import com.google.android.material.card.MaterialCardView
 import kotlinx.android.synthetic.main.activity_new_diary.*
+import kotlinx.android.synthetic.main.activity_photo_viewer.*
 
 class NewDiaryActivity : AppCompatActivity() {
 
@@ -39,6 +40,9 @@ class NewDiaryActivity : AppCompatActivity() {
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_new_diary)
+        setSupportActionBar(materialToolbar_new_diary)
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        materialToolbar_new_diary.setNavigationIcon(R.drawable.ic_baseline_arrow_back_gray_32)
 
         MobileAds.initialize(this)
         adView3.loadAd(AdRequest.Builder().build())
@@ -50,8 +54,7 @@ class NewDiaryActivity : AppCompatActivity() {
         button_save.setOnClickListener {
             // если поле пустое устанавливаем отриц. результат
             if (TextUtils.isEmpty(edit_diary.text)) {
-                // устанавливаем результат как RESULT_CANCELED (отменен)
-                setResult(Activity.RESULT_CANCELED, replyIntent)
+                edit_diary.error = this.resources.getString(R.string.error_diary_name)
             } else {
                 // создаем массив с названием и описанием дневника
                 val diaryContext = arrayListOf(edit_diary.text.toString(),
@@ -59,9 +62,10 @@ class NewDiaryActivity : AppCompatActivity() {
                 // кладем то, что написано в editText в word и передаем по тегу EXTRA_REPLY (ниже)
                 replyIntent.putExtra(EXTRA_NEW_DIARY, diaryContext)
                 setResult(Activity.RESULT_OK, replyIntent) // resultCode будет RESULT_OK
+                // завершаем работу с активити
+                finish()
             }
-            // завершаем работу с активити
-            finish()
+
         }
         // Кнопка Cancel
         button_cancel_diary.setOnClickListener {
@@ -173,6 +177,11 @@ class NewDiaryActivity : AppCompatActivity() {
         else {
             super.onBackPressed()
         }
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return true
     }
 
     // обрабатываем выбор фото из галереи

@@ -9,7 +9,7 @@
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/note_settings"
-        android:icon="@drawable/ic_baseline_more_vert_32"
+        android:icon="@drawable/ic_outline_settings_32"
         android:title="@string/settings_btn"
         app:showAsAction="ifRoom" />
 </menu>

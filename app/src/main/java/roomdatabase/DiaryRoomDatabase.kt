@@ -9,7 +9,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.lang.reflect.Type
 
-@Database(entities = [Diary::class, Note::class, DailyListItem::class], version = 1, exportSchema = false)
+@Database(entities = [Diary::class, Note::class, DailyListItem::class], version = 2, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class DiaryRoomDatabase : RoomDatabase() {
 

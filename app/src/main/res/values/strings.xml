@@ -72,10 +72,16 @@
 
     <!-- Settings -->
     <string name="categoryMainSettings">Main settings</string>
-    <string name="img_check">Show diary image on the note background</string>
-    <string name="color_check_diary">Show diary color</string>
-    <string name="color_check_note">Show note color</string>
-    <string name="images_show_setting">Show attached to note images</string>
+
+    <string name="diary_image_in_note_title">Background image for note</string>
+    <string name="diary_image_in_note_summary">Show diary image on the note background</string>
+
+    <string name="show_color_diary_title">Show diary color</string>
+
+    <string name="show_color_note_title">Show note color</string>
+
+    <string name="show_images_in_list_note_title">Show notes with images</string>
+    <string name="show_images_in_list_note_summary">Show attached images in the note list</string>
 
     <!-- Menu buttons -->
     <string name="edit_btn">Edit</string>
@@ -124,5 +130,8 @@
     <string name="app_ver">App version: 1.02</string>
     <string name="privacy_policy">Privacy policy link:</string>
     <string name="pp_link">https://diary-daily-list.flycricket.io/privacy.html</string>
+
+    <!-- Error messages -->
+    <string name="error_diary_name">Input name</string>
 
 </resources>

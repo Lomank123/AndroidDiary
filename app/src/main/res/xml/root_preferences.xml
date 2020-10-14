@@ -1,27 +1,35 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <PreferenceCategory app:title="@string/categoryMainSettings">
+    <PreferenceCategory
+        app:iconSpaceReserved="false"
+        app:title="@string/categoryMainSettings">
 
         <SwitchPreferenceCompat
+            android:summary="@string/diary_image_in_note_summary"
+            app:iconSpaceReserved="false"
             app:defaultValue="true"
             app:key="img_check"
-            app:title="@string/img_check" />
+            app:title="@string/diary_image_in_note_title" />
 
         <SwitchPreferenceCompat
             app:defaultValue="true"
+            app:iconSpaceReserved="false"
             app:key="color_check_diary"
-            app:title="@string/color_check_diary" />
+            app:title="@string/show_color_diary_title" />
 
         <SwitchPreferenceCompat
             app:defaultValue="true"
+            app:iconSpaceReserved="false"
             app:key="color_check_note"
-            app:title="@string/color_check_note" />
+            app:title="@string/show_color_note_title" />
 
         <SwitchPreferenceCompat
             app:defaultValue="true"
+            app:iconSpaceReserved="false"
             app:key="images_show_note"
-            app:title="@string/images_show_setting"/>
+            android:summary="@string/show_images_in_list_note_summary"
+            app:title="@string/show_images_in_list_note_title"/>
 
     </PreferenceCategory>
 </PreferenceScreen>

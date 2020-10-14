@@ -148,10 +148,11 @@
                 android:layout_marginEnd="4dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/sample"
-                android:visibility="gone"
-                app:layout_constraintEnd_toStartOf="@+id/imageButton_delete"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_outline_settings_32" />
+
+                app:srcCompat="@drawable/ic_baseline_more_vert_32" />
 
             <ImageButton
                 android:id="@+id/imageButton_delete"
@@ -163,7 +164,7 @@
                 android:layout_marginEnd="4dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/sample"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/imageButton_options"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_baseline_close_32" />
 

@@ -52,10 +52,15 @@
 
     <!-- Настройки -->
     <string name="categoryMainSettings">Главные настройки</string>
-    <string name="img_check">Показывать изображение из дневника на заднем фоне заметки</string>
-    <string name="color_check_diary">Показывать цвет дневников</string>
-    <string name="color_check_note">Показывать цвет заметок</string>
-    <string name="images_show_setting">Показывать изображения, прикрепленные к заметке</string>
+    <string name="diary_image_in_note_title">Фото на заднем фоне заметки</string>
+    <string name="diary_image_in_note_summary">Показывать картинку дневника на заднем фоне заметки</string>
+
+    <string name="show_color_diary_title">Показывать цвет дневников</string>
+
+    <string name="show_color_note_title">Показывать цвет заметок</string>
+
+    <string name="show_images_in_list_note_title">Заметки с картинками</string>
+    <string name="show_images_in_list_note_summary">Показывать изображения, прикрепленные к заметке, в списке</string>
 
     <!-- Меню -->
     <string name="edit_btn">Редактировать</string>
@@ -76,6 +81,9 @@
     <string name="new_diary">Новый дневник</string>
     <string name="edit_diary">Изменение дневника</string>
     <string name="clicked_note">Заметка</string>
+
+    <!-- Error messages -->
+    <string name="error_diary_name">Введите имя</string>
 
     <!-- Создатели -->
     <string name="creators">Создатель</string>

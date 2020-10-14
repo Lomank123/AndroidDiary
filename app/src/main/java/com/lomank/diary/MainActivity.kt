@@ -11,6 +11,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
+import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
@@ -41,6 +42,8 @@ class MainActivity : AppCompatActivity() {
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        setSupportActionBar(materialToolbar)
+        materialToolbar.overflowIcon = ResourcesCompat.getDrawable(resources, R.drawable.ic_baseline_more_vert_32, null)
 
         MobileAds.initialize(this)
         adView.loadAd(AdRequest.Builder().build())
@@ -160,11 +163,6 @@ class MainActivity : AppCompatActivity() {
                 diaryEdit.isExpanded = false
                 mainViewModel.updateDiary(diaryEdit) // обновляем запись в БД
             }
-        }
-        if ((requestCode == newDiaryActivityRequestCode || requestCode == editDiaryActivityRequestCode) &&
-            resultCode == Activity.RESULT_CANCELED) {
-            Toast.makeText(this, resources.getString(R.string.empty_not_saved),
-                Toast.LENGTH_SHORT).show()
         }
     }
 

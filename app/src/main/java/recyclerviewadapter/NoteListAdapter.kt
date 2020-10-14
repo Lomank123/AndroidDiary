@@ -68,7 +68,7 @@ class NoteListAdapter internal constructor(
         private val noteDescriptionView : TextView = itemView.findViewById(R.id.textView_content)
         private val noteImageView : ImageView = itemView.findViewById(R.id.imageView)
         private val noteStarView : ImageView = itemView.findViewById(R.id.imageView_star)
-
+        private val noteSettingsButtonView : ImageButton = itemView.findViewById(R.id.imageButton_options)
         private val noteImageButtonViewDelete : ImageButton = itemView.findViewById(R.id.imageButton_delete)
         // expandable layout
         private val expandableLayoutItemView : ConstraintLayout = itemView.findViewById(R.id.expandable_layout)
@@ -97,7 +97,7 @@ class NoteListAdapter internal constructor(
             }
 
             // showing images
-            if(prefs!!.getBoolean("images_show_note", false)){
+            if(prefs!!.getBoolean("images_show_note", true)){
                 val viewList = arrayListOf(image1, image2, image3)
                 if (note.images != null) {
                     if(note.images!!.isNotEmpty()) {
@@ -136,7 +136,7 @@ class NoteListAdapter internal constructor(
                 imageViewMic.visibility = GONE
 
             // color
-            if (note.color != null && prefs.getBoolean("color_check_note", false)) {
+            if (note.color != null && prefs.getBoolean("color_check_note", true)) {
                 layoutItemView.setBackgroundColor(note.color!!)
             }
             else
@@ -166,9 +166,9 @@ class NoteListAdapter internal constructor(
                 expandableLayoutItemView.visibility = GONE
             }
 
-            itemView.setOnLongClickListener {
+            fun setOptionsListener(view : View){
                 // Устанавливаем контекстное меню
-                val popupMenu = PopupMenu(mContext, it)
+                val popupMenu = PopupMenu(mContext, view)
                 popupMenu.inflate(R.menu.menu_context)
 
                 // установка нужной надписи на пункт меню
@@ -243,6 +243,14 @@ class NoteListAdapter internal constructor(
                     }
                 }
                 popupMenu.show() // показываем меню
+            }
+
+            noteSettingsButtonView.setOnClickListener {
+                setOptionsListener(it)
+            }
+
+            itemView.setOnLongClickListener {
+                setOptionsListener(it)
                 true
             }
         }

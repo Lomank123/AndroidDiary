@@ -63,7 +63,7 @@ class DiaryListAdapter internal constructor(
         private val diaryDescriptionView: TextView = itemView.findViewById(R.id.textView_content)
         private val diaryImageView: ImageView = itemView.findViewById(R.id.imageView)
         private val diaryStarView: ImageView = itemView.findViewById(R.id.imageView_star)
-
+        private val diarySettingsButtonView : ImageButton = itemView.findViewById(R.id.imageButton_options)
         private val diaryImageButtonViewDelete : ImageButton = itemView.findViewById(R.id.imageButton_delete)
         // expandable layout
         private val expandableLayoutItemView : ConstraintLayout = itemView.findViewById(R.id.expandable_layout)
@@ -96,7 +96,7 @@ class DiaryListAdapter internal constructor(
             }
 
             // color
-            if(extDiary.diary.color != null && prefs!!.getBoolean("color_check_diary", false))
+            if(extDiary.diary.color != null && prefs!!.getBoolean("color_check_diary", true))
                 layoutItemView.setBackgroundColor(extDiary.diary.color!!)
             else
                 layoutItemView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white))
@@ -139,9 +139,9 @@ class DiaryListAdapter internal constructor(
                 expandableLayoutItemView.visibility = GONE
             }
 
-            itemView.setOnLongClickListener {
+            fun setOptionsListener(view : View){
                 // Устанавливаем контекстное меню
-                val popupMenu = PopupMenu(mContext, it)
+                val popupMenu = PopupMenu(mContext, view)
                 popupMenu.inflate(R.menu.menu_context)
                 // This button never used here
                 popupMenu.menu.findItem(R.id.move).isVisible = false
@@ -209,8 +209,18 @@ class DiaryListAdapter internal constructor(
                     }
                 }
                 popupMenu.show() // показываем меню
+            }
+
+            diarySettingsButtonView.setOnClickListener {
+                setOptionsListener(it)
+            }
+
+            itemView.setOnLongClickListener {
+                setOptionsListener(it)
                 true
             }
+
+
         }
     }
 

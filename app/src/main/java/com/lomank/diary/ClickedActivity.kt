@@ -9,6 +9,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import android.database.Cursor
 import android.media.MediaPlayer
 import android.media.MediaRecorder
 import android.net.Uri
@@ -16,6 +17,7 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.text.TextUtils
 import android.util.Log
@@ -84,9 +86,10 @@ class ClickedActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_clicked)
-
-        // prefs
-        val prefs: SharedPreferences? = PreferenceManager.getDefaultSharedPreferences(this)
+        setSupportActionBar(materialToolbar_clicked)
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        materialToolbar_clicked.overflowIcon = ResourcesCompat.getDrawable(resources, R.drawable.ic_baseline_more_vert_32, null)
+        materialToolbar_clicked.setNavigationIcon(R.drawable.ic_baseline_arrow_back_gray_32)
 
         // getting the request code from parent activity
         requestCode = intent.getIntExtra("requestCode", 0)
@@ -139,11 +142,6 @@ class ClickedActivity : AppCompatActivity() {
                 colorView.setBackgroundColor(note.color!!)
             }
         }
-        // setting image on the background
-        if(extDiaryParent.diary.img != null && extDiaryParent.diary.img != "" && prefs!!.getBoolean("img_check", false))
-            Glide.with(this).load(extDiaryParent.diary.img).into(imageView_background)
-
-
 
         // FAB save
         fab_save.setOnClickListener{
@@ -277,6 +275,11 @@ class ClickedActivity : AppCompatActivity() {
         }
     }
 
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return true
+    }
+
     // Back button
     override fun onBackPressed() {
         if(requestCode == newNoteRequestCode) {
@@ -362,6 +365,7 @@ class ClickedActivity : AppCompatActivity() {
         startActivityForResult(choosePhotoIntent, choosePhotoRequestCode)
     }
 
+    //TODO: Need to repair or use CameraX
     private fun makeCameraIntent() {
         val values = ContentValues(1)
         values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpg")
@@ -397,7 +401,6 @@ class ClickedActivity : AppCompatActivity() {
 
         }
         if(requestCode == cameraActivityRequestCode && resultCode == Activity.RESULT_OK){
-            Log.e("err", "uri is:  ${imageUri.toString()}")
             if(listOfImages.size < 3) {
                 listOfImages.add(imageUri.toString())
             } else {
@@ -405,7 +408,50 @@ class ClickedActivity : AppCompatActivity() {
             }
             note.images = listOfImages
         }
+        if(requestCode == cameraActivityRequestCode && resultCode == Activity.RESULT_CANCELED){
+            //TODO: Need to repair or use CameraX
+            Log.e("err", "uri is:  ${imageUri!!.path!!}")
+            Log.e("err", "path uri is : ${imageUri.toString()}")
+
+        }
     }
+
+   // private fun getUri() : String?{
+   //     val docId = DocumentsContract.getDocumentId(imageUri)
+   //     val split = docId.split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+   //     val type = split[0]
+//
+   //     var contentUri: Uri? = null
+   //     when (type) {
+   //         "image" -> contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+   //         "video" -> contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
+   //         "audio" -> contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
+   //     }
+//
+   //     val selection = "_id=?"
+   //     val selectionArgs = arrayOf(split[1])
+//
+   //     return getDataColumn(this, contentUri, selection, selectionArgs)
+   // }
+//
+   // private fun getDataColumn(context: Context, uri: Uri?, selection : String?,
+   //                           selectionArgs: Array<String>?): String? {
+//
+   //     var cursor: Cursor? = null
+   //     val column = "_data"
+   //     val projection = arrayOf(column)
+//
+   //     try {
+   //         cursor = context.contentResolver.query(uri!!, projection, selection, selectionArgs, null)
+   //         if (cursor != null && cursor.moveToFirst()) {
+   //             val index = cursor.getColumnIndexOrThrow(column)
+   //             return cursor.getString(index)
+   //         }
+   //     } finally {
+   //         cursor?.close()
+   //     }
+   //     return null
+   // }
 
     private fun setImage(){
         val viewList = arrayListOf<ImageView>(imageClicked1, imageClicked2, imageClicked3)
@@ -464,14 +510,20 @@ class ClickedActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        // setting image
-        setImage()
+
         val prefs: SharedPreferences? = PreferenceManager.getDefaultSharedPreferences(this)
         val extDiaryParent = intent.getSerializableExtra("diaryParent") as ExtendedDiary
 
+        // setting image
+        setImage()
+
         // setting image on the background
-        if(extDiaryParent.diary.img != null && extDiaryParent.diary.img != "" && prefs!!.getBoolean("img_check", false))
+        if(extDiaryParent.diary.img != null && prefs!!.getBoolean("img_check", true)) {
+            imageView_background.visibility = VISIBLE
             Glide.with(this).load(extDiaryParent.diary.img).into(imageView_background)
+        } else {
+            imageView_background.visibility = GONE
+        }
 
         // resetting progressBar and media player
         seekBar_active.progress = 0
@@ -618,7 +670,7 @@ class ClickedActivity : AppCompatActivity() {
                     }
                 }
                 if(allGranted)
-                    Toast.makeText(this, "Tap one more time", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, this.resources.getString(R.string.perm_one_more), Toast.LENGTH_SHORT).show()
             }
         }
     }

@@ -7,6 +7,20 @@
     android:layout_height="match_parent"
     android:background="@color/colorBackground">
 
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/materialToolbar_note"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/primary_color1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:menu="@menu/menu_main"
+        app:collapseIcon="@drawable/ic_baseline_arrow_back_gray_32"
+        app:titleTextColor="@color/gray">
+
+    </com.google.android.material.appbar.MaterialToolbar>
+
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewpager1"
         android:layout_width="0dp"
@@ -38,7 +52,7 @@
         app:adUnitId="ca-app-pub-3081053917792975/2630036802"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/materialToolbar_note" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

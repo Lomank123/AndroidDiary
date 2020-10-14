@@ -3,6 +3,7 @@ package com.lomank.diary
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.core.content.res.ResourcesCompat
 import androidx.preference.PreferenceManager
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.gms.ads.AdRequest
@@ -17,6 +18,10 @@ class NoteActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_note)
+        setSupportActionBar(materialToolbar_note)
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        materialToolbar_note.overflowIcon = ResourcesCompat.getDrawable(resources, R.drawable.ic_baseline_more_vert_32, null)
+        materialToolbar_note.setNavigationIcon(R.drawable.ic_baseline_arrow_back_gray_32)
 
         MobileAds.initialize(this)
         adView2.loadAd(AdRequest.Builder().build())
@@ -27,6 +32,11 @@ class NoteActivity : AppCompatActivity() {
             prefs.edit().putBoolean("sorted_notes", false).apply()
 
         viewPagerWithFragments()
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return true
     }
 
     private fun viewPagerWithFragments()

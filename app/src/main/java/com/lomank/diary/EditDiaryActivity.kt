@@ -20,6 +20,7 @@ import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.MobileAds
 import com.google.android.material.card.MaterialCardView
 import kotlinx.android.synthetic.main.activity_new_diary.*
+import kotlinx.android.synthetic.main.activity_photo_viewer.*
 import roomdatabase.Diary
 
 class EditDiaryActivity : AppCompatActivity() {
@@ -39,6 +40,9 @@ class EditDiaryActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_new_diary)
+        setSupportActionBar(materialToolbar_new_diary)
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        materialToolbar_new_diary.setNavigationIcon(R.drawable.ic_baseline_arrow_back_gray_32)
 
         MobileAds.initialize(this)
         adView3.loadAd(AdRequest.Builder().build())
@@ -62,16 +66,16 @@ class EditDiaryActivity : AppCompatActivity() {
 
         button_save.setOnClickListener {
             if (TextUtils.isEmpty(edit_diary.text)) {
-                // устанавливаем результат как RESULT_CANCELED (отменен)
-                setResult(Activity.RESULT_CANCELED, replyIntent)
+                edit_diary.error = this.resources.getString(R.string.error_diary_name)
             } else {
                 diary.name = edit_diary.text.toString()
                 diary.content = edit_content.text.toString()
                 replyIntent.putExtra(EXTRA_EDIT_DIARY, diary)
                 setResult(Activity.RESULT_OK, replyIntent)
+                // завершаем работу с активити
+                finish()
             }
-            // завершаем работу с активити
-            finish()
+
         }
         button_cancel_diary.setOnClickListener {
             // Если изменения были, спрашиваем, хочет ли пользователь покинуть окно
@@ -181,6 +185,11 @@ class EditDiaryActivity : AppCompatActivity() {
             makeDialog()
         else
             super.onBackPressed()
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return true
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
