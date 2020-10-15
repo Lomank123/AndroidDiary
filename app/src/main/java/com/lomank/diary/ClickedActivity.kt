@@ -4,23 +4,17 @@ import android.Manifest
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.app.Activity
-import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
-import android.database.Cursor
 import android.media.MediaPlayer
 import android.media.MediaRecorder
-import android.net.Uri
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
-import android.provider.DocumentsContract
-import android.provider.MediaStore
 import android.text.TextUtils
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -43,15 +37,12 @@ import java.io.File
 import java.lang.Exception
 
 class ClickedActivity : AppCompatActivity() {
-
     private val permissionRequestCode = 145
     private val choosePhotoRequestCode = 12
     private val newNoteRequestCode = 111
     private val openNoteRequestCode = 222
     private val photoActivityRequestCode = 487
     private val cameraActivityRequestCode = 179
-
-    private var imageUri : Uri? = null
 
     private var primalColor : Int? = null
 
@@ -190,10 +181,14 @@ class ClickedActivity : AppCompatActivity() {
             // permission check
             requestForCheckPermission(2)
             if(checkPermission(this, permissionsList2)){
-                // closing another layout if it was opened
-                if(isVoiceLayoutOpen)
-                    animateVoiceLayout()
-                makePhotoChooseIntent()
+                if(listOfImages.size < 3) {
+                    // closing another layout if it was opened
+                    if (isVoiceLayoutOpen)
+                        animateVoiceLayout()
+                    makePhotoChooseIntent()
+                } else {
+                    Toast.makeText(this, this.resources.getString(R.string.max_image_attached), Toast.LENGTH_SHORT).show()
+                }
             }
         }
 
@@ -365,32 +360,22 @@ class ClickedActivity : AppCompatActivity() {
         startActivityForResult(choosePhotoIntent, choosePhotoRequestCode)
     }
 
-    //TODO: Need to repair or use CameraX
     private fun makeCameraIntent() {
-        val values = ContentValues(1)
-        values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpg")
-        imageUri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
-        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        if (intent.resolveActivity(packageManager) != null) {
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
-            startActivityForResult(intent, cameraActivityRequestCode)
-        }
+        val cameraIntent = Intent(this, CameraActivity::class.java)
+        startActivityForResult(cameraIntent, cameraActivityRequestCode)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == choosePhotoRequestCode && resultCode == Activity.RESULT_OK)
         {
+            // TODO: rework this when using multiple photo choice
             // setting photo
             val uriImage = data?.data
             contentResolver.takePersistableUriPermission(uriImage!!, Intent.FLAG_GRANT_READ_URI_PERMISSION)
 
-            if(listOfImages.size < 3) {
-                listOfImages.add(uriImage.toString())
-            } else {
-                Toast.makeText(this, this.resources.getString(R.string.max_image_attached), Toast.LENGTH_SHORT).show()
-            }
+            // check is implemented in button click listener
+            listOfImages.add(uriImage.toString())
             note.images = listOfImages
         }
         if(requestCode == photoActivityRequestCode && resultCode == Activity.RESULT_OK){
@@ -398,60 +383,16 @@ class ClickedActivity : AppCompatActivity() {
             listOfImages = newNote.images as MutableList<String?>
             note.images = listOfImages
             setImage()
-
         }
         if(requestCode == cameraActivityRequestCode && resultCode == Activity.RESULT_OK){
-            if(listOfImages.size < 3) {
-                listOfImages.add(imageUri.toString())
-            } else {
-                Toast.makeText(this, this.resources.getString(R.string.max_image_attached), Toast.LENGTH_SHORT).show()
-            }
+            // full image path
+            val image = data?.getStringExtra(CameraActivity.EXTRA_REPLY_CAMERA_INTENT)
+
+            // check is implemented in button click listener
+            listOfImages.add(image)
             note.images = listOfImages
         }
-        if(requestCode == cameraActivityRequestCode && resultCode == Activity.RESULT_CANCELED){
-            //TODO: Need to repair or use CameraX
-            Log.e("err", "uri is:  ${imageUri!!.path!!}")
-            Log.e("err", "path uri is : ${imageUri.toString()}")
-
-        }
     }
-
-   // private fun getUri() : String?{
-   //     val docId = DocumentsContract.getDocumentId(imageUri)
-   //     val split = docId.split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-   //     val type = split[0]
-//
-   //     var contentUri: Uri? = null
-   //     when (type) {
-   //         "image" -> contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-   //         "video" -> contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
-   //         "audio" -> contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
-   //     }
-//
-   //     val selection = "_id=?"
-   //     val selectionArgs = arrayOf(split[1])
-//
-   //     return getDataColumn(this, contentUri, selection, selectionArgs)
-   // }
-//
-   // private fun getDataColumn(context: Context, uri: Uri?, selection : String?,
-   //                           selectionArgs: Array<String>?): String? {
-//
-   //     var cursor: Cursor? = null
-   //     val column = "_data"
-   //     val projection = arrayOf(column)
-//
-   //     try {
-   //         cursor = context.contentResolver.query(uri!!, projection, selection, selectionArgs, null)
-   //         if (cursor != null && cursor.moveToFirst()) {
-   //             val index = cursor.getColumnIndexOrThrow(column)
-   //             return cursor.getString(index)
-   //         }
-   //     } finally {
-   //         cursor?.close()
-   //     }
-   //     return null
-   // }
 
     private fun setImage(){
         val viewList = arrayListOf<ImageView>(imageClicked1, imageClicked2, imageClicked3)
@@ -461,9 +402,11 @@ class ClickedActivity : AppCompatActivity() {
                 for(i in note.images!!.indices) {
                     // setting image
                     viewList[i].visibility = VISIBLE
-                    Glide.with(this).load(note.images!![i]).override(800, 1000).into(viewList[i])
+                    Glide.with(this).load(note.images!![i])
+                        .override(800, 1000)
+                        .into(viewList[i])
                     // open photo listener
-                    viewList[i].setOnClickListener{
+                    viewList[i].setOnClickListener {
                         val imageIntent = Intent(this, PhotoViewerActivity::class.java)
                         imageIntent.putExtra("currentPos", i)
                         imageIntent.putExtra("images", note)

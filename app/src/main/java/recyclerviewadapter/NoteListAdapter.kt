@@ -69,7 +69,7 @@ class NoteListAdapter internal constructor(
         private val noteImageView : ImageView = itemView.findViewById(R.id.imageView)
         private val noteStarView : ImageView = itemView.findViewById(R.id.imageView_star)
         private val noteSettingsButtonView : ImageButton = itemView.findViewById(R.id.imageButton_options)
-        private val noteImageButtonViewDelete : ImageButton = itemView.findViewById(R.id.imageButton_delete)
+        //private val noteImageButtonViewDelete : ImageButton = itemView.findViewById(R.id.imageButton_delete)
         // expandable layout
         private val expandableLayoutItemView : ConstraintLayout = itemView.findViewById(R.id.expandable_layout)
         private val creationDateItemView : TextView = itemView.findViewById(R.id.creation_date_text2)
@@ -120,9 +120,6 @@ class NoteListAdapter internal constructor(
             } else {
                 imageLayout.visibility = GONE
             }
-
-
-
             // иконка со звездочкой (избранное)
             if (note.favorite)
                 noteStarView.visibility = VISIBLE
@@ -141,21 +138,6 @@ class NoteListAdapter internal constructor(
             }
             else
                 layoutItemView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white))
-
-            noteImageButtonViewDelete.setOnClickListener {
-                val dialog = MaterialDialog(mContext)
-                dialog.show{
-                    title(R.string.dialog_delete)
-                    message(R.string.dialog_check_delete_note)
-                    positiveButton(R.string.dialog_yes) {
-                        listenerDelete(note)
-                        dialog.dismiss()
-                    }
-                    negativeButton(R.string.dialog_no) {
-                        dialog.dismiss()
-                    }
-                }
-            }
 
             // Проверяем нужно ли показать информацию
             if (note.isExpanded) {
@@ -192,6 +174,21 @@ class NoteListAdapter internal constructor(
                         R.id.open -> {
                             listenerOpen(note)
                             // Т.к. в этом обработчике нужно вернуть boolean, возвращаем true
+                            true
+                        }
+                        R.id.delete -> {
+                            val dialog = MaterialDialog(mContext)
+                            dialog.show{
+                                title(R.string.dialog_delete)
+                                message(R.string.dialog_check_delete_note)
+                                positiveButton(R.string.dialog_yes) {
+                                    listenerDelete(note)
+                                    dialog.dismiss()
+                                }
+                                negativeButton(R.string.dialog_no) {
+                                    dialog.dismiss()
+                                }
+                            }
                             true
                         }
                         R.id.bookmark -> {

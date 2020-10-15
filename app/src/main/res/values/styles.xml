@@ -3,10 +3,10 @@
     <!-- You can also use this theme: Theme.MaterialComponents.Light.DarkActionBar -->
 
     <!-- Theme for PhotoViewer Activity -->
-    <style name="noActionBarTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="noActionBarTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="colorPrimary">@color/black</item>
-        <item name="colorPrimaryDark">@color/black</item>
         <item name="colorSecondary">@color/black</item>
+        <item name="colorPrimaryDark">@color/black</item>
         <item name="android:navigationBarColor">@color/black</item>
     </style>
 

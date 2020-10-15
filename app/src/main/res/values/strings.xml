@@ -133,5 +133,6 @@
 
     <!-- Error messages -->
     <string name="error_diary_name">Input name</string>
+    <string name="error_load_photo">Photo was moved or deleted.</string>
 
 </resources>

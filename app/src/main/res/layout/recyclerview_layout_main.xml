@@ -120,9 +120,9 @@
                 android:fontFamily="@font/ubuntu_regular"
                 android:maxWidth="220dp"
                 android:text="@string/sample"
-                android:textColor="#000"
+                android:textColor="@color/black"
                 android:textSize="17sp"
-                app:layout_constraintEnd_toStartOf="@+id/imageButton_delete"
+                app:layout_constraintEnd_toStartOf="@+id/imageButton_options"
                 app:layout_constraintStart_toEndOf="@+id/imageView"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -144,14 +144,11 @@
                 android:layout_height="30dp"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentEnd="true"
-                android:layout_marginTop="4dp"
-                android:layout_marginEnd="4dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/sample"
                 android:visibility="visible"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-
                 app:srcCompat="@drawable/ic_baseline_more_vert_32" />
 
             <ImageButton
@@ -162,6 +159,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_marginTop="4dp"
                 android:layout_marginEnd="4dp"
+                android:visibility="gone"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/sample"
                 app:layout_constraintEnd_toStartOf="@+id/imageButton_options"

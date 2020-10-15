@@ -84,6 +84,7 @@
 
     <!-- Error messages -->
     <string name="error_diary_name">Введите имя</string>
+    <string name="error_load_photo">Фотография была перемещена или удалена</string>
 
     <!-- Создатели -->
     <string name="creators">Создатель</string>

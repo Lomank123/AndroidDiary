@@ -64,7 +64,7 @@ class DiaryListAdapter internal constructor(
         private val diaryImageView: ImageView = itemView.findViewById(R.id.imageView)
         private val diaryStarView: ImageView = itemView.findViewById(R.id.imageView_star)
         private val diarySettingsButtonView : ImageButton = itemView.findViewById(R.id.imageButton_options)
-        private val diaryImageButtonViewDelete : ImageButton = itemView.findViewById(R.id.imageButton_delete)
+        //private val diaryImageButtonViewDelete : ImageButton = itemView.findViewById(R.id.imageButton_delete)
         // expandable layout
         private val expandableLayoutItemView : ConstraintLayout = itemView.findViewById(R.id.expandable_layout)
         private val creationDateItemView : TextView = itemView.findViewById(R.id.creation_date_text2)
@@ -115,21 +115,6 @@ class DiaryListAdapter internal constructor(
                 diaryImageView.setImageResource(R.drawable.logo)
             }
 
-            diaryImageButtonViewDelete.setOnClickListener {
-                val dialog = MaterialDialog(mContext)
-                dialog.show {
-                    title(R.string.dialog_delete)
-                    message(R.string.dialog_check_delete)
-                    positiveButton(R.string.dialog_yes) {
-                        listenerDeleteDiary(extDiary)
-                        dialog.dismiss()
-                    }
-                    negativeButton(R.string.dialog_no) {
-                        dialog.dismiss()
-                    }
-                }
-            }
-
             // Проверяем нужно ли показать информацию
             if (extDiary.diary.isExpanded) {
                 diaryDescriptionView.visibility = GONE
@@ -168,6 +153,21 @@ class DiaryListAdapter internal constructor(
                         R.id.open -> {
                             listenerOpenDiary(extDiary) // listener, описанный в NoteActivity
                             // Т.к. в этом обработчике нужно вернуть boolean, возвращаем true
+                            true
+                        }
+                        R.id.delete -> {
+                            val dialog = MaterialDialog(mContext)
+                            dialog.show {
+                                title(R.string.dialog_delete)
+                                message(R.string.dialog_check_delete)
+                                positiveButton(R.string.dialog_yes) {
+                                    listenerDeleteDiary(extDiary)
+                                    dialog.dismiss()
+                                }
+                                negativeButton(R.string.dialog_no) {
+                                    dialog.dismiss()
+                                }
+                            }
                             true
                         }
                         R.id.edit -> {
