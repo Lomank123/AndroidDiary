@@ -3,9 +3,7 @@ package recyclerviewadapter
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.VISIBLE
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.davemorrissey.labs.subscaleview.ImageSource.uri
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
@@ -18,20 +16,23 @@ class ImageViewPagerAdapter(
 
     private var images = emptyList<String?>()
 
+    private var imagesOrientation = emptyList<Int?>()
+
    inner class ViewPagerViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView){
 
        private val photoItemView : SubsamplingScaleImageView = itemView.findViewById(R.id.photoView_holder)
 
-       fun bindView(image : String?) {
+       fun bindView(image : String?, position: Int) {
             if(image != null){
                 photoItemView.setImage(uri(image))
-                photoItemView.orientation = SubsamplingScaleImageView.ORIENTATION_0
+                photoItemView.orientation = imagesOrientation[position]!!
             }
        }
    }
 
-    internal fun setImages(list : List<String?>){
+    internal fun setImages(list : List<String?>, listOrientation : List<Int?>){
         this.images = list
+        this.imagesOrientation = listOrientation
         notifyDataSetChanged()
     }
 
@@ -41,7 +42,7 @@ class ImageViewPagerAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewPagerViewHolder, position: Int) {
-        holder.bindView(images[position])
+        holder.bindView(images[position], position)
     }
 
     override fun getItemCount(): Int {

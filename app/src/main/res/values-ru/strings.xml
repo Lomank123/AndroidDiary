@@ -62,6 +62,11 @@
     <string name="show_images_in_list_note_title">Заметки с картинками</string>
     <string name="show_images_in_list_note_summary">Показывать изображения, прикрепленные к заметке, в списке</string>
 
+    <string name="clickable_image_title">Кликабельные фотографии</string>
+    <string name="clickable_image_summary">Возможность открывать фотографии прямо в списке заметок</string>
+
+    <string name="rate_button">Оценить приложение</string>
+
     <!-- Меню -->
     <string name="edit_btn">Редактировать</string>
     <string name="open_btn">Открыть</string>
@@ -120,5 +125,10 @@
 
     <string name="privacy_policy">Ссылка на политику конфиденциальности:</string>
     <string name="pp_link">https://diary-daily-list.flycricket.io/privacy.html</string>
+
+    <!-- FishBun strings -->
+    <string name="photo_choose_limit_reached">Вы выбрали максимальное число фотографий</string>
+    <string name="photo_choose_title">Альбом</string>
+    <string name="photo_choose_all_views_title">Все фотографии</string>
 
 </resources>

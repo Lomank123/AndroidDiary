@@ -58,6 +58,9 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
 
+    // FishBun
+    implementation 'com.sangcomz:FishBun:1.0.0-alpha03'
+
 
     // Room components
     implementation "androidx.room:room-runtime:2.2.5"

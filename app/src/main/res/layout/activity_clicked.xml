@@ -27,6 +27,7 @@
         android:alpha="0.1"
         android:contentDescription="@string/sample"
         android:scaleType="centerCrop"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -35,18 +36,31 @@
         app:layout_constraintVertical_bias="1.0"
         app:srcCompat="@color/white" />
 
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/adView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:visibility="visible"
+        app:adSize="BANNER"
+        app:adUnitId="ca-app-pub-3081053917792975/9807157974"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/materialToolbar_clicked" />
+
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView_images"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:visibility="gone"
         app:cardCornerRadius="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText_name">
+        app:layout_constraintTop_toBottomOf="@+id/adView">
 
         <TableLayout
             android:id="@+id/imageTableLayout"
@@ -94,6 +108,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
+        android:layout_marginTop="8dp"
         android:autofillHints="text"
         android:fontFamily="@font/ubuntu_regular"
         android:hint="@string/title"
@@ -103,7 +118,7 @@
         android:textSize="26sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/materialToolbar_clicked" />
+        app:layout_constraintTop_toBottomOf="@+id/cardView_images" />
 
     <EditText
         android:id="@+id/editText_content"
@@ -112,19 +127,19 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="10dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="8dp"
         android:autofillHints="text"
         android:backgroundTint="@android:color/transparent"
         android:ems="10"
-        android:paddingStart="10dp"
         android:fontFamily="@font/ubuntu_regular"
         android:gravity="start|top"
         android:hint="@string/hint_text_note"
         android:inputType="textMultiLine"
+        android:paddingStart="10dp"
         app:layout_constraintBottom_toTopOf="@+id/view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cardView_images" />
+        app:layout_constraintTop_toBottomOf="@+id/editText_name" />
 
     <View
         android:id="@+id/color_indicator"

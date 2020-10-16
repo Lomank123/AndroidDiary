@@ -10,8 +10,8 @@ import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.media.MediaPlayer
 import android.media.MediaRecorder
+import android.net.Uri
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.text.TextUtils
@@ -23,6 +23,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.PermissionChecker
 import androidx.core.content.res.ResourcesCompat
@@ -30,15 +31,17 @@ import androidx.preference.PreferenceManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.color.colorChooser
 import com.bumptech.glide.Glide
+import com.sangcomz.fishbun.FishBun
+import com.sangcomz.fishbun.FishBun.Companion.INTENT_PATH
+import com.sangcomz.fishbun.adapter.image.impl.GlideAdapter
 import kotlinx.android.synthetic.main.activity_clicked.*
 import roomdatabase.ExtendedDiary
 import roomdatabase.Note
 import java.io.File
-import java.lang.Exception
 
 class ClickedActivity : AppCompatActivity() {
     private val permissionRequestCode = 145
-    private val choosePhotoRequestCode = 12
+    //private val choosePhotoRequestCode = 12
     private val newNoteRequestCode = 111
     private val openNoteRequestCode = 222
     private val photoActivityRequestCode = 487
@@ -59,6 +62,7 @@ class ClickedActivity : AppCompatActivity() {
 
     // image handle
     private var listOfImages = mutableListOf<String?>()
+    private var listOfOrientations = mutableListOf<Int?>()
 
     private var isVoiceLayoutOpen = false // for layout
     private var isRecording = false // for counting seconds
@@ -79,7 +83,11 @@ class ClickedActivity : AppCompatActivity() {
         setContentView(R.layout.activity_clicked)
         setSupportActionBar(materialToolbar_clicked)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-        materialToolbar_clicked.overflowIcon = ResourcesCompat.getDrawable(resources, R.drawable.ic_baseline_more_vert_32, null)
+        materialToolbar_clicked.overflowIcon = ResourcesCompat.getDrawable(
+            resources,
+            R.drawable.ic_baseline_more_vert_32,
+            null
+        )
         materialToolbar_clicked.setNavigationIcon(R.drawable.ic_baseline_arrow_back_gray_32)
 
         // getting the request code from parent activity
@@ -125,11 +133,16 @@ class ClickedActivity : AppCompatActivity() {
             // setting images
             if(note.images != null) {
                 listOfImages = note.images as MutableList<String?>
+                listOfOrientations = note.imagesOrientation as MutableList<Int?>
             }
 
             // color
             primalColor = note.color
-            if(note.color != null && note.color != ResourcesCompat.getColor(resources, R.color.white, null)){
+            if(note.color != null && note.color != ResourcesCompat.getColor(
+                    resources,
+                    R.color.white,
+                    null
+                )){
                 colorView.setBackgroundColor(note.color!!)
             }
         }
@@ -142,14 +155,20 @@ class ClickedActivity : AppCompatActivity() {
         // color button
         color_choose_button.setOnClickListener {
             val colorWhite = ResourcesCompat.getColor(resources, R.color.white, null)
-            val colorPrimaryOrange = ResourcesCompat.getColor(resources, R.color.primary_color1, null)
-            val colorArray = intArrayOf(colorWhite, colorPrimaryOrange,
+            val colorPrimaryOrange = ResourcesCompat.getColor(
+                resources,
+                R.color.primary_color1,
+                null
+            )
+            val colorArray = intArrayOf(
+                colorWhite, colorPrimaryOrange,
                 ResourcesCompat.getColor(resources, R.color.pink, null),
                 ResourcesCompat.getColor(resources, R.color.green, null),
                 ResourcesCompat.getColor(resources, R.color.yellow, null),
                 ResourcesCompat.getColor(resources, R.color.blue, null),
                 ResourcesCompat.getColor(resources, R.color.grass, null),
-                ResourcesCompat.getColor(resources, R.color.purple, null))
+                ResourcesCompat.getColor(resources, R.color.purple, null)
+            )
             val colorDialog = MaterialDialog(this)
             colorDialog.show {
                 title(R.string.dialog_color_choose_title)
@@ -187,7 +206,11 @@ class ClickedActivity : AppCompatActivity() {
                         animateVoiceLayout()
                     makePhotoChooseIntent()
                 } else {
-                    Toast.makeText(this, this.resources.getString(R.string.max_image_attached), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this,
+                        this.resources.getString(R.string.max_image_attached),
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
         }
@@ -201,7 +224,11 @@ class ClickedActivity : AppCompatActivity() {
                         animateVoiceLayout()
                     makeCameraIntent()
                 } else {
-                    Toast.makeText(this, this.resources.getString(R.string.max_image_attached), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this,
+                        this.resources.getString(R.string.max_image_attached),
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
         }
@@ -316,7 +343,7 @@ class ClickedActivity : AppCompatActivity() {
         finish()
     }
 
-    private fun saveDialogShow(code : Int) {
+    private fun saveDialogShow(code: Int) {
         val dialog = MaterialDialog(this@ClickedActivity)
         dialog.show{
             title(R.string.dialog_save)
@@ -355,9 +382,22 @@ class ClickedActivity : AppCompatActivity() {
     }
 
     private fun makePhotoChooseIntent() {
-        val choosePhotoIntent = Intent(Intent.ACTION_OPEN_DOCUMENT)
-        choosePhotoIntent.type = "image/*"
-        startActivityForResult(choosePhotoIntent, choosePhotoRequestCode)
+        // FishBun multiple photo choose
+        FishBun.with(this@ClickedActivity)
+            .setImageAdapter(GlideAdapter())
+            .setMaxCount(3 - listOfImages.size)
+            .setActionBarColor(
+                ResourcesCompat.getColor(resources, R.color.primary_color1, null),
+                ResourcesCompat.getColor(resources, R.color.primary_color_dark1, null))
+            .textOnImagesSelectionLimitReached(this.resources.getString(R.string.photo_choose_limit_reached))
+            .setAllViewTitle(this.resources.getString(R.string.photo_choose_all_views_title))
+            .setActionBarTitle(this.resources.getString(R.string.photo_choose_title))
+            .startAlbum()
+
+        // old method
+        //val choosePhotoIntent = Intent(Intent.ACTION_OPEN_DOCUMENT)
+        //choosePhotoIntent.type = "image/*"
+        //startActivityForResult(choosePhotoIntent, choosePhotoRequestCode)
     }
 
     private fun makeCameraIntent() {
@@ -367,30 +407,49 @@ class ClickedActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == choosePhotoRequestCode && resultCode == Activity.RESULT_OK)
+        // Choosing from the Gallery
+        if (requestCode == FishBun.FISHBUN_REQUEST_CODE && resultCode == Activity.RESULT_OK)
         {
-            // TODO: rework this when using multiple photo choice
-            // setting photo
-            val uriImage = data?.data
-            contentResolver.takePersistableUriPermission(uriImage!!, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            // FishBun multiple photo choose
+            val path = data?.getParcelableArrayListExtra<Uri>(INTENT_PATH)
+
+            if (path != null) {
+                for(image in path){
+                    // TODO: check with xiaomi, if doesn't work don't implement FishBun(worked on Xiaomi mi 6)
+                    // setting photo
+                    listOfImages.add(image.toString())
+                    listOfOrientations.add(0)
+                }
+            }
+            // old method
+            //contentResolver.takePersistableUriPermission(
+            //    image!!,
+            //    Intent.FLAG_GRANT_READ_URI_PERMISSION
+            //)
 
             // check is implemented in button click listener
-            listOfImages.add(uriImage.toString())
+
             note.images = listOfImages
+            note.imagesOrientation = listOfOrientations
         }
+        // PhotoViewerActivity
         if(requestCode == photoActivityRequestCode && resultCode == Activity.RESULT_OK){
             val newNote = data?.getSerializableExtra(PhotoViewerActivity.EXTRA_REPLY_PHOTO_VIEWER) as Note
             listOfImages = newNote.images as MutableList<String?>
+            listOfOrientations = newNote.imagesOrientation as MutableList<Int?>
             note.images = listOfImages
-            setImage()
+            note.imagesOrientation = listOfOrientations
         }
+        // CameraActivity
         if(requestCode == cameraActivityRequestCode && resultCode == Activity.RESULT_OK){
             // full image path
             val image = data?.getStringExtra(CameraActivity.EXTRA_REPLY_CAMERA_INTENT)
 
             // check is implemented in button click listener
             listOfImages.add(image)
+            listOfOrientations.add(0)
             note.images = listOfImages
+            note.imagesOrientation = listOfOrientations
         }
     }
 
@@ -512,7 +571,11 @@ class ClickedActivity : AppCompatActivity() {
         seekBar_active.progress = 0
         seekBar_active.setOnSeekBarChangeListener(
             object : SeekBar.OnSeekBarChangeListener {
-                override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                override fun onProgressChanged(
+                    seekBar: SeekBar?,
+                    progress: Int,
+                    fromUser: Boolean
+                ) {
                     if (fromUser) {
                         mediaPlayer!!.seekTo(progress)
 
@@ -520,8 +583,10 @@ class ClickedActivity : AppCompatActivity() {
                         start_time_active.text = elapsedTime
                     }
                 }
+
                 override fun onStartTrackingTouch(p0: SeekBar?) {
                 }
+
                 override fun onStopTrackingTouch(p0: SeekBar?) {
                 }
             }
@@ -544,7 +609,9 @@ class ClickedActivity : AppCompatActivity() {
         if (isVoiceLayoutOpen) {
             layout_voice.visibility = VISIBLE
             layout_voice.alpha = 0.0f
-            layout_voice.animate().translationY(-layout_voice.height.toFloat()).alpha(1.0f).setListener(null).start()
+            layout_voice.animate().translationY(-layout_voice.height.toFloat()).alpha(1.0f).setListener(
+                null
+            ).start()
         } else {
             // stop playing voice note
             if(mediaPlayer != null)
@@ -558,11 +625,12 @@ class ClickedActivity : AppCompatActivity() {
                 override fun onAnimationEnd(animation: Animator?) {
                     super.onAnimationEnd(animation)
                     layout_voice.visibility = GONE
-                }}).start()
+                }
+            }).start()
         }
     }
 
-    private fun checkPermission(context : Context, permissions : Array<String>) : Boolean {
+    private fun checkPermission(context: Context, permissions: Array<String>) : Boolean {
         var allSuccess = true
         for(i in permissions.indices) {
             if(PermissionChecker.checkCallingOrSelfPermission(
@@ -600,20 +668,34 @@ class ClickedActivity : AppCompatActivity() {
         when(requestCode) {
             permissionRequestCode -> {
                 var allGranted = true
-                for(i in permissions.indices) {
+                for (i in permissions.indices) {
                     if (grantResults[i] == PackageManager.PERMISSION_DENIED) {
-                        val requestAgain = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && shouldShowRequestPermissionRationale(permissions[i])
-                        if(requestAgain) {
-                            Toast.makeText(this, resources.getString(R.string.perm_denied), Toast.LENGTH_SHORT).show()
-                        }
-                        else {
-                            Toast.makeText(this, resources.getString(R.string.perm_denied_again), Toast.LENGTH_SHORT).show()
+                        val requestAgain =
+                            Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && shouldShowRequestPermissionRationale(
+                                permissions[i]
+                            )
+                        if (requestAgain) {
+                            Toast.makeText(
+                                this,
+                                resources.getString(R.string.perm_denied),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        } else {
+                            Toast.makeText(
+                                this,
+                                resources.getString(R.string.perm_denied_again),
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                         allGranted = false
                     }
                 }
-                if(allGranted)
-                    Toast.makeText(this, this.resources.getString(R.string.perm_one_more), Toast.LENGTH_SHORT).show()
+                if (allGranted)
+                    Toast.makeText(
+                        this,
+                        this.resources.getString(R.string.perm_one_more),
+                        Toast.LENGTH_SHORT
+                    ).show()
             }
         }
     }
@@ -639,7 +721,7 @@ class ClickedActivity : AppCompatActivity() {
         }
     }
 
-    private fun recordProgressUpdater(time : Int)
+    private fun recordProgressUpdater(time: Int)
     {
         val recordingTime = createTimeLabel(time)
         record_time_dis.text = recordingTime
@@ -653,7 +735,7 @@ class ClickedActivity : AppCompatActivity() {
     }
 
     // Переводит значение Int в формат (min:sec)
-    private fun createTimeLabel(time : Int) : String
+    private fun createTimeLabel(time: Int) : String
     {
         var timeLabel: String
         val min = time / 1000 / 60
@@ -704,7 +786,7 @@ class ClickedActivity : AppCompatActivity() {
             mediaRecorder?.prepare()
             mediaRecorder?.start()
         }
-        catch (e : Exception)
+        catch (e: Exception)
         {
             e.printStackTrace()
         }
@@ -723,7 +805,7 @@ class ClickedActivity : AppCompatActivity() {
             mediaPlayer?.setDataSource(fileName)
             mediaPlayer?.prepare()
         }
-        catch (e : Exception) {
+        catch (e: Exception) {
             e.printStackTrace()
         }
     }

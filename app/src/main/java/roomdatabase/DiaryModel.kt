@@ -1,10 +1,7 @@
 package roomdatabase
 
 import androidx.room.*
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import java.io.Serializable
-import java.lang.reflect.Type
 
 
 /**
@@ -14,7 +11,7 @@ import java.lang.reflect.Type
 /**
  * Модель дневника
  */
-@Entity(tableName = "diary_table")                                        // название таблицы
+@Entity(tableName = "diary_table")                           // название таблицы
 data class Diary(
     @ColumnInfo(name = "diary_name") var name: String        // название дневника
 ) : Serializable
@@ -32,11 +29,11 @@ data class Diary(
     @ColumnInfo(name = "diary_is_favorite")
     var favorite : Boolean = false                 // является ли избранным
 
-    @ColumnInfo(name = "diary_creation_date")
-    var creationDate : String? = null              // Дата создания
-
     @ColumnInfo(name = "diary_list_name")
     var listName : String? = null                  // Название списка дел
+
+    @ColumnInfo(name = "diary_creation_date")
+    var creationDate : String? = null              // Дата создания
 
     @ColumnInfo(name = "diary_date")
     var lastEditDate : String? = null              // дата последнего изменения
@@ -114,13 +111,19 @@ data class Note(
     var parentId : Long? = null                     // id дневника, к к-му привязана
 
     @ColumnInfo(name = "note_images")
-    var images : List<String?>? = null
+    var images : List<String?>? = null              // Список изображений, прикрепленных к заметке
+
+    @ColumnInfo(name = "note_images_orientation")
+    var imagesOrientation : List<Int?>? = null      // Угол поворота каждой картинки
 
     @ColumnInfo(name = "note_color")
     var color : Int? = null                         // цвет
 
     @ColumnInfo(name = "note_is_voice")
     var voice : Boolean = false                     // есть ли голосовая заметка
+
+    @ColumnInfo(name = "note_voice_notes")
+    var voiceNotes : List<String?>? = null          // Список голосовых заметок
 
     @ColumnInfo(name = "note_is_favorite")
     var favorite : Boolean = false                  // является ли избранным
@@ -161,6 +164,10 @@ data class Note(
             return false
         if (images != other.images)
             return false
+        if (imagesOrientation != other.imagesOrientation)
+            return false
+        if(voiceNotes != other.voiceNotes)
+            return false
 
         return true
     }
@@ -171,8 +178,10 @@ data class Note(
         result = 31 * result + content.hashCode()
         result = 31 * result + (parentId?.hashCode() ?: 0)
         result = 31 * result + (images?.hashCode() ?: 0)
+        result = 31 * result + (imagesOrientation?.hashCode() ?: 0)
         result = 31 * result + (color ?: 0)
         result = 31 * result + voice.hashCode()
+        result = 31 * result + (voiceNotes?.hashCode() ?: 0)
         result = 31 * result + favorite.hashCode()
         result = 31 * result + (lastEditDate?.hashCode() ?: 0)
         result = 31 * result + (creationDate?.hashCode() ?: 0)
@@ -189,13 +198,16 @@ data class DailyListItem(
 {
     // Первичный ключ - id с авто-генерацией ключей
     @PrimaryKey(autoGenerate = true)
-    var id : Long = 0                               // id заметки
+    var id : Long = 0                                       // id заметки
 
     @ColumnInfo(name = "daily_list_item_color")
-    var color : Int? = null                      // цвет
+    var color : Int? = null                                 // цвет
 
     @ColumnInfo(name = "daily_list_item_is_done")
-    var isDone : Boolean = false                    // сделано ли дело
+    var isDone : Boolean = false                            // сделано ли дело
+
+    @ColumnInfo(name = "daily_list_item_scheduled_date")
+    var scheduledDate : String? = null                      // Запланированное время
 
     override fun equals(other: Any?): Boolean {
 
@@ -210,6 +222,8 @@ data class DailyListItem(
             return false
         if(color != other.color)
             return false
+        if(scheduledDate != other.scheduledDate)
+            return false
 
         return true
     }
@@ -220,8 +234,10 @@ data class DailyListItem(
         result = 31 * result + id.hashCode()
         result = 31 * result + (color ?: 0)
         result = 31 * result + isDone.hashCode()
+        result = 31 * result + (scheduledDate?.hashCode() ?: 0)
         return result
     }
+
 }
 
 /**

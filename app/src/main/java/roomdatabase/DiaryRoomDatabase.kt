@@ -9,7 +9,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.lang.reflect.Type
 
-@Database(entities = [Diary::class, Note::class, DailyListItem::class], version = 2, exportSchema = false)
+@Database(entities = [Diary::class, Note::class, DailyListItem::class], version = 3, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class DiaryRoomDatabase : RoomDatabase() {
 
@@ -53,7 +53,7 @@ abstract class DiaryRoomDatabase : RoomDatabase() {
                     DiaryRoomDatabase::class.java,
                     "diary_database"
                 ).addCallback(DiaryDatabaseCallback(scope))
-                    .fallbackToDestructiveMigration()
+                    //.fallbackToDestructiveMigration()
                     .build()
                 INSTANCE = instance
                 return instance
@@ -84,4 +84,25 @@ class Converters {
         val type: Type = object : TypeToken<List<String?>?>() {}.type
         return gson.fromJson(listString, type)
     }
+
+    @TypeConverter // note this annotation
+    fun fromIntList(list : List<Int?>?): String? {
+        if (list == null) {
+            return null
+        }
+        val gson = Gson()
+        val type: Type = object : TypeToken<List<Int?>?>() {}.type
+        return gson.toJson(list, type)
+    }
+
+    @TypeConverter // note this annotation
+    fun toIntList(listInt : String?): List<Int?>? {
+        if (listInt == null) {
+            return null
+        }
+        val gson = Gson()
+        val type: Type = object : TypeToken<List<Int?>?>() {}.type
+        return gson.fromJson(listInt, type)
+    }
+
 }

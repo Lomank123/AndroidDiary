@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<full-backup-content>
+    <include domain="database" path="diary_database.db" />
+    <include domain="sharedpref" path="."/>
+    <include domain="external" path="." />
+    <include domain="root" path="." />
+</full-backup-content>

@@ -28,6 +28,9 @@ class NoteFragment : Fragment() {
 
     private val newNoteRequestCode = 111
     private val openNoteRequestCode = 222
+    private val photoActivityRequestCode = 333
+
+    private var photoPosition = 0
 
     private lateinit var mainViewModel: MainViewModel       // добавляем ViewModel
     private lateinit var mainNoteList : List<Note>
@@ -140,6 +143,13 @@ class NoteFragment : Fragment() {
         }, {
             // listenerUpdate
             updateNote(it)
+        }, {
+            val imageIntent = Intent(activity, PhotoViewerActivity::class.java)
+            imageIntent.putExtra("currentPos", photoPosition)
+            imageIntent.putExtra("images", it)
+            startActivityForResult(imageIntent, photoActivityRequestCode)
+        }, {
+            photoPosition = it
         })
     }
 
@@ -176,6 +186,11 @@ class NoteFragment : Fragment() {
                 note.isExpanded = false
                 updateNote(note)
             }
+        }
+        if(requestCode == photoActivityRequestCode && resultCode == Activity.RESULT_OK){
+            val newNote = data?.getSerializableExtra(PhotoViewerActivity.EXTRA_REPLY_PHOTO_VIEWER) as Note
+            updateNote(newNote)
+
         }
     }
 

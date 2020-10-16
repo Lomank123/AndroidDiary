@@ -26,7 +26,9 @@ class NoteListAdapter internal constructor(
     context: Context,
     private val listenerOpen : (Note) -> Unit,
     private val listenerDelete : (Note) -> Unit,
-    private val listenerUpdate : (Note) -> Unit
+    private val listenerUpdate : (Note) -> Unit,
+    private val listenerPhoto : (Note) -> Unit,
+    private val listenerPosition : (Int) -> Unit
 ) : RecyclerView.Adapter<NoteListAdapter.NoteViewHolder>() {
 
     // По сути переменная inflater используется как метка на родительский XML,
@@ -106,6 +108,18 @@ class NoteListAdapter internal constructor(
                             // setting image
                             viewList[i].visibility = VISIBLE
                             Glide.with(mContext).load(note.images!![i]).override(800, 1000).into(viewList[i])
+
+                            if(prefs.getBoolean("clickable_image_note_key", true)){
+                                viewList[i].setOnClickListener {
+                                    listenerPosition(i)
+                                    listenerPhoto(note)
+                                }
+                            } else {
+                                viewList[i].setOnClickListener{
+                                    listenerOpen(note)
+                                }
+                            }
+
                         }
                     } else {
                         imageLayout.visibility = GONE

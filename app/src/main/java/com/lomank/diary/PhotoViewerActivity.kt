@@ -13,10 +13,11 @@ import kotlinx.android.synthetic.main.activity_photo_viewer.*
 import recyclerviewadapter.ImageViewPagerAdapter
 import roomdatabase.Note
 
-
 class PhotoViewerActivity : AppCompatActivity() {
 
     private var allImages = mutableListOf<String?>()
+
+    private var allImagesOrientation = mutableListOf<Int?>()
 
     private lateinit var note : Note
 
@@ -33,11 +34,14 @@ class PhotoViewerActivity : AppCompatActivity() {
 
         val adapter = ImageViewPagerAdapter(this)
         image_viewPager.adapter = adapter
-        if(note.images != null) {
 
-            for(image in note.images!!)
-                allImages.add(image)
-            adapter.setImages(allImages)
+        if(note.images != null) {
+            for(i in note.images!!.indices){
+                allImages.add(note.images!![i])
+                allImagesOrientation.add(note.imagesOrientation!![i])
+            }
+
+            adapter.setImages(allImages, allImagesOrientation)
             image_viewPager.setCurrentItem(currentPos, false)
         }
     }
@@ -52,10 +56,12 @@ class PhotoViewerActivity : AppCompatActivity() {
             R.id.rotate_left -> {
                 val v = image_viewPager.findViewById<SubsamplingScaleImageView>(R.id.photoView_holder)
                 rotatePicture(v.orientation + 90, v)
+                allImagesOrientation[image_viewPager.currentItem] = v.orientation
             }
             R.id.rotate_right -> {
                 val v = image_viewPager.findViewById<SubsamplingScaleImageView>(R.id.photoView_holder)
                 rotatePicture(v.orientation - 90, v)
+                allImagesOrientation[image_viewPager.currentItem] = v.orientation
             }
             R.id.delete -> {
                 val dialog = MaterialDialog(this)
@@ -65,12 +71,13 @@ class PhotoViewerActivity : AppCompatActivity() {
                     message(R.string.dialog_image_delete_message)
                     positiveButton(R.string.dialog_yes) {
                         allImages.removeAt(viewPager.currentItem)
+                        allImagesOrientation.removeAt(viewPager.currentItem)
                         if(viewPager.currentItem == 2){
                             viewPager.setCurrentItem(1, false)
                         } else if(viewPager.currentItem == 1){
                             viewPager.setCurrentItem(0, false)
                         }
-                        (viewPager.adapter as ImageViewPagerAdapter).setImages(allImages)
+                        (viewPager.adapter as ImageViewPagerAdapter).setImages(allImages, allImagesOrientation)
 
                         if(allImages.isEmpty())
                             checkResultIntent()
@@ -79,9 +86,7 @@ class PhotoViewerActivity : AppCompatActivity() {
                     negativeButton(R.string.dialog_no) {
                         dialog.dismiss()
                     }
-
                 }
-
             }
         }
         return super.onOptionsItemSelected(item)
@@ -92,24 +97,22 @@ class PhotoViewerActivity : AppCompatActivity() {
         if(rotationInDegrees > 270){
             view.orientation = SubsamplingScaleImageView.ORIENTATION_0
         } else {
-            if(rotationInDegrees == -90)
+            if(rotationInDegrees == -90) {
                 view.orientation = SubsamplingScaleImageView.ORIENTATION_270
-            else
+            }
+            else {
                 view.orientation = rotationInDegrees
+            }
         }
     }
 
     private fun checkResultIntent() {
         val resultIntent = Intent()
-        if(note.images!! != allImages) {
-            note.images = allImages
-            resultIntent.putExtra(EXTRA_REPLY_PHOTO_VIEWER, note)
-            setResult(Activity.RESULT_OK, resultIntent)
-            finish()
-        } else {
-            setResult(Activity.RESULT_CANCELED, resultIntent)
-            finish()
-        }
+        note.images = allImages
+        note.imagesOrientation = allImagesOrientation
+        resultIntent.putExtra(EXTRA_REPLY_PHOTO_VIEWER, note)
+        setResult(Activity.RESULT_OK, resultIntent)
+        finish()
     }
 
     override fun onSupportNavigateUp(): Boolean {

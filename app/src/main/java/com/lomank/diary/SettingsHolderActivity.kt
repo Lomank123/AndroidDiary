@@ -1,10 +1,15 @@
 package com.lomank.diary
 
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.res.ResourcesCompat
+import androidx.browser.customtabs.CustomTabsClient.getPackageName
+import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import kotlinx.android.synthetic.main.activity_settings.*
+
 
 class SettingsHolderActivity : AppCompatActivity() {
 
@@ -14,6 +19,8 @@ class SettingsHolderActivity : AppCompatActivity() {
         setSupportActionBar(materialToolbar_settings)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         materialToolbar_settings.setNavigationIcon(R.drawable.ic_baseline_arrow_back_gray_32)
+
+
 
         supportFragmentManager
             .beginTransaction()
@@ -29,6 +36,27 @@ class SettingsHolderActivity : AppCompatActivity() {
     class SettingsFragment : PreferenceFragmentCompat() {
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey)
+
+            val rateButton = findPreference<Preference>(getString(R.string.rate_button))
+
+            rateButton!!.setOnPreferenceClickListener {
+                try {
+                    startActivity(
+                        Intent(
+                            Intent.ACTION_VIEW,
+                            Uri.parse("market://details?id=" + requireActivity().packageName)
+                        )
+                    )
+                } catch (e: ActivityNotFoundException) {
+                    startActivity(
+                        Intent(
+                            Intent.ACTION_VIEW,
+                            Uri.parse("https://play.google.com/store/apps/details?id=" + requireActivity().packageName)
+                        )
+                    )
+                }
+                true
+            }
         }
     }
 }

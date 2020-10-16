@@ -83,6 +83,12 @@
     <string name="show_images_in_list_note_title">Show notes with images</string>
     <string name="show_images_in_list_note_summary">Show attached images in the note list</string>
 
+    <string name="clickable_image_title">Clickable images in notes list</string>
+    <string name="clickable_image_summary">Click on image to open it in full size from notes list</string>
+
+    <string name="rate_button">Rate us on Play Market</string>
+
+
     <!-- Menu buttons -->
     <string name="edit_btn">Edit</string>
     <string name="open_btn">Open</string>
@@ -134,5 +140,10 @@
     <!-- Error messages -->
     <string name="error_diary_name">Input name</string>
     <string name="error_load_photo">Photo was moved or deleted.</string>
+
+    <!-- FishBun strings -->
+    <string name="photo_choose_limit_reached">Selection full. Deselect an image to choose another.</string>
+    <string name="photo_choose_title">Album</string>
+    <string name="photo_choose_all_views_title">All views</string>
 
 </resources>
