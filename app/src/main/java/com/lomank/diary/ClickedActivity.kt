@@ -421,7 +421,6 @@ class ClickedActivity : AppCompatActivity() {
 
             if (path != null) {
                 for(image in path){
-                    // TODO: check with xiaomi, if doesn't work don't implement FishBun(worked on Xiaomi mi 6)
                     // setting photo
                     listOfImages.add(image.toString())
                     listOfOrientations.add(0)

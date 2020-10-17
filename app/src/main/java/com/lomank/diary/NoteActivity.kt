@@ -12,7 +12,6 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.android.synthetic.main.activity_note.*
 import other.ViewPagerStatesAdapter
-import roomdatabase.ExtendedDiary
 
 class NoteActivity : AppCompatActivity() {
 

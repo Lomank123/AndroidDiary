@@ -5,11 +5,9 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.browser.customtabs.CustomTabsClient.getPackageName
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import kotlinx.android.synthetic.main.activity_settings.*
-
 
 class SettingsHolderActivity : AppCompatActivity() {
 
@@ -19,8 +17,6 @@ class SettingsHolderActivity : AppCompatActivity() {
         setSupportActionBar(materialToolbar_settings)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         materialToolbar_settings.setNavigationIcon(R.drawable.ic_baseline_arrow_back_gray_32)
-
-
 
         supportFragmentManager
             .beginTransaction()

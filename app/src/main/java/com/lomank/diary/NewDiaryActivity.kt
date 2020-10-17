@@ -20,7 +20,6 @@ import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.MobileAds
 import com.google.android.material.card.MaterialCardView
 import kotlinx.android.synthetic.main.activity_new_diary.*
-import kotlinx.android.synthetic.main.activity_photo_viewer.*
 
 class NewDiaryActivity : AppCompatActivity() {
 
