@@ -86,6 +86,9 @@
     <string name="clickable_image_title">Clickable images in notes list</string>
     <string name="clickable_image_summary">Click on image to open it in full size from notes list</string>
 
+    <string name="open_last_diary_title">Start with last opened diary</string>
+    <string name="open_last_diary_summary">When you enter the app the latest opened diary will be opened</string>
+
     <string name="rate_button">Rate us on Play Market</string>
 
 

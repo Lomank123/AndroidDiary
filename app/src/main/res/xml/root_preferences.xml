@@ -38,6 +38,13 @@
             android:summary="@string/clickable_image_summary"
             app:title="@string/clickable_image_title"/>
 
+        <SwitchPreferenceCompat
+            app:defaultValue="false"
+            app:iconSpaceReserved="false"
+            app:key="open_last_opened_diary"
+            app:title="@string/open_last_diary_title"
+            android:summary="@string/open_last_diary_summary"/>
+
         <Preference
             android:clickable="true"
             app:key="@string/rate_button"

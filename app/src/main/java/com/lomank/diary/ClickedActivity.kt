@@ -31,10 +31,13 @@ import androidx.preference.PreferenceManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.color.colorChooser
 import com.bumptech.glide.Glide
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.MobileAds
 import com.sangcomz.fishbun.FishBun
 import com.sangcomz.fishbun.FishBun.Companion.INTENT_PATH
 import com.sangcomz.fishbun.adapter.image.impl.GlideAdapter
 import kotlinx.android.synthetic.main.activity_clicked.*
+import kotlinx.android.synthetic.main.activity_clicked.adView4
 import roomdatabase.ExtendedDiary
 import roomdatabase.Note
 import java.io.File
@@ -89,6 +92,9 @@ class ClickedActivity : AppCompatActivity() {
             null
         )
         materialToolbar_clicked.setNavigationIcon(R.drawable.ic_baseline_arrow_back_gray_32)
+
+        MobileAds.initialize(this)
+        adView4.loadAd(AdRequest.Builder().build())
 
         // getting the request code from parent activity
         requestCode = intent.getIntExtra("requestCode", 0)

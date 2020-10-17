@@ -69,14 +69,13 @@
                 android:layout_width="25dp"
                 android:layout_height="25dp"
                 android:layout_below="@+id/imageView"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="4dp"
+                android:layout_marginTop="8dp"
                 android:layout_toEndOf="@+id/imageView"
                 android:contentDescription="@string/sample"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/imageButton_delete"
+                app:layout_constraintTop_toBottomOf="@+id/imageButton_options"
                 app:srcCompat="@android:drawable/ic_btn_speak_now" />
 
             <de.hdodenhof.circleimageview.CircleImageView
@@ -134,7 +133,7 @@
                 android:layout_toEndOf="@+id/imageView"
                 android:contentDescription="@string/sample"
                 android:visibility="visible"
-                app:layout_constraintBottom_toBottomOf="@+id/imageView"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:srcCompat="@android:drawable/btn_star_big_on" />
 

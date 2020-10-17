@@ -12,6 +12,7 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.android.synthetic.main.activity_note.*
 import other.ViewPagerStatesAdapter
+import roomdatabase.ExtendedDiary
 
 class NoteActivity : AppCompatActivity() {
 
@@ -29,7 +30,7 @@ class NoteActivity : AppCompatActivity() {
         // При первом запуске приложения на уст-ве добавляем усл-ие для сортировки
         val prefs: SharedPreferences? = PreferenceManager.getDefaultSharedPreferences(this)
         if (!(prefs!!.contains("sorted_notes")))
-            prefs.edit().putBoolean("sorted_notes", false).apply()
+            prefs.edit().putBoolean("sorted_notes", true).apply()
 
         viewPagerWithFragments()
     }

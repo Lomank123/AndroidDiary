@@ -65,6 +65,9 @@
     <string name="clickable_image_title">Кликабельные фотографии</string>
     <string name="clickable_image_summary">Возможность открывать фотографии прямо в списке заметок</string>
 
+    <string name="open_last_diary_title">Последний открытый дневник</string>
+    <string name="open_last_diary_summary">Открывать последний дневник, с которым вы работали, при входе в приложение</string>
+
     <string name="rate_button">Оценить приложение</string>
 
     <!-- Меню -->

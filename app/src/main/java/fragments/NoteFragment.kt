@@ -51,8 +51,6 @@ class NoteFragment : Fragment() {
         extDiaryParent = requireActivity().intent.getSerializableExtra("extDiaryParent") as ExtendedDiary
 
         val prefs: SharedPreferences? = PreferenceManager.getDefaultSharedPreferences(activity)
-        if (!(prefs!!.contains("sorted_notes")))
-            prefs.edit().putBoolean("sorted_notes", false).apply()
 
         val adapter = newNoteAdapter(layout)
         layout.recyclerview_note.adapter = adapter
@@ -77,7 +75,7 @@ class NoteFragment : Fragment() {
             }
 
             // setting notes in the adapter
-            if (prefs.getBoolean("sorted_notes", false))
+            if (prefs!!.getBoolean("sorted_notes", true))
                 adapter.setNotes(mainNoteList.sortedBy { !it.favorite }, obj)
             else
                 adapter.setNotes(mainNoteList, obj)
@@ -225,7 +223,7 @@ class NoteFragment : Fragment() {
         }
 
         if(starItem != null){
-            if (prefs!!.getBoolean("sorted_notes", false)) {
+            if (prefs!!.getBoolean("sorted_notes", true)) {
                 starItem.setIcon(R.drawable.ic_baseline_star_32)
             } else {
                 starItem.setIcon(R.drawable.ic_baseline_star_border_32)
@@ -251,7 +249,7 @@ class NoteFragment : Fragment() {
             }
             R.id.star -> {
                 val adapter = recyclerview_note.adapter as NoteListAdapter
-                if (prefs!!.getBoolean("sorted_notes", false)) {
+                if (prefs!!.getBoolean("sorted_notes", true)) {
                     prefs.edit().putBoolean("sorted_notes", false).apply()
                     adapter.setNotes(mainNoteList, mainViewModel.allExtendedDiaries.value!!)
                     item.setIcon(R.drawable.ic_baseline_star_border_32)
@@ -281,7 +279,7 @@ class NoteFragment : Fragment() {
         } else { // Если строка поиска пуста
             findListOfNotes(extDiaries, extDiaryParent)
         }
-        if (prefs!!.getBoolean("sorted_notes", false)) {
+        if (prefs!!.getBoolean("sorted_notes", true)) {
             adapter.setNotes(mainNoteList.sortedBy { !it.favorite }, extDiaries)
 
         }

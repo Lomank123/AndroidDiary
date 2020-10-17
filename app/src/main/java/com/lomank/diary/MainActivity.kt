@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -29,11 +30,13 @@ import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
-    private val newDiaryActivityRequestCode = 1              // для NewWordActivity
-    private val editDiaryActivityRequestCode = 2             // для EditActivity
+    private val newDiaryActivityRequestCode = 1
+    private val editDiaryActivityRequestCode = 2
 
-    private lateinit var mainViewModel: MainViewModel        // добавляем ViewModel
+    private lateinit var mainViewModel: MainViewModel
     private lateinit var extDiaryList : List<ExtendedDiary>
+
+    private var flagLastOpened = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -47,9 +50,8 @@ class MainActivity : AppCompatActivity() {
         MobileAds.initialize(this)
         adView.loadAd(AdRequest.Builder().build())
 
-
         if (!(prefs!!.contains("sorted")))
-            prefs.edit().putBoolean("sorted", false).apply()
+            prefs.edit().putBoolean("sorted", true).apply()
 
         // Создаем провайдер, связывая с соотв. классом ViewModel (одинаково для всех ViewModel)
         mainViewModel = ViewModelProvider(this).get(MainViewModel::class.java)
@@ -62,7 +64,29 @@ class MainActivity : AppCompatActivity() {
         // Следит за изменением списка записей(дневников) и обновляет данные в RecyclerView
         mainViewModel.allExtendedDiaries.observe(this, { objects ->
             extDiaryList = objects
-            if (prefs.getBoolean("sorted", false))
+
+            if(prefs.getBoolean("open_last_opened_diary", false)) {
+                if (flagLastOpened == 0) {
+                    val lastOpenedDiaryId = prefs.getLong("lastOpenedDiaryId", (-1).toLong())
+                    if (lastOpenedDiaryId != (-1).toLong()) {
+                        for (extDiary in extDiaryList) {
+                            if (extDiary.diary.id == lastOpenedDiaryId) {
+                                flagLastOpened = 1
+                                val intent = Intent(this, NoteActivity::class.java)
+                                intent.putExtra("extDiaryParent", extDiary) // Передаем ExtendedDiary
+                                prefs.edit().putLong("lastOpenedDiaryId", extDiary.diary.id).apply()
+                                startActivity(intent)
+                                break
+                            }
+                        }
+                    }
+                    flagLastOpened = 1
+                }
+            } else {
+                flagLastOpened = 1
+            }
+
+            if (prefs.getBoolean("sorted", true))
                 adapter.setDiaries(extDiaryList.sortedBy { !it.diary.favorite })
             else
                 adapter.setDiaries(extDiaryList)
@@ -108,6 +132,8 @@ class MainActivity : AppCompatActivity() {
     // то, что в фигурных скобках это и есть аргумент listener : (ExtendedDiary) -> Unit в адаптере
     private fun newDiaryAdapter() : DiaryListAdapter
     {
+        val prefs: SharedPreferences? = PreferenceManager.getDefaultSharedPreferences(this)
+
         return DiaryListAdapter(this,
             {
                 // listenerDelete
@@ -116,6 +142,10 @@ class MainActivity : AppCompatActivity() {
                 // listenerOpen
                 val intent = Intent(this, NoteActivity::class.java)
                 intent.putExtra("extDiaryParent", it) // Передаем ExtendedDiary
+
+                prefs!!.edit().putLong("lastOpenedDiaryId", it.diary.id).apply()
+                Log.e("err", "opened diary with id = ${it.diary.id}")
+
                 startActivity(intent)
             }, {
                 // listenerEdit
@@ -197,7 +227,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         if(starItem != null){
-            if (prefs!!.getBoolean("sorted", false)) {
+            if (prefs!!.getBoolean("sorted", true)) {
                 starItem.setIcon(R.drawable.ic_baseline_star_32)
             } else {
                 starItem.setIcon(R.drawable.ic_baseline_star_border_32)
@@ -222,7 +252,7 @@ class MainActivity : AppCompatActivity() {
         } else { // Если строка поиска пуста
             mainViewModel.allExtendedDiaries.value!!
         }
-        if (prefs!!.getBoolean("sorted", false)) {
+        if (prefs!!.getBoolean("sorted", true)) {
             adapter.setDiaries(extDiaryList.sortedBy { !it.diary.favorite })
 
         }
@@ -246,7 +276,7 @@ class MainActivity : AppCompatActivity() {
             }
             R.id.star -> {
                 val adapter = recyclerview.adapter as DiaryListAdapter
-                if (prefs!!.getBoolean("sorted", false)) {
+                if (prefs!!.getBoolean("sorted", true)) {
                     prefs.edit().putBoolean("sorted", false).apply()
                     adapter.setDiaries(extDiaryList)
                     item.setIcon(R.drawable.ic_baseline_star_border_32)
