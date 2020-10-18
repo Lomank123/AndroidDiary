@@ -4,7 +4,6 @@
     <string name="list_name">Список дел</string>
     <string name="hint_diary">Название дневника…</string>
     <string name="button_save">Сохранить</string>
-    <string name="empty_not_saved">Отменено или поле с именем пустое</string>
     <string name="sample">Пример текста</string>
     <string name="description">Описание…</string>
     <string name="description_full">Описание:</string>
@@ -15,8 +14,8 @@
     <string name="color_choose">Цвет</string>
     <string name="photo_reset">Сброс</string>
     <string name="search">Поиск</string>
-    <string name="add_favor">Добавлено в избранное</string>
-    <string name="del_favor">Удалено из избранного</string>
+    <string name="add_favor">Добавлено в избранные</string>
+    <string name="del_favor">Удалено из избранных</string>
     <string name="creation_date">Дата создания: </string>
     <string name="last_edit_date">Дата последнего изменения: </string>
     <string name="amount_of_notes">Количество заметок: </string>
@@ -56,8 +55,10 @@
     <string name="diary_image_in_note_summary">Показывать картинку дневника на заднем фоне заметки</string>
 
     <string name="show_color_diary_title">Показывать цвет дневников</string>
+    <string name="show_color_diary_summary">Вы можете выбрать цвет при создании дневников</string>
 
     <string name="show_color_note_title">Показывать цвет заметок</string>
+    <string name="show_color_note_summary">Вы можете выбрать цвет при создании заметок</string>
 
     <string name="show_images_in_list_note_title">Заметки с картинками</string>
     <string name="show_images_in_list_note_summary">Показывать изображения, прикрепленные к заметке, в списке</string>
@@ -92,12 +93,11 @@
 
     <!-- Error messages -->
     <string name="error_diary_name">Введите имя</string>
-    <string name="error_load_photo">Фотография была перемещена или удалена</string>
 
     <!-- Создатели -->
     <string name="creators">Создатель</string>
     <string name="robert">Роберт Хакимов</string>
-    <string name="app_ver">Версия приложения: 1.03</string>
+    <string name="app_ver">Версия приложения: 1.01</string>
 
     <!-- Voice -->
     <string name="start_time">0:00</string>

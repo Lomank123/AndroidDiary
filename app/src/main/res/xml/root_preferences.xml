@@ -16,13 +16,15 @@
             app:defaultValue="true"
             app:iconSpaceReserved="false"
             app:key="color_check_diary"
-            app:title="@string/show_color_diary_title" />
+            app:title="@string/show_color_diary_title"
+            app:summary="@string/show_color_diary_summary"/>
 
         <SwitchPreferenceCompat
             app:defaultValue="true"
             app:iconSpaceReserved="false"
             app:key="color_check_note"
-            app:title="@string/show_color_note_title" />
+            app:title="@string/show_color_note_title"
+            app:summary="@string/show_color_note_summary"/>
 
         <SwitchPreferenceCompat
             app:defaultValue="true"

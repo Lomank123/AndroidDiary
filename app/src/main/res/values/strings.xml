@@ -8,7 +8,6 @@
     <string name="title">Title…</string>
 
     <!-- Toast messages -->
-    <string name="empty_not_saved">Canceled or Diary name is empty</string>
     <string name="add_favor">Added to Favorites</string>
     <string name="del_favor">Removed from Favorites</string>
     <!-- Permissions -->
@@ -76,9 +75,11 @@
     <string name="diary_image_in_note_title">Background image for note</string>
     <string name="diary_image_in_note_summary">Show diary image on the note background</string>
 
-    <string name="show_color_diary_title">Show diary color</string>
+    <string name="show_color_diary_title">Show diaries color</string>
+    <string name="show_color_diary_summary">You can choose color when create diaries</string>
 
-    <string name="show_color_note_title">Show note color</string>
+    <string name="show_color_note_title">Show notes color</string>
+    <string name="show_color_note_summary">You can choose color when create notes</string>
 
     <string name="show_images_in_list_note_title">Show notes with images</string>
     <string name="show_images_in_list_note_summary">Show attached images in the note list</string>
@@ -89,7 +90,7 @@
     <string name="open_last_diary_title">Start with last opened diary</string>
     <string name="open_last_diary_summary">When you enter the app the latest opened diary will be opened</string>
 
-    <string name="rate_button">Rate us on Play Market</string>
+    <string name="rate_button">Rate this app on Play Market</string>
 
 
     <!-- Menu buttons -->
@@ -136,13 +137,12 @@
     <!-- Other -->
     <string name="creators">Creator</string>
     <string name="robert">Robert Khakimov</string>
-    <string name="app_ver">App version: 1.0</string>
+    <string name="app_ver">App version: 1.01</string>
     <string name="privacy_policy">Privacy policy link:</string>
     <string name="pp_link">https://diary-daily-list.flycricket.io/privacy.html</string>
 
     <!-- Error messages -->
     <string name="error_diary_name">Input name</string>
-    <string name="error_load_photo">Photo was moved or deleted.</string>
 
     <!-- FishBun strings -->
     <string name="photo_choose_limit_reached">Selection full. Deselect an image to choose another.</string>

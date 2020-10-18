@@ -44,7 +44,7 @@
         android:layout_centerHorizontal="true"
         android:visibility="visible"
         app:adSize="BANNER"
-        app:adUnitId="ca-app-pub-3081053917792975/9807157974"
+        app:adUnitId="ca-app-pub-3081053917792975/7124389977"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/materialToolbar_clicked" />
