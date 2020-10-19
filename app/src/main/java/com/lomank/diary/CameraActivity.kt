@@ -8,6 +8,7 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Environment
 import android.util.Log
 import android.view.ScaleGestureDetector
 import android.widget.Toast
@@ -165,10 +166,15 @@ class CameraActivity : AppCompatActivity() {
     }
 
     private fun getOutputDirectory(): File {
-        val mediaDir = externalMediaDirs.firstOrNull()?.let {
-            File(it, resources.getString(R.string.app_name)).apply { mkdirs() } }
-        return if (mediaDir != null && mediaDir.exists())
-            mediaDir else filesDir
+        //val mediaDir = externalMediaDirs.firstOrNull()?.let {
+        //    File(it, resources.getString(R.string.app_name)).apply { mkdirs() } }
+        val mediaDir2 = File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), resources.getString(R.string.app_name))
+        if (!mediaDir2.exists() && !mediaDir2.mkdirs()){
+            Log.d("dir", "failed to create directory")
+        }
+        //Log.e("dir", "full path: ${mediaDir2.absolutePath}")
+        return if (mediaDir2.exists())
+            mediaDir2 else filesDir
     }
 
     override fun onDestroy() {

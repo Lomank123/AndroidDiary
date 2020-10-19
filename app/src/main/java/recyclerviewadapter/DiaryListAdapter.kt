@@ -108,7 +108,7 @@ class DiaryListAdapter internal constructor(
                 diaryStarView.visibility = GONE
 
             // photo
-            if (extDiary.diary.img != null && extDiary.diary.img != "") {
+            if (extDiary.diary.img != null) {
                 // trying to set an image with Glide
                 Glide.with(mContext).load(extDiary.diary.img).into(diaryImageView)
             } else {

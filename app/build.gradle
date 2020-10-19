@@ -13,8 +13,8 @@ android {
         applicationId "com.lomank.diary"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 12
-        versionName "1.01"
+        versionCode 15
+        versionName "1.04"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
