@@ -48,7 +48,7 @@ class MainActivity : AppCompatActivity() {
         materialToolbar.overflowIcon = ResourcesCompat.getDrawable(resources, R.drawable.ic_baseline_more_vert_32, null)
 
         MobileAds.initialize(this)
-        adView.loadAd(AdRequest.Builder().build())
+        adView1.loadAd(AdRequest.Builder().build())
 
         if (!(prefs!!.contains("sorted")))
             prefs.edit().putBoolean("sorted", true).apply()
@@ -153,7 +153,7 @@ class MainActivity : AppCompatActivity() {
                 intent.putExtra("diaryEdit", it.diary)
                 startActivityForResult(intent, editDiaryActivityRequestCode)
             }, {
-               // listenerUpdate
+                // listenerUpdate
                 updateDiary(it)
             })
     }

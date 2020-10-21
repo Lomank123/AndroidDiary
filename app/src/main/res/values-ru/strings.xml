@@ -97,7 +97,7 @@
     <!-- Создатели -->
     <string name="creators">Создатель</string>
     <string name="robert">Роберт Хакимов</string>
-    <string name="app_ver">Версия приложения: 1.01</string>
+    <string name="app_ver">Версия приложения: 1.05</string>
 
     <!-- Voice -->
     <string name="start_time">0:00</string>
@@ -133,5 +133,13 @@
     <string name="photo_choose_limit_reached">Вы выбрали максимальное число фотографий</string>
     <string name="photo_choose_title">Альбом</string>
     <string name="photo_choose_all_views_title">Все фотографии</string>
+
+    <!-- banner ad id -->
+    <string name="banner1">ca-app-pub-3081053917792975/9330399843</string>
+    <string name="banner2">ca-app-pub-3081053917792975/8437471645</string>
+    <string name="banner3">ca-app-pub-3081053917792975/2851964866</string>
+    <string name="banner4">ca-app-pub-3081053917792975/7124389977</string>
+
+    <string name="native_banner1">ca-app-pub-3081053917792975/8153598286</string>
 
 </resources>
