@@ -71,6 +71,7 @@
 
     <!-- Settings -->
     <string name="categoryMainSettings">Main settings</string>
+    <string name="categoryNotifications">Notifications</string>
 
     <string name="diary_image_in_note_title">Background image for note</string>
     <string name="diary_image_in_note_summary">Show diary image on the note background</string>
@@ -91,6 +92,9 @@
     <string name="open_last_diary_summary">When you enter the app the latest opened diary will be opened</string>
 
     <string name="rate_button">Rate this app on Play Market</string>
+
+    <string name="enable_notifications">Enable notifications</string>
+    <string name="notify_time">Set time for notifications</string>
 
 
     <!-- Menu buttons -->
@@ -156,5 +160,19 @@
     <string name="banner4">ca-app-pub-3081053917792975/7124389977</string>
 
     <string name="native_banner1">ca-app-pub-3081053917792975/8153598286</string>
+    
+    <!-- Notifications -->
+    <string name="notify_title_plural">You have several</string>
+    <string name="notify_items_remain_plural">things to do</string>
+    <string name="notify_title_single">You have only 1 thing to do! Tap to open daily list</string>
+
+    <string name="notify_message_plural">Here they are:</string>
+    <string name="notify_message_ending_plural1">And</string>
+    <string name="notify_message_ending_plural2">more. Tap to open</string>
+
+
+    <string name="notify_message_single">Here it is:</string>
+
+
 
 </resources>

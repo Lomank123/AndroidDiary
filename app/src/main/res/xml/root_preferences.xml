@@ -49,8 +49,26 @@
 
         <Preference
             android:clickable="true"
-            app:key="@string/rate_button"
+            app:key="rate_button"
             app:title="@string/rate_button"
+            app:iconSpaceReserved="false"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:iconSpaceReserved="false"
+        app:title="@string/categoryNotifications">
+
+        <SwitchPreferenceCompat
+            app:defaultValue="true"
+            app:iconSpaceReserved="false"
+            app:key="enable_notifications"
+            app:title="@string/enable_notifications"/>
+
+        <Preference
+            android:clickable="true"
+            app:key="notify_time"
+            app:title="@string/notify_time"
             app:iconSpaceReserved="false"/>
 
     </PreferenceCategory>

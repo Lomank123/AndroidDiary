@@ -20,6 +20,7 @@ import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_daily_list.*
 import kotlinx.android.synthetic.main.fragment_daily_list.view.*
+import other.NotificationCreator
 import recyclerviewadapter.DailyListAdapter
 import roomdatabase.DailyListItem
 import roomdatabase.ExtendedDiary
@@ -29,7 +30,9 @@ class DailyListFragment : Fragment() {
 
     private lateinit var mainViewModel: MainViewModel       // добавляем ViewModel
 
-    private lateinit var allDailyListItems : List<DailyListItem>
+    private var allDailyListItems = emptyList<DailyListItem>()
+
+    private lateinit var notifCreator : NotificationCreator
 
     private var isComplete = false
 
@@ -57,7 +60,6 @@ class DailyListFragment : Fragment() {
             layout.collapsing_toolbar_layout.title = extDiaryParent.diary.listName
         else
             layout.collapsing_toolbar_layout.title = requireActivity().resources.getString(R.string.list_name)
-
 
         if (mainViewModel.allExtendedDiaries.hasActiveObservers())
             mainViewModel.allExtendedDiaries.removeObservers(requireActivity())
@@ -178,6 +180,14 @@ class DailyListFragment : Fragment() {
         return layout
     }
 
+    override fun onResume() {
+        super.onResume()
+        // Notification
+        notifCreator = NotificationCreator(requireContext())
+        notifCreator.createNotifyChannel()
+        setNotifyMessageListener()
+    }
+
     // Setting adapter
     private fun newAdapter() : DailyListAdapter{
         return DailyListAdapter(requireActivity(),
@@ -240,6 +250,15 @@ class DailyListFragment : Fragment() {
         snackBar.show()
     }
 
+    // sets title and message for notification
+    private fun setNotifyMessageListener(){
+        if (mainViewModel.allDailyListItems.hasActiveObservers())
+            mainViewModel.allDailyListItems.removeObservers(requireActivity())
+        mainViewModel.allDailyListItems.observe(requireActivity(), {
+            notifCreator.setNotifyMessage(it)
+        })
+    }
+
     // mainViewModel DailyListItem methods
 
     private fun deleteDailyListItem(item: DailyListItem){
@@ -263,5 +282,4 @@ class DailyListFragment : Fragment() {
         mainViewModel.deleteDailyList(id)
         createUndoSnackBar(view, oldDailyList)
     }
-
 }

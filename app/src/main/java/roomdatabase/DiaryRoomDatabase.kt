@@ -29,9 +29,6 @@ abstract class DiaryRoomDatabase : RoomDatabase() {
 
         // ф-ия для возможных начальных данных или другого функционала
         suspend fun populateDatabase(diaryDao: DiaryDao) {
-            // удалит все записи при перезапуске приложения (можно вынести в отдельную кнопку)
-            //diaryDao.deleteAllDiaries()
-            //diaryDao.deleteAllNotes()
         }
     }
 

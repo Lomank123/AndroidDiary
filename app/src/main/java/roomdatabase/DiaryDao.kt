@@ -111,6 +111,10 @@ interface DiaryDao {
     @Query("DELETE FROM daily_list_item_table")
     suspend fun deleteAllDailyListItems()
 
+    @Transaction
+    @Query("SELECT * from daily_list_item_table WHERE daily_list_item_is_done = :value")
+    fun getDailyListItems(value : Boolean=false) : LiveData<List<DailyListItem>>
+
     // ExtendedDiary queries
 
     // Выдает все записи для дата-класса ExtendedDiary

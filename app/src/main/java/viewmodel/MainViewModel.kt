@@ -13,7 +13,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     // ViewModel поддерживает ссылку на репозиторий для получения данных
     private val repository: MainRepository
     // LiveData дают нам обновленные слова, когда они меняются
-    val allExtendedDiaries: LiveData<List<ExtendedDiary>>
+    val allExtendedDiaries : LiveData<List<ExtendedDiary>>
+    val allDailyListItems : LiveData<List<DailyListItem>>
 
     init {
         // Gets reference to WordDao from WordRoomDatabase to construct
@@ -25,6 +26,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         repository = MainRepository(diaryDao)
         // передаем данные из репозитория во ViewModel
         allExtendedDiaries = repository.allExtendedDiaries
+        allDailyListItems = repository.allDailyListItems
     }
 
     // Diaries:

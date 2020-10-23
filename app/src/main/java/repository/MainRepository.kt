@@ -8,6 +8,7 @@ class MainRepository (private val diaryDao : DiaryDao) {
 
     // получаем записи по запросу
     var allExtendedDiaries : LiveData<List<ExtendedDiary>> = diaryDao.getExtendedDiaries()
+    var allDailyListItems : LiveData<List<DailyListItem>> = diaryDao.getDailyListItems()
 
     // ВАЖНО: LiveData объекты постоянно активны и при изменениях в БД они сразу
     // же получают эту информацию,

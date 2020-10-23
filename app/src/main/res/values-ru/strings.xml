@@ -51,6 +51,8 @@
 
     <!-- Настройки -->
     <string name="categoryMainSettings">Главные настройки</string>
+    <string name="categoryNotifications">Уведомления</string>
+
     <string name="diary_image_in_note_title">Фото на заднем фоне заметки</string>
     <string name="diary_image_in_note_summary">Показывать картинку дневника на заднем фоне заметки</string>
 
@@ -70,6 +72,9 @@
     <string name="open_last_diary_summary">Открывать последний дневник, с которым вы работали, при входе в приложение</string>
 
     <string name="rate_button">Оценить приложение</string>
+
+    <string name="enable_notifications">Включить уведомления</string>
+    <string name="notify_time">Установить время для уведомлений</string>
 
     <!-- Меню -->
     <string name="edit_btn">Редактировать</string>
@@ -141,5 +146,16 @@
     <string name="banner4">ca-app-pub-3081053917792975/7124389977</string>
 
     <string name="native_banner1">ca-app-pub-3081053917792975/8153598286</string>
+
+    <!-- Notifications -->
+    <string name="notify_title_plural">У вас осталось несколько</string>
+    <string name="notify_items_remain_plural">дел.</string>
+    <string name="notify_title_single">У вас осталось лишь одно дело! Нажмите чтобы открыть</string>
+
+    <string name="notify_message_plural">Вот они:</string>
+    <string name="notify_message_ending_plural1">И еще</string>
+    <string name="notify_message_ending_plural2">. Нажмите чтобы открыть</string>
+
+    <string name="notify_message_single">Вот оно:</string>
 
 </resources>

@@ -1,7 +1,7 @@
 package com.lomank.diary
 
 import android.annotation.SuppressLint
-import android.app.Activity
+import android.app.*
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -19,6 +19,7 @@ import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.MobileAds
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
+import other.NotificationCreator
 import other.TopSpacingItemDecoration
 import recyclerviewadapter.DiaryListAdapter
 import roomdatabase.Diary
@@ -35,6 +36,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var mainViewModel: MainViewModel
     private lateinit var extDiaryList : List<ExtendedDiary>
+    private lateinit var notifCreator : NotificationCreator
 
     private var flagLastOpened = 0
 
@@ -102,6 +104,13 @@ class MainActivity : AppCompatActivity() {
     override fun onResume()
     {
         super.onResume()
+
+        // Notifications
+        notifCreator = NotificationCreator(this)
+        notifCreator.createNotifyChannel()
+        setNotifyMessageListener()
+
+        //createNotification()
         // Конкретно сейчас влияет на мгновенное появление цветов записей
         // если изменить опцию в настройках эффект будет мгновенным
         recyclerview.adapter!!.notifyDataSetChanged()
@@ -318,6 +327,15 @@ class MainActivity : AppCompatActivity() {
         snackBar.show()
     }
 
+    // sets title and message for notification
+    private fun setNotifyMessageListener(){
+        if (mainViewModel.allDailyListItems.hasActiveObservers())
+            mainViewModel.allDailyListItems.removeObservers(this)
+        mainViewModel.allDailyListItems.observe(this, {
+            notifCreator.setNotifyMessage(it)
+        })
+    }
+
     // Database queries
 
     // Delete diary
@@ -337,5 +355,6 @@ class MainActivity : AppCompatActivity() {
     private fun updateListOfDiaries(list : List<Diary>){
         mainViewModel.updateListOfDiaries(list)
     }
+
 }
 
