@@ -96,6 +96,8 @@ class NotificationCreator(context : Context) {
         if(notificationMessage != "" && prefs!!.getBoolean("enable_notifications", true)) {
 
             val calendar = GregorianCalendar.getInstance()
+            val firstTime = calendar.timeInMillis
+            Log.e("time", "firstTime: $firstTime")
 
             val scheduleTime = prefs.getString("notify_time", null)
 
@@ -126,9 +128,16 @@ class NotificationCreator(context : Context) {
                         "${calendar.get(Calendar.MILLISECOND)}")
             }
 
+            var secondTime = calendar.timeInMillis
+
+            if(firstTime >= secondTime){
+                secondTime = calendar.timeInMillis + AlarmManager.INTERVAL_DAY
+                Log.e("time", "secondTime: $secondTime")
+            }
+
             alarmManager.setRepeating(
                 AlarmManager.RTC_WAKEUP,
-                calendar.timeInMillis + AlarmManager.INTERVAL_DAY,
+                secondTime,
                 AlarmManager.INTERVAL_DAY,
                 pendingIntent
             )

@@ -16,8 +16,6 @@ import androidx.core.content.res.ResourcesCompat
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.color.colorChooser
 import com.bumptech.glide.Glide
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.MobileAds
 import com.google.android.material.card.MaterialCardView
 import kotlinx.android.synthetic.main.activity_new_diary.*
 import roomdatabase.Diary
@@ -42,9 +40,6 @@ class EditDiaryActivity : AppCompatActivity() {
         setSupportActionBar(materialToolbar_new_diary)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         materialToolbar_new_diary.setNavigationIcon(R.drawable.ic_baseline_arrow_back_gray_32)
-
-        MobileAds.initialize(this)
-        adView3.loadAd(AdRequest.Builder().build())
 
         val diary = intent.getSerializableExtra("diaryEdit") as? Diary
 
