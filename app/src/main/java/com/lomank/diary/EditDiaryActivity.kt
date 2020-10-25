@@ -54,9 +54,8 @@ class EditDiaryActivity : AppCompatActivity() {
         // photo
         if (diary.img != null && diary.img != "") {
             isPhotoExist = true
-            Glide.with(this).load(diary.img).into(imageView_new_diary)
-        } else
-            imageView_new_diary.setImageResource(R.drawable.logo)
+            Glide.with(this).load(diary.img).placeholder(R.drawable.logo).override(1000, 800).into(imageView_new_diary)
+        }
 
         button_save.setOnClickListener {
             if (TextUtils.isEmpty(edit_diary.text)) {
@@ -194,7 +193,7 @@ class EditDiaryActivity : AppCompatActivity() {
             // setting photo
             val uriImage = data?.data
             contentResolver.takePersistableUriPermission(uriImage!!, Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            Glide.with(this).load(uriImage).into(imageView_new_diary)
+            Glide.with(this).load(uriImage).placeholder(R.drawable.logo).override(1000, 800).into(imageView_new_diary)
 
             replyIntent.putExtra(EXTRA_EDIT_DIARY_IMAGE, uriImage.toString())
             isPhotoChanged = diary!!.img != uriImage.toString()

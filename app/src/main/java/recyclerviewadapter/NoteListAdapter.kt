@@ -65,102 +65,29 @@ class NoteListAdapter internal constructor(
     // этот класс ХРАНИТ в себе то самое вью, в котором будут что-то менять
     inner class NoteViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        private val layoutItemView : ConstraintLayout = itemView.findViewById(R.id.constraint_layout)
-        private val noteItemView : TextView = itemView.findViewById(R.id.editText_name)
-        private val noteDescriptionView : TextView = itemView.findViewById(R.id.textView_content)
-        private val noteImageView : ImageView = itemView.findViewById(R.id.imageView)
-        private val noteStarView : ImageView = itemView.findViewById(R.id.imageView_star)
-        private val noteSettingsButtonView : ImageButton = itemView.findViewById(R.id.imageButton_options)
-        //private val noteImageButtonViewDelete : ImageButton = itemView.findViewById(R.id.imageButton_delete)
+        private val layoutItemView : ConstraintLayout = itemView.findViewById(R.id.constraint_layout_note)
+        private val noteItemView : TextView = itemView.findViewById(R.id.editText_name_note)
+        private val noteDescriptionView : TextView = itemView.findViewById(R.id.textView_content_note)
+        //private val noteImageView : ImageView = itemView.findViewById(R.id.imageView)
+        //private val noteStarView : ImageView = itemView.findViewById(R.id.imageView_star)
+
         // expandable layout
-        private val expandableLayoutItemView : ConstraintLayout = itemView.findViewById(R.id.expandable_layout)
-        private val creationDateItemView : TextView = itemView.findViewById(R.id.creation_date_text2)
-        private val lastEditDateItemView : TextView = itemView.findViewById(R.id.last_edit_date_text2)
-        private val imageViewMic : ImageView = itemView.findViewById(R.id.imageView_mic)
+        private val expandableLayoutItemView : ConstraintLayout = itemView.findViewById(R.id.expandable_layout_note)
+        private val creationDateItemView : TextView = itemView.findViewById(R.id.creation_date_text2_note)
+        private val lastEditDateItemView : TextView = itemView.findViewById(R.id.last_edit_date_text2_note)
+
+        private val noteSettingsButtonView : ImageButton = itemView.findViewById(R.id.imageButton_options_note)
+        private val imageViewMic : ImageView = itemView.findViewById(R.id.imageView_mic_note)
+        private val imageViewFavorite : ImageView = itemView.findViewById(R.id.imageButton_favorite_note)
 
         // images
-        private val imageLayout : TableLayout = itemView.findViewById(R.id.tableLayout_images)
-        private val image1 : ImageView = itemView.findViewById(R.id.image1)
-        private val image2 : ImageView = itemView.findViewById(R.id.image2)
-        private val image3 : ImageView = itemView.findViewById(R.id.image3)
+        private val imageLayout : TableLayout = itemView.findViewById(R.id.tableLayout_images_note)
+        private val image1 : ImageView = itemView.findViewById(R.id.image1_note)
+        private val image2 : ImageView = itemView.findViewById(R.id.image2_note)
+        private val image3 : ImageView = itemView.findViewById(R.id.image3_note)
 
         // эта функция применяется для каждого члена RecyclerView т.к. вызывается в onBindViewHolder
         fun bindView(note: Note) {
-            noteImageView.setImageResource(R.drawable.empty_note_photo)
-            noteItemView.text = note.name
-            noteDescriptionView.text = cutString(note.content)
-            creationDateItemView.text = note.creationDate.toString()
-            lastEditDateItemView.text = note.lastEditDate
-
-            // Устанавливаем обработчик нажатий на элемент RecyclerView, при нажатии
-            // будет вызываться первый listener (listenerOpen), который открывает заметку
-            itemView.setOnClickListener {
-                listenerOpen(note)
-            }
-
-            // showing images
-            if(prefs!!.getBoolean("images_show_note", true)){
-                val viewList = arrayListOf(image1, image2, image3)
-                if (note.images != null) {
-                    if(note.images!!.isNotEmpty()) {
-                        imageLayout.visibility = VISIBLE
-                        for(i in note.images!!.indices) {
-                            // setting image
-                            viewList[i].visibility = VISIBLE
-                            Glide.with(mContext).load(note.images!![i]).override(800, 1000).into(viewList[i])
-
-                            if(prefs.getBoolean("clickable_image_note_key", true)){
-                                viewList[i].setOnClickListener {
-                                    listenerPosition(i)
-                                    listenerPhoto(note)
-                                }
-                            } else {
-                                viewList[i].setOnClickListener{
-                                    listenerOpen(note)
-                                }
-                            }
-
-                        }
-                    } else {
-                        imageLayout.visibility = GONE
-                    }
-                    for(i in note.images!!.size until viewList.size){
-                        viewList[i].visibility = GONE
-                    }
-                    setLayoutParams(note, image1, image2)
-                } else {
-                    imageLayout.visibility = GONE
-                }
-            } else {
-                imageLayout.visibility = GONE
-            }
-            // иконка со звездочкой (избранное)
-            if (note.favorite)
-                noteStarView.visibility = VISIBLE
-            else
-                noteStarView.visibility = GONE
-
-            // if there is a voice note inside
-            if(note.voice)
-                imageViewMic.visibility = VISIBLE
-            else
-                imageViewMic.visibility = GONE
-
-            // color
-            if (note.color != null && prefs.getBoolean("color_check_note", true)) {
-                layoutItemView.setBackgroundColor(note.color!!)
-            }
-            else
-                layoutItemView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white))
-
-            // Проверяем нужно ли показать информацию
-            if (note.isExpanded) {
-                //noteDescriptionView.visibility = GONE
-                expandableLayoutItemView.visibility = VISIBLE
-            } else {
-                //noteDescriptionView.visibility = VISIBLE
-                expandableLayoutItemView.visibility = GONE
-            }
 
             fun setOptionsListener(view : View){
                 // Устанавливаем контекстное меню
@@ -208,11 +135,11 @@ class NoteListAdapter internal constructor(
                         R.id.bookmark -> {
                             note.favorite = !note.favorite
                             if(note.favorite) {
-                                noteStarView.visibility = VISIBLE
+                                imageViewFavorite.visibility = VISIBLE
                                 Toast.makeText(mContext, mContext.resources.getString(R.string.add_favor),
                                     Toast.LENGTH_SHORT).show()
                             } else {
-                                noteStarView.visibility = GONE
+                                imageViewFavorite.visibility = GONE
                                 Toast.makeText(mContext, mContext.resources.getString(R.string.del_favor),
                                     Toast.LENGTH_SHORT).show()
                             }
@@ -256,6 +183,85 @@ class NoteListAdapter internal constructor(
                 popupMenu.show() // показываем меню
             }
 
+            //noteImageView.setImageResource(R.drawable.empty_note_photo)
+            noteItemView.text = note.name
+            noteDescriptionView.text = cutString(note.content)
+            creationDateItemView.text = note.creationDate.toString()
+            lastEditDateItemView.text = note.lastEditDate
+
+            // Устанавливаем обработчик нажатий на элемент RecyclerView, при нажатии
+            // будет вызываться первый listener (listenerOpen), который открывает заметку
+            itemView.setOnClickListener {
+                listenerOpen(note)
+            }
+
+            // showing images
+            if(prefs!!.getBoolean("images_show_note", true)){
+                val viewList = arrayListOf(image1, image2, image3)
+                if (note.images != null) {
+                    if(note.images!!.isNotEmpty()) {
+                        imageLayout.visibility = VISIBLE
+                        for(i in note.images!!.indices) {
+                            // setting image
+                            viewList[i].visibility = VISIBLE
+                            Glide.with(mContext).load(note.images!![i]).override(800, 1000).into(viewList[i])
+
+                            if(prefs.getBoolean("clickable_image_note_key", true)){
+                                viewList[i].setOnClickListener {
+                                    listenerPosition(i)
+                                    listenerPhoto(note)
+                                }
+                            } else {
+                                viewList[i].setOnClickListener{
+                                    listenerOpen(note)
+                                }
+                                viewList[i].setOnLongClickListener {
+                                    setOptionsListener(it)
+                                    true
+                                }
+                            }
+                        }
+                    } else {
+                        imageLayout.visibility = GONE
+                    }
+                    for(i in note.images!!.size until viewList.size){
+                        viewList[i].visibility = GONE
+                    }
+                    setLayoutParams(note, image1, image2)
+                } else {
+                    imageLayout.visibility = GONE
+                }
+            } else {
+                imageLayout.visibility = GONE
+            }
+            // иконка со звездочкой (избранное)
+            if (note.favorite)
+                imageViewFavorite.visibility = VISIBLE
+            else
+                imageViewFavorite.visibility = GONE
+
+            // if there is a voice note inside
+            if(note.voice)
+                imageViewMic.visibility = VISIBLE
+            else
+                imageViewMic.visibility = GONE
+
+            // color
+            if (note.color != null && prefs.getBoolean("color_check_note", true)) {
+                layoutItemView.setBackgroundColor(note.color!!)
+            }
+            else
+                layoutItemView.setBackgroundColor(ContextCompat.getColor(mContext, R.color.white))
+
+            // Проверяем нужно ли показать информацию
+            if (note.isExpanded) {
+                //noteDescriptionView.visibility = GONE
+                expandableLayoutItemView.visibility = VISIBLE
+            } else {
+                //noteDescriptionView.visibility = VISIBLE
+                expandableLayoutItemView.visibility = GONE
+            }
+
             noteSettingsButtonView.setOnClickListener {
                 setOptionsListener(it)
             }
@@ -269,7 +275,7 @@ class NoteListAdapter internal constructor(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoteViewHolder {
         // добавляет контент(XML) из 1-го аргумента, и помещает во второй (родительский)
-        val itemView = inflater.inflate(R.layout.recyclerview_layout_main, parent,
+        val itemView = inflater.inflate(R.layout.recyclerview_layout_note, parent,
             false)
         return NoteViewHolder(itemView)
     }
@@ -340,6 +346,6 @@ class NoteListAdapter internal constructor(
     override fun getItemCount() = notes.size // сколько эл-тов будет в списке
 
     companion object {
-        const val NUMBER_OF_SYMBOLS = 32
+        const val NUMBER_OF_SYMBOLS = 64
     }
 }

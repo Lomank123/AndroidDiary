@@ -62,7 +62,7 @@ class DiaryListAdapter internal constructor(
         private val diaryItemView: TextView = itemView.findViewById(R.id.editText_name)
         private val diaryDescriptionView: TextView = itemView.findViewById(R.id.textView_content)
         private val diaryImageView: ImageView = itemView.findViewById(R.id.imageView)
-        private val diaryStarView: ImageView = itemView.findViewById(R.id.imageView_star)
+        private val diaryStarView: ImageView = itemView.findViewById(R.id.imageButton_favorite)
         private val diarySettingsButtonView : ImageButton = itemView.findViewById(R.id.imageButton_options)
         //private val diaryImageButtonViewDelete : ImageButton = itemView.findViewById(R.id.imageButton_delete)
         // expandable layout
@@ -110,9 +110,7 @@ class DiaryListAdapter internal constructor(
             // photo
             if (extDiary.diary.img != null) {
                 // trying to set an image with Glide
-                Glide.with(mContext).load(extDiary.diary.img).into(diaryImageView)
-            } else {
-                diaryImageView.setImageResource(R.drawable.logo)
+                Glide.with(mContext).load(extDiary.diary.img).placeholder(R.drawable.logo).override(1000, 800).into(diaryImageView)
             }
 
             // Проверяем нужно ли показать информацию

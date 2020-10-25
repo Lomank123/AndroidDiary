@@ -186,7 +186,7 @@ class NewDiaryActivity : AppCompatActivity() {
             isPhotoExist = true
             val uriImage = data?.data
             contentResolver.takePersistableUriPermission(uriImage!!, Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            Glide.with(this).load(uriImage).into(imageView_new_diary)
+            Glide.with(this).load(uriImage).placeholder(R.drawable.logo).override(1000, 800).into(imageView_new_diary)
             replyIntent.putExtra(EXTRA_NEW_DIARY_IMAGE, uriImage.toString())
         }
     }

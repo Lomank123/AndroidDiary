@@ -102,7 +102,7 @@
     <!-- Создатели -->
     <string name="creators">Создатель</string>
     <string name="robert">Роберт Хакимов</string>
-    <string name="app_ver">Версия приложения: 1.05</string>
+    <string name="app_ver">Версия приложения: 1.06</string>
 
     <!-- Voice -->
     <string name="start_time">0:00</string>
