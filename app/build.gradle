@@ -13,8 +13,8 @@ android {
         applicationId "com.lomank.diary"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 17
-        versionName "1.06"
+        versionCode 18
+        versionName "1.07"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -40,6 +40,7 @@ dependencies {
     implementation 'androidx.core:core-ktx:1.3.1'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'androidx.preference:preference:1.1.1'
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'

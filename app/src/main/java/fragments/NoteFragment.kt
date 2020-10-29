@@ -59,6 +59,7 @@ class NoteFragment : Fragment() {
 
         mainViewModel = ViewModelProvider(this).get(MainViewModel::class.java)
 
+        // TODO: Использовать отдельный список, полученный из бд (только заметки)
         if (mainViewModel.allExtendedDiaries.hasActiveObservers())
             mainViewModel.allExtendedDiaries.removeObservers(requireActivity())
         mainViewModel.allExtendedDiaries.observe(viewLifecycleOwner, { obj->
@@ -207,9 +208,10 @@ class NoteFragment : Fragment() {
                     return true
                 }
                 override fun onQueryTextChange(newText: String?): Boolean {
+                    // TODO: Возможно нужно убрать обсервер, после создания новой заметки очищать строку поиска
                     if (mainViewModel.allExtendedDiaries.hasActiveObservers())
                         mainViewModel.allExtendedDiaries.removeObservers(activity!!)
-
+                    // TODO: Изменить, т.к. в observe в onCreate есть код, переименовывающий голосовую заметку, тут его нет
                     mainViewModel.allExtendedDiaries.observe(activity!!, {
                         mainNoteList = findListOfNotes(it, extDiaryParent)
                         setNotesForSearch((recyclerview_note.adapter as NoteListAdapter), prefs,
@@ -281,7 +283,6 @@ class NoteFragment : Fragment() {
         }
         if (prefs!!.getBoolean("sorted_notes", true)) {
             adapter.setNotes(mainNoteList.sortedBy { !it.favorite }, extDiaries)
-
         }
         else
             adapter.setNotes(mainNoteList, extDiaries)
@@ -308,8 +309,6 @@ class NoteFragment : Fragment() {
         })
         snackBar.show()
     }
-
-
 
     // Удаление записи
     private fun deleteNote(view : View, note : Note)

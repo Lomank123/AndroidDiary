@@ -83,9 +83,9 @@
                 android:id="@+id/imageView_mic"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
-                android:layout_below="@+id/imageViewHolder"
+                android:layout_below="@+id/imageView"
                 android:layout_marginTop="8dp"
-                android:layout_toEndOf="@+id/imageViewHolder"
+                android:layout_toEndOf="@+id/imageView"
                 android:contentDescription="@string/sample"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -93,25 +93,17 @@
                 app:layout_constraintTop_toBottomOf="@+id/imageButton_options"
                 app:srcCompat="@android:drawable/ic_btn_speak_now" />
 
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/imageViewHolder"
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/imageView"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
-                app:cardCornerRadius="250dp"
-                app:strokeWidth="1dp"
-                app:strokeColor="@color/primary_color1"
+                android:src="@drawable/logo"
+                android:visibility="visible"
+                app:civ_border_color="@color/primary_color_dark1"
+                app:civ_border_width="2dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" >
-
-                <ImageView
-                    android:id="@+id/imageView"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:src="@drawable/logo"
-                    android:scaleType="centerCrop"/>
-
-            </com.google.android.material.card.MaterialCardView>
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/textView_content"
@@ -121,14 +113,14 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="8dp"
-                android:layout_toEndOf="@+id/imageViewHolder"
+                android:layout_toEndOf="@+id/imageView"
                 android:fontFamily="@font/ubuntu_regular"
                 android:maxWidth="220dp"
                 android:text="@string/description"
                 android:textColor="#939596"
                 android:textSize="14sp"
                 app:layout_constraintEnd_toStartOf="@+id/imageButton_favorite"
-                app:layout_constraintStart_toEndOf="@+id/imageViewHolder"
+                app:layout_constraintStart_toEndOf="@+id/imageView"
                 app:layout_constraintTop_toBottomOf="@+id/editText_name" />
 
             <TextView
@@ -139,14 +131,14 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="8dp"
-                android:layout_toEndOf="@+id/imageViewHolder"
+                android:layout_toEndOf="@+id/imageView"
                 android:fontFamily="@font/ubuntu_regular"
                 android:maxWidth="220dp"
                 android:text="@string/sample"
                 android:textColor="@color/black"
                 android:textSize="17sp"
                 app:layout_constraintEnd_toStartOf="@+id/imageButton_options"
-                app:layout_constraintStart_toEndOf="@+id/imageViewHolder"
+                app:layout_constraintStart_toEndOf="@+id/imageView"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageButton

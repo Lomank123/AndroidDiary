@@ -110,7 +110,7 @@ class DiaryListAdapter internal constructor(
             // photo
             if (extDiary.diary.img != null) {
                 // trying to set an image with Glide
-                Glide.with(mContext).load(extDiary.diary.img).placeholder(R.drawable.logo).override(1000, 800).into(diaryImageView)
+                Glide.with(mContext).load(extDiary.diary.img).placeholder(R.drawable.logo).into(diaryImageView)
             }
 
             // Проверяем нужно ли показать информацию

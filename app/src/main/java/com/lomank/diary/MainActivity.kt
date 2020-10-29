@@ -63,6 +63,7 @@ class MainActivity : AppCompatActivity() {
         recyclerview.layoutManager = StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
         recyclerview.addItemDecoration(TopSpacingItemDecoration(20)) // отступы
 
+        // TODO: Возможно нужно использовать отдельный список дневников, полученный запросом к бд
         // Следит за изменением списка записей(дневников) и обновляет данные в RecyclerView
         mainViewModel.allExtendedDiaries.observe(this, { objects ->
             extDiaryList = objects

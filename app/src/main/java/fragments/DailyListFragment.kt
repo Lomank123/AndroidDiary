@@ -61,6 +61,7 @@ class DailyListFragment : Fragment() {
         else
             layout.collapsing_toolbar_layout.title = requireActivity().resources.getString(R.string.list_name)
 
+        // TODO: Использовать отдельный список, полученный из бд
         if (mainViewModel.allExtendedDiaries.hasActiveObservers())
             mainViewModel.allExtendedDiaries.removeObservers(requireActivity())
         mainViewModel.allExtendedDiaries.observe(viewLifecycleOwner, {
