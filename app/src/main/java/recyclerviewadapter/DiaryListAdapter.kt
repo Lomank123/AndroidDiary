@@ -2,6 +2,7 @@ package recyclerviewadapter
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -109,8 +110,11 @@ class DiaryListAdapter internal constructor(
 
             // photo
             if (extDiary.diary.img != null) {
+                Log.e("img", "The img is: ${extDiary.diary.img}")
                 // trying to set an image with Glide
                 Glide.with(mContext).load(extDiary.diary.img).placeholder(R.drawable.logo).into(diaryImageView)
+            } else {
+                diaryImageView.setImageResource(R.drawable.logo)
             }
 
             // Проверяем нужно ли показать информацию
