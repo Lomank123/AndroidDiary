@@ -23,8 +23,9 @@ class NoteActivity : AppCompatActivity() {
         materialToolbar_note.overflowIcon = ResourcesCompat.getDrawable(resources, R.drawable.ic_baseline_more_vert_32, null)
         materialToolbar_note.setNavigationIcon(R.drawable.ic_baseline_arrow_back_gray_32)
 
-        MobileAds.initialize(this)
-        adView2.loadAd(AdRequest.Builder().build())
+        // TODO: ENABLE AD WHEN YOU'LL NEED IT
+        //MobileAds.initialize(this)
+        //adView2.loadAd(AdRequest.Builder().build())
 
         // При первом запуске приложения на уст-ве добавляем усл-ие для сортировки
         val prefs: SharedPreferences? = PreferenceManager.getDefaultSharedPreferences(this)

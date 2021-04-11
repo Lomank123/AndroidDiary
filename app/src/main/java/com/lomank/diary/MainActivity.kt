@@ -37,22 +37,24 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mainViewModel: MainViewModel
     private lateinit var extDiaryList : List<ExtendedDiary>
     private lateinit var notifCreator : NotificationCreator
+    private lateinit var prefs: SharedPreferences
 
     private var flagLastOpened = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
-        val prefs: SharedPreferences? = PreferenceManager.getDefaultSharedPreferences(this)
+        prefs = PreferenceManager.getDefaultSharedPreferences(this)
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(materialToolbar)
         materialToolbar.overflowIcon = ResourcesCompat.getDrawable(resources, R.drawable.ic_baseline_more_vert_32, null)
 
-        MobileAds.initialize(this)
-        adView1.loadAd(AdRequest.Builder().build())
+        // TODO: ENABLE AD WHEN YOU'LL NEED IT
+        //MobileAds.initialize(this)
+        //adView1.loadAd(AdRequest.Builder().build())
 
-        if (!(prefs!!.contains("sorted")))
+        if (!(prefs.contains("sorted")))
             prefs.edit().putBoolean("sorted", true).apply()
 
         // Создаем провайдер, связывая с соотв. классом ViewModel (одинаково для всех ViewModel)
@@ -63,7 +65,8 @@ class MainActivity : AppCompatActivity() {
         recyclerview.layoutManager = StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
         recyclerview.addItemDecoration(TopSpacingItemDecoration(20)) // отступы
 
-        // TODO: Возможно нужно использовать отдельный список дневников, полученный запросом к бд
+        // TODO: Возможно нужно использовать отдельный список дневников, полученный запросом к бд (Diary, а не ExtendedDiary)
+        // TODO: Если изменять, то тогда нужно как-то получать список заметок у дневника (для UNDO)
         // Следит за изменением списка записей(дневников) и обновляет данные в RecyclerView
         mainViewModel.allExtendedDiaries.observe(this, { objects ->
             extDiaryList = objects
@@ -142,8 +145,6 @@ class MainActivity : AppCompatActivity() {
     // то, что в фигурных скобках это и есть аргумент listener : (ExtendedDiary) -> Unit в адаптере
     private fun newDiaryAdapter() : DiaryListAdapter
     {
-        val prefs: SharedPreferences? = PreferenceManager.getDefaultSharedPreferences(this)
-
         return DiaryListAdapter(this,
             {
                 // listenerDelete
@@ -153,7 +154,7 @@ class MainActivity : AppCompatActivity() {
                 val intent = Intent(this, NoteActivity::class.java)
                 intent.putExtra("extDiaryParent", it) // Передаем ExtendedDiary
 
-                prefs!!.edit().putLong("lastOpenedDiaryId", it.diary.id).apply()
+                prefs.edit().putLong("lastOpenedDiaryId", it.diary.id).apply()
                 Log.e("err", "opened diary with id = ${it.diary.id}")
 
                 startActivity(intent)
@@ -172,6 +173,8 @@ class MainActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
+
+        // TODO: Объединить NewDiary и EditDiary Activities
         if (requestCode == newDiaryActivityRequestCode && resultCode == Activity.RESULT_OK) {
             data?.getStringArrayListExtra(NewDiaryActivity.EXTRA_NEW_DIARY)?.let {
                 val diary = Diary(it[0])
@@ -183,6 +186,7 @@ class MainActivity : AppCompatActivity() {
                 diary.color = data.getIntExtra(NewDiaryActivity.EXTRA_NEW_DIARY_COLOR, 0)
                 if(diary.color == 0)
                     diary.color = null
+                // TODO: вынести обновление текущей даты в отдельную ф-ию и возможно перенести в NewDiaryActivity
                 diary.creationDate = currentDate()
                 diary.lastEditDate = currentDate()
                 diary.content = it[1]
@@ -209,7 +213,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
 
-        val prefs: SharedPreferences? = PreferenceManager.getDefaultSharedPreferences(this)
         val starItem = menu!!.findItem(R.id.star)
         val searchItem = menu.findItem(R.id.search_view)
 
@@ -227,17 +230,17 @@ class MainActivity : AppCompatActivity() {
                         mainViewModel.allExtendedDiaries.removeObservers(this@MainActivity)
                     mainViewModel.allExtendedDiaries.observe(this@MainActivity, {
                         extDiaryList = it
-                        setDiariesForSearch(recyclerview.adapter as DiaryListAdapter, prefs,
+                        setDiariesForSearch(recyclerview.adapter as DiaryListAdapter,
                             newText)
                     })
-                    setDiariesForSearch(recyclerview.adapter as DiaryListAdapter, prefs, newText)
+                    setDiariesForSearch(recyclerview.adapter as DiaryListAdapter, newText)
                     return true
                 }
             })
         }
 
         if(starItem != null){
-            if (prefs!!.getBoolean("sorted", true)) {
+            if (prefs.getBoolean("sorted", true)) {
                 starItem.setIcon(R.drawable.ic_baseline_star_32)
             } else {
                 starItem.setIcon(R.drawable.ic_baseline_star_border_32)
@@ -247,8 +250,9 @@ class MainActivity : AppCompatActivity() {
         return super.onCreateOptionsMenu(menu)
     }
 
+    // TODO: Переделать так, чтобы не пришлось использовать observer'ов (вынести в отдельное окно, либо очищать список и после этого выдавать совпадения в поиске)
     // Функция для вывода поискового запроса (используется только в SearchView)
-    private fun setDiariesForSearch(adapter : DiaryListAdapter, prefs : SharedPreferences?, newText : String?)
+    private fun setDiariesForSearch(adapter : DiaryListAdapter, newText : String?)
     {
         extDiaryList = if (newText!!.isNotEmpty()) {
             // diariesSearchList - список записей, удовлетворяющих поисковому запросу
@@ -262,7 +266,7 @@ class MainActivity : AppCompatActivity() {
         } else { // Если строка поиска пуста
             mainViewModel.allExtendedDiaries.value!!
         }
-        if (prefs!!.getBoolean("sorted", true)) {
+        if (prefs.getBoolean("sorted", true)) {
             adapter.setDiaries(extDiaryList.sortedBy { !it.diary.favorite })
 
         }
@@ -272,7 +276,6 @@ class MainActivity : AppCompatActivity() {
 
     // когда выбираешь элемент меню
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val prefs: SharedPreferences? = PreferenceManager.getDefaultSharedPreferences(this)
         when(item.itemId){
             R.id.settings -> {
                 // открытие окна "Настройки"
@@ -284,9 +287,10 @@ class MainActivity : AppCompatActivity() {
                 val intentAbout = Intent(this, AboutActivity::class.java)
                 startActivity(intentAbout)
             }
+            // TODO: Вынести код в функцию, передавая список дневников как аргумент
             R.id.star -> {
                 val adapter = recyclerview.adapter as DiaryListAdapter
-                if (prefs!!.getBoolean("sorted", true)) {
+                if (prefs.getBoolean("sorted", true)) {
                     prefs.edit().putBoolean("sorted", false).apply()
                     adapter.setDiaries(extDiaryList)
                     item.setIcon(R.drawable.ic_baseline_star_border_32)
